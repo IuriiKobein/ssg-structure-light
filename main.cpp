@@ -1,20 +1,14 @@
 #include <stdio.h>
-#include <assert.h>
 #include <iostream>
-#include <npp.h>
 #include <fstream>
-#include <cufft.h>
-#include <cmath>
 #include <opencv2/core.hpp>
 #include <opencv2/cudaarithm.hpp>
 #include <opencv2/core/cuda.hpp>
 #include <chrono>
 #include "cuda_functions.h"
-#include "cuda_impl.h"
-#include <iomanip>
+
 const int IMG_WIDTH = 512;
 const int IMG_HEIGHT = 512;
-
 
 cv::Mat ReadMatFromTxt(std::string filename, int rows,int cols)
 {
@@ -201,7 +195,7 @@ cv::Mat iLaplacian(cv::Mat &img){
     return ca;
 }
 
-void CreateCudaGrids(cv::Mat img, cv::cuda::GpuMat &cudaCosDCT, cv::cuda::GpuMat &cudaSinDCT, cv::cuda::GpuMat &cudaCosIDCT, cv::cuda::GpuMat &cudaSinIDCT,  cv::cuda::GpuMat &cudaGridLaplacian){
+void CreateCudaGrids(cv::Mat &img, ConstData &constGrids){
 
     int height = img.rows;
     int width = img.cols;
@@ -237,14 +231,46 @@ void CreateCudaGrids(cv::Mat img, cv::cuda::GpuMat &cudaCosDCT, cv::cuda::GpuMat
             gridLaplacian.at<float>(i,j) = (i+1)*(i+1) + (j+1)*(j+1);
         }
     }
-
-    cudaCosDCT.upload(gridCosDCT);
-    cudaSinDCT.upload(gridSinDCT);
-    cudaCosIDCT.upload(gridCosIDCT);
-    cudaSinIDCT.upload(gridSinIDCT);
-    cudaGridLaplacian.upload(gridLaplacian);
+    constGrids.height = height;
+    constGrids.width = width;
+    constGrids.cudaCosDCT.upload(gridCosDCT);
+    constGrids.cudaCosDCT.upload(gridCosDCT);
+    constGrids.cudaSinDCT.upload(gridSinDCT);
+    constGrids.cudaCosIDCT.upload(gridCosIDCT);
+    constGrids.cudaSinIDCT.upload(gridSinIDCT);
+    constGrids.cudaGridLaplacian.upload(gridLaplacian);
 }
 
+void InitVars(VarMats &varMats, int height, int width){
+
+    varMats.doubledMat = cv::cuda::GpuMat(2*height, 2*width, CV_32FC1);
+    varMats.Mat = cv::cuda::GpuMat(height, width, CV_32FC1);
+    varMats.complexMat = cv::cuda::GpuMat(height, width, CV_32FC2);
+    varMats.ch1 = cv::cuda::GpuMat(height, width, CV_32FC1);
+    varMats.ch2 = cv::cuda::GpuMat(height, width, CV_32FC1);
+    varMats.outMat = cv::cuda::GpuMat(height, width, CV_32FC1);
+    varMats.fftOut = cv::cuda::GpuMat(2*height, width+1, CV_32FC2);
+    varMats.ifftIn = cv::cuda::GpuMat(height, width, CV_32FC2);
+    varMats.imgSin = cv::cuda::GpuMat(height, width, CV_32FC1);
+    varMats.imgCos = cv::cuda::GpuMat(height, width, CV_32FC1);
+    varMats.ca = cv::cuda::GpuMat(height, width, CV_32FC1);
+    varMats.ica = cv::cuda::GpuMat(height, width, CV_32FC1);
+    varMats.a1 = cv::cuda::GpuMat(height, width, CV_32FC1);
+    varMats.a2 = cv::cuda::GpuMat(height, width, CV_32FC1);
+    varMats.k1 = cv::cuda::GpuMat(height, width, CV_32FC1);
+    varMats.k1round = cv::cuda::GpuMat(height, width, CV_32FC1);
+    varMats.k2 = cv::cuda::GpuMat(height, width, CV_32FC1);
+    varMats.k2round = cv::cuda::GpuMat(height, width, CV_32FC1);
+    varMats.phi1 = cv::cuda::GpuMat(height, width, CV_32FC1);
+    varMats.phi2 = cv::cuda::GpuMat(height, width, CV_32FC1);
+    varMats.error = cv::cuda::GpuMat(height, width, CV_32FC1);
+    varMats.x = cv::cuda::GpuMat(height, width, CV_32FC1);
+    varMats.z = cv::cuda::GpuMat(height, width, CV_32FC1);
+    for(auto i = 0; i < 2; i++)
+    {
+        varMats.complexArray.push_back(varMats.complexMat.clone());
+    }
+}
 
 int main(){
     
@@ -252,18 +278,19 @@ int main(){
     cv::cuda::GpuMat cudaImg;
     cudaImg.upload(img);
 
-    cv::cuda::GpuMat cudaCosDCT, cudaSinDCT;
-    cv::cuda::GpuMat cudaCosIDCT, cudaSinIDCT;
-    cv::cuda::GpuMat cudaGridLaplacian;
-    CreateCudaGrids(img, cudaCosDCT, cudaSinDCT, cudaCosIDCT, cudaSinIDCT, cudaGridLaplacian);
+    ConstData constGrids;
+    VarMats varMats;
+
+    CreateCudaGrids(img, constGrids);
+    InitVars(varMats, constGrids.height, constGrids.width);
 
     auto ts = std::chrono::high_resolution_clock::now();
-    phaseUnwrap(cudaImg, cudaCosDCT, cudaSinDCT, cudaCosIDCT, cudaSinIDCT, cudaGridLaplacian);
+    phaseUnwrap(cudaImg, constGrids, varMats);
     auto te = std::chrono::high_resolution_clock::now();
     std::cout << "Time GPU Laplacian: " << std::chrono::duration_cast<std::chrono::microseconds>(te - ts).count() <<std::endl;
     
     ts = std::chrono::high_resolution_clock::now();
-    phaseUnwrap(cudaImg, cudaCosDCT, cudaSinDCT, cudaCosIDCT, cudaSinIDCT, cudaGridLaplacian);
+    phaseUnwrap(cudaImg, constGrids, varMats);
     te = std::chrono::high_resolution_clock::now();
     std::cout << "Time GPU Laplacian: " << std::chrono::duration_cast<std::chrono::microseconds>(te - ts).count() <<std::endl;
 

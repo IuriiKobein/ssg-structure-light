@@ -5,6 +5,7 @@ CMakeFiles/3dr.dir/cuda_functions.cpp.o
  /home/vlads/Cpp/opencv_cuda/cuda_functions.cpp
  /home/vlads/Cpp/opencv_cuda/cuda_functions.h
  /home/vlads/Cpp/opencv_cuda/cuda_impl.h
+ /home/vlads/Cpp/opencv_cuda/structs.h
  /usr/local/cuda/include/builtin_types.h
  /usr/local/cuda/include/channel_descriptor.h
  /usr/local/cuda/include/crt/common_functions.h
@@ -197,6 +198,7 @@ CMakeFiles/3dr.dir/main.cpp.o
  /home/vlads/Cpp/opencv_cuda/cuda_functions.h
  /home/vlads/Cpp/opencv_cuda/cuda_impl.h
  /home/vlads/Cpp/opencv_cuda/main.cpp
+ /home/vlads/Cpp/opencv_cuda/structs.h
  /usr/local/cuda/include/builtin_types.h
  /usr/local/cuda/include/channel_descriptor.h
  /usr/local/cuda/include/crt/common_functions.h
@@ -211,14 +213,12 @@ CMakeFiles/3dr.dir/main.cpp.o
  /usr/local/cuda/include/crt/math_functions.hpp
  /usr/local/cuda/include/crt/sm_70_rt.h
  /usr/local/cuda/include/crt/sm_70_rt.hpp
- /usr/local/cuda/include/cuComplex.h
  /usr/local/cuda/include/cuda.h
  /usr/local/cuda/include/cuda_device_runtime_api.h
  /usr/local/cuda/include/cuda_runtime.h
  /usr/local/cuda/include/cuda_runtime_api.h
  /usr/local/cuda/include/cuda_surface_types.h
  /usr/local/cuda/include/cuda_texture_types.h
- /usr/local/cuda/include/cufft.h
  /usr/local/cuda/include/device_atomic_functions.h
  /usr/local/cuda/include/device_atomic_functions.hpp
  /usr/local/cuda/include/device_launch_parameters.h
@@ -227,29 +227,6 @@ CMakeFiles/3dr.dir/main.cpp.o
  /usr/local/cuda/include/driver_types.h
  /usr/local/cuda/include/library_types.h
  /usr/local/cuda/include/math_constants.h
- /usr/local/cuda/include/npp.h
- /usr/local/cuda/include/nppcore.h
- /usr/local/cuda/include/nppdefs.h
- /usr/local/cuda/include/nppi.h
- /usr/local/cuda/include/nppi_arithmetic_and_logical_operations.h
- /usr/local/cuda/include/nppi_color_conversion.h
- /usr/local/cuda/include/nppi_compression_functions.h
- /usr/local/cuda/include/nppi_computer_vision.h
- /usr/local/cuda/include/nppi_data_exchange_and_initialization.h
- /usr/local/cuda/include/nppi_filtering_functions.h
- /usr/local/cuda/include/nppi_geometry_transforms.h
- /usr/local/cuda/include/nppi_linear_transforms.h
- /usr/local/cuda/include/nppi_morphological_operations.h
- /usr/local/cuda/include/nppi_statistics_functions.h
- /usr/local/cuda/include/nppi_support_functions.h
- /usr/local/cuda/include/nppi_threshold_and_compare_operations.h
- /usr/local/cuda/include/npps.h
- /usr/local/cuda/include/npps_arithmetic_and_logical_operations.h
- /usr/local/cuda/include/npps_conversion_functions.h
- /usr/local/cuda/include/npps_filtering_functions.h
- /usr/local/cuda/include/npps_initialization.h
- /usr/local/cuda/include/npps_statistics_functions.h
- /usr/local/cuda/include/npps_support_functions.h
  /usr/local/cuda/include/sm_20_atomic_functions.h
  /usr/local/cuda/include/sm_20_atomic_functions.hpp
  /usr/local/cuda/include/sm_20_intrinsics.h
