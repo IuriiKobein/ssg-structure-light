@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/vlads/Cpp/opencv_cuda/main.cu
+stdio.h
+-
+assert.h
+-
+cuda.h
+-
+cuda_runtime.h
+-
+iostream
+-
+npp.h
+-
+fstream
+-
+cufft.h
+-
+cmath
+-
+opencv2/cudaarithm.hpp
+-
+opencv2/core/cuda.hpp
+-
+
