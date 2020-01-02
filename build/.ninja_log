@@ -1,0 +1,15 @@
+# ninja log v5
+1	2076	1577981560	CMakeFiles/3dr.dir/main.cpp.o	3d654bfeeafba8
+0	2357	1577981560	CMakeFiles/cuda_alg.dir/cuda_impl.cu.o	322774e6395b6adf
+2	27	1577981728	CMakeFiles/cuda_alg.dir/cmake_device_link.o	3e698b48df73e747
+28	66	1577981729	libcuda_alg.so	776fe4a17b3ba140
+2	864	1577981729	CMakeFiles/3dr.dir/cuda_functions.cpp.o	d99dde318a3ba3ac
+864	1020	1577981729	3dr	e5616a4fd0c0f246
+1	863	1577981795	CMakeFiles/3dr.dir/cuda_functions.cpp.o	d99dde318a3ba3ac
+863	1018	1577981795	3dr	e5616a4fd0c0f246
+1	873	1577981807	CMakeFiles/3dr.dir/cuda_functions.cpp.o	d99dde318a3ba3ac
+873	1022	1577981807	3dr	e5616a4fd0c0f246
+1	897	1577981830	CMakeFiles/3dr.dir/cuda_functions.cpp.o	d99dde318a3ba3ac
+897	1061	1577981830	3dr	e5616a4fd0c0f246
+1	1638	1577981920	CMakeFiles/3dr.dir/main.cpp.o	3d654bfeeafba8
+1638	1789	1577981920	3dr	e5616a4fd0c0f246

@@ -116,6 +116,7 @@ void phaseUnwrap(cv::cuda::GpuMat &img, ConstData &constGrids, VarMats &varMats)
         varMats.k1round = varMats.k2round.clone();
     }
     
+    img = varMats.phi2;
     /*//SAVING IMG
     std::string s1 = "Reconstruction";
     std::string s2 = ".bmp";
