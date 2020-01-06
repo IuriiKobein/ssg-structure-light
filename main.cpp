@@ -17,6 +17,7 @@
 #include <opencv2/cudafilters.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
+#include <opencv2/phase_unwrapping.hpp>
 
 #include <string>
 #include <vector>
@@ -361,14 +362,16 @@ std::vector<cv::cuda::GpuMat> cuda_imgs_from_dir_load(const char *dir_path) {
     return cuda_imgs_load(path_list);
 }
 
+void img_show(const std::string title, cv::Mat &h_img) {
+    cv::normalize(h_img, h_img, 0, 1, cv::NORM_MINMAX, CV_32F);
+    cv::namedWindow(title, cv::WINDOW_NORMAL);
+    cv::imshow(title, h_img);
+}
 void cuda_img_show(const std::string title, cv::cuda::GpuMat &d_img) {
     cv::Mat h_img(d_img.size(), d_img.type());
 
     d_img.download(h_img);
-    cv::normalize(h_img, h_img, 0, 1, cv::NORM_MINMAX, CV_32F);
-
-    cv::namedWindow(title, cv::WINDOW_NORMAL);
-    cv::imshow(title, h_img);
+    img_show(title, h_img);
 }
 }  // namespace
 
@@ -388,8 +391,6 @@ int main(int argc, char *argv[]) {
     auto refs_f32 = cuda_imgs_alloc(refs_u8.size(), refs_u8[0].size(), CV_32F);
     auto srcs_f32 = cuda_imgs_alloc(srcs_u8.size(), srcs_u8[0].size(), CV_32F);
 
-    auto ts = std::chrono::high_resolution_clock::now();
-
     for (auto i = 0ul; i < refs_u8.size(); ++i) {
         refs_u8[i].convertTo(refs_f32[i], refs_f32[i].type(), 1.0f / 255);
         srcs_u8[i].convertTo(srcs_f32[i], srcs_f32[i].type(), 1.0f / 255);
@@ -407,15 +408,37 @@ int main(int argc, char *argv[]) {
 
     cv::cuda::subtract(src_phase, ref_phase, src_phase);
 
-    phaseUnwrap(src_phase, constGrids, varMats);
 
+    auto ts = std::chrono::high_resolution_clock::now();
     auto te = std::chrono::high_resolution_clock::now();
-    std::cout << "Time GPU Laplacian: "
-              << std::chrono::duration_cast<std::chrono::microseconds>(te - ts)
+    if ( argc == 4 &&  *argv[3] == 'c')
+    {
+	    cv::Mat h_in(cv::Size(512, 512), CV_32FC1),h_out(cv::Size(512, 512), CV_32FC1);
+
+	    src_phase.download(h_in);
+	    cv::phase_unwrapping::HistogramPhaseUnwrapping::Params params;
+	    params.width = 512;
+	    params.height = 512;
+	    auto pu = cv::phase_unwrapping::HistogramPhaseUnwrapping::create(params);
+
+	    ts = std::chrono::high_resolution_clock::now();
+
+	    pu->unwrapPhaseMap(h_in, h_out);
+
+	    te = std::chrono::high_resolution_clock::now();
+	    img_show("unwrapped", h_out);
+	    std::cout << "cpu phase unwrap:";
+    } else {
+	    ts = std::chrono::high_resolution_clock::now();
+	    phaseUnwrap(src_phase, constGrids, varMats);
+	    te = std::chrono::high_resolution_clock::now();
+	    cuda_img_show("unwrapped", src_phase);
+	    std::cout << "cuda phase unwrap:";
+    }
+    std::cout  << std::chrono::duration_cast<std::chrono::microseconds>(te - ts)
                      .count()
               << std::endl;
 
-    cuda_img_show("unwrapped", src_phase);
     }
     cv::waitKey(0);
 
