@@ -24,13 +24,10 @@ cv::cuda::GpuMat &cuda_dct2(cv::cuda::GpuMat &img, ConstData &constGrids,
 
     /* 3. crop roi of dct */
     const auto &crop_fft_out = fft_out(cv::Rect(0, 0, h, w));
-    cv::cuda::split(crop_fft_out, carr);
+    //cv::cuda::split(crop_fft_out, carr);
 
-    /* 4. multipy dct cos/sin twiddle factors*/
-    cv::cuda::multiply(carr[0], cos_coeff, carr[0]);
-    cv::cuda::multiply(carr[1], sin_coeff, carr[1]);
-
-    cv::cuda::add(carr[0], carr[1], carr[0]);
+    //* 4. convert dft out to dct by twiddle factors*/
+    cuda_dft2dct_out_convert(crop_fft_out, cos_coeff, sin_coeff, carr[0]);
 
     return carr[0];
 }
@@ -45,10 +42,8 @@ cv::cuda::GpuMat &idct(cv::cuda::GpuMat &img, ConstData &constGrids,
     const auto &cos_coeff = constGrids.cudaCosIDCT;
     const auto &sin_coeff = constGrids.cudaSinIDCT;
 
-    cv::cuda::multiply(img, cos_coeff, c_arr[0]);
-    cv::cuda::multiply(img, sin_coeff, c_arr[1]);
-
-    cv::cuda::merge(c_arr, ifft_in);
+    //* 4. convert dft in to dct by twiddle factors*/
+    cuda_idft2idct_in_convert(img, cos_coeff, sin_coeff, ifft_in);
 
     cv::cuda::dft(ifft_in, ifft_in, ifft_in.size(),
                   cv::DFT_ROWS + cv::DFT_INVERSE + cv::DFT_SCALE);
@@ -72,8 +67,8 @@ cv::cuda::GpuMat &cuda_idct2(cv::cuda::GpuMat &img, ConstData &constGrids,
     return varMats.x;
 }
 
-cv::cuda::GpuMat &cudaLaplacian(cv::cuda::GpuMat &img, ConstData &constGrids,
-                                VarMats &varMats) {
+void cudaLaplacian(cv::cuda::GpuMat &img, ConstData &constGrids,
+                                VarMats &varMats, cv::cuda::GpuMat& out) {
     auto &ca = varMats.ca;
     const auto &l_grid = constGrids.cudaGridLaplacian;
     const auto h = constGrids.height;
@@ -81,9 +76,7 @@ cv::cuda::GpuMat &cudaLaplacian(cv::cuda::GpuMat &img, ConstData &constGrids,
 
     cv::cuda::multiply(cuda_dct2(img, constGrids, varMats), l_grid, ca);
     auto &idct_out = cuda_idct2(ca, constGrids, varMats);
-    idct_out.convertTo(idct_out, idct_out.type(), -4 * M_PI * M_PI / (h * w));
-
-    return idct_out;
+    idct_out.convertTo(out, idct_out.type(), -4 * M_PI * M_PI / (h * w));
 }
 
 cv::cuda::GpuMat &cudaiLaplacian(cv::cuda::GpuMat &img, ConstData &constGrids,
@@ -111,11 +104,9 @@ cv::cuda::GpuMat &deltaPhi(cv::cuda::GpuMat &img, ConstData &constGrids,
     cudaSin(img, img_sin);
     cudaCos(img, img_cos);
 
-    cv::cuda::multiply(cudaLaplacian(img_sin, constGrids, varMats), img_cos,
-                       a1);
-    cv::cuda::multiply(cudaLaplacian(img_cos, constGrids, varMats), img_sin,
-                       a2);
-    cv::cuda::subtract(a1, a2, a1);
+    cudaLaplacian(img_sin, constGrids, varMats, a1);
+    cudaLaplacian(img_cos, constGrids, varMats, a2);
+    cuda_delta_phi_mult_sub_inplace(a1, a2, img_cos, img_sin, a1);
 
     return cudaiLaplacian(a1, constGrids, varMats);
 }
