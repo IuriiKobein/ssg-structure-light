@@ -13,8 +13,6 @@ find_package(OpenCV)
 find_package(CUDA)
 SET(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} ${CUDA_ARCH}")
 
-find_library(TCMALLOC_LIB NAMES libtcmalloc.so.4)
-
 include_directories(${OpenCV_INCLUDE_DIRS} ${CUDA_INCLUDE_DIRS} src)
 
 set(3dr_srcs main.cpp
@@ -30,7 +28,5 @@ add_executable(3dr ${3dr_srcs})
 
 target_link_libraries(3dr ${OpenCV_LIBS})
 target_link_libraries(3dr ${CUDA_LIBS})
-target_link_libraries(3dr ${TCMALLOC_LIB})
-target_link_libraries(3dr tbb)
 target_link_libraries(3dr cuda_alg)
 target_link_libraries(3dr -lstdc++fs)
