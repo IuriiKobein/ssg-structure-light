@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 #include "cuda_functions.h"
-#include "cuda_impl.h"
+#include "cuda_kernels.h"
 
 namespace {
 
@@ -291,30 +291,21 @@ void InitVars(VarMats &varMats, int height, int width){
 
     varMats.doubledMat = cv::cuda::GpuMat(2*height, 2*width, CV_32FC1);
     varMats.Mat = cv::cuda::GpuMat(height, width, CV_32FC1);
-    varMats.complexMat = cv::cuda::GpuMat(height, width, CV_32FC2);
-    varMats.ch1 = cv::cuda::GpuMat(height, width, CV_32FC1);
-    varMats.ch2 = cv::cuda::GpuMat(height, width, CV_32FC1);
-    varMats.outMat = cv::cuda::GpuMat(height, width, CV_32FC1);
     varMats.fftOut = cv::cuda::GpuMat(2*height, width+1, CV_32FC2);
     varMats.ifftIn = cv::cuda::GpuMat(height, width, CV_32FC2);
     varMats.imgSin = cv::cuda::GpuMat(height, width, CV_32FC1);
     varMats.imgCos = cv::cuda::GpuMat(height, width, CV_32FC1);
     varMats.ca = cv::cuda::GpuMat(height, width, CV_32FC1);
-    varMats.ica = cv::cuda::GpuMat(height, width, CV_32FC1);
     varMats.a1 = cv::cuda::GpuMat(height, width, CV_32FC1);
     varMats.a2 = cv::cuda::GpuMat(height, width, CV_32FC1);
     varMats.k1 = cv::cuda::GpuMat(height, width, CV_32FC1);
-    varMats.k1round = cv::cuda::GpuMat(height, width, CV_32FC1);
-    varMats.k2 = cv::cuda::GpuMat(height, width, CV_32FC1);
-    varMats.k2round = cv::cuda::GpuMat(height, width, CV_32FC1);
     varMats.phi1 = cv::cuda::GpuMat(height, width, CV_32FC1);
     varMats.phi2 = cv::cuda::GpuMat(height, width, CV_32FC1);
     varMats.error = cv::cuda::GpuMat(height, width, CV_32FC1);
     varMats.x = cv::cuda::GpuMat(height, width, CV_32FC1);
-    varMats.z = cv::cuda::GpuMat(height, width, CV_32FC1);
     for(auto i = 0; i < 2; i++)
     {
-        varMats.complexArray.push_back(varMats.complexMat.clone());
+        varMats.c_arr.push_back(varMats.Mat.clone());
     }
 }
 
@@ -389,7 +380,7 @@ int main(int argc, char *argv[]) {
     InitVars(varMats, constGrids.height, constGrids.width);
 
     /*==============================================================================*/
-    int i = 2;
+    int i = 4;
     while(i--){
     auto srcs_u8 = cuda_imgs_from_dir_load(argv[1]);
     auto refs_u8 = cuda_imgs_from_dir_load(argv[2]);

@@ -1,121 +1,162 @@
 #include "cuda_functions.h"
+#include "cuda_kernels.h"
 
-cv::cuda::GpuMat cuda_dct2(cv::cuda::GpuMat &img, ConstData &constGrids, VarMats &varMats){
+cv::cuda::GpuMat &cuda_dct2(cv::cuda::GpuMat &img, ConstData &constGrids,
+                            VarMats &varMats) {
+    /* 0. extract preallocated contstant and temp vars */
+    auto &fft_in = varMats.doubledMat;
+    auto &fft_out = varMats.fftOut;
+    auto &carr = varMats.c_arr;
+    const auto &cos_coeff = constGrids.cudaCosDCT;
+    const auto &sin_coeff = constGrids.cudaSinDCT;
+    const auto h = constGrids.height;
+    const auto w = constGrids.width;
 
-	img.copyTo(varMats.doubledMat(cv::Rect(0, 0, constGrids.height, constGrids.width)));
+    /* 1. to calcualte dct via fft make input signal
+     * event related to left right corner */
+    img.copyTo(fft_in(cv::Rect(0, 0, h, w)));
+    cv::cuda::flip(img, fft_in(cv::Rect(0, w, h, w)), 0);
+    cv::cuda::flip(img, fft_in(cv::Rect(h, 0, h, w)), 1);
+    cv::cuda::flip(img, fft_in(cv::Rect(h, w, h, w)), -1);
 
-	cv::cuda::flip(img, varMats.Mat, 0);
-	varMats.Mat.copyTo(varMats.doubledMat(cv::Rect(0, constGrids.width, constGrids.height, constGrids.width)));
-	cv::cuda::flip(img, varMats.Mat, 1);
-	varMats.Mat.copyTo(varMats.doubledMat(cv::Rect(constGrids.height, 0, constGrids.height, constGrids.width)));
-	cv::cuda::flip(img, varMats.Mat, -1);
-	varMats.Mat.copyTo(varMats.doubledMat(cv::Rect(constGrids.height, constGrids.width, constGrids.height, constGrids.width)));
+    /* 2. apply real -> complex dft  */
+    cv::cuda::dft(fft_in, fft_out, fft_in.size());
 
-	cv::cuda::dft(varMats.doubledMat, varMats.fftOut, varMats.doubledMat.size());
-	varMats.fftOut(cv::Rect(0, 0, constGrids.height, constGrids.width)).copyTo(varMats.complexMat);
-    cv::cuda::split(varMats.complexMat, varMats.complexArray);
+    /* 3. crop roi of dct */
+    const auto &crop_fft_out = fft_out(cv::Rect(0, 0, h, w));
+    cv::cuda::split(crop_fft_out, carr);
 
-	cv::cuda::multiply(varMats.complexArray[0], constGrids.cudaCosDCT, varMats.ch1);
-	cv::cuda::multiply(varMats.complexArray[1], constGrids.cudaSinDCT, varMats.ch2);
-	cv::cuda::add(varMats.ch1, varMats.ch2, varMats.outMat);    
+    /* 4. multipy dct cos/sin twiddle factors*/
+    cv::cuda::multiply(carr[0], cos_coeff, carr[0]);
+    cv::cuda::multiply(carr[1], sin_coeff, carr[1]);
 
-	return varMats.outMat;
+    cv::cuda::add(carr[0], carr[1], carr[0]);
+
+    return carr[0];
 }
 
-cv::cuda::GpuMat idct(cv::cuda::GpuMat &img, ConstData &constGrids, VarMats &varMats){
+cv::cuda::GpuMat &idct(cv::cuda::GpuMat &img, ConstData &constGrids,
+                       VarMats &varMats) {
+    /* 0. extract preallocated contstant and temp vars */
+    auto &ca = varMats.ca;
+    auto &ifft_in = varMats.ifftIn;
+    auto &c_arr = varMats.c_arr;
+    auto &mat = varMats.Mat;
+    const auto &cos_coeff = constGrids.cudaCosIDCT;
+    const auto &sin_coeff = constGrids.cudaSinIDCT;
 
-    cv::cuda::multiply(img, constGrids.cudaCosIDCT, varMats.ch1);
-    cv::cuda::multiply(img, constGrids.cudaSinIDCT, varMats.ch2);
+    cv::cuda::multiply(img, cos_coeff, c_arr[0]);
+    cv::cuda::multiply(img, sin_coeff, c_arr[1]);
 
-    varMats.complexArray[0] = (varMats.ch1.clone());
-    varMats.complexArray[1] = (varMats.ch2.clone());
-    cv::cuda::merge(varMats.complexArray, varMats.ifftIn);
-    
-    cv::cuda::dft(varMats.ifftIn, varMats.ifftIn, varMats.ifftIn.size(), cv::DFT_ROWS+cv::DFT_INVERSE+cv::DFT_SCALE);
-    cv::cuda::split(varMats.ifftIn, varMats.complexArray);
+    cv::cuda::merge(c_arr, ifft_in);
 
-    varMats.outMat = varMats.complexArray[0];
-    varMats.outMat.convertTo(varMats.outMat, varMats.outMat.type(), 512);
-    
-	cv::cuda::flip(varMats.outMat, varMats.Mat, 1);
-    invertArray(varMats.outMat, varMats.Mat, varMats.ca);
+    cv::cuda::dft(ifft_in, ifft_in, ifft_in.size(),
+                  cv::DFT_ROWS + cv::DFT_INVERSE + cv::DFT_SCALE);
+    cv::cuda::split(ifft_in, c_arr);
 
-    return varMats.ca;
+    c_arr[0].convertTo(c_arr[0], c_arr[0].type(), 512);
+
+    cv::cuda::flip(c_arr[0], mat, 1);
+    invertArray(c_arr[0], mat, ca);
+
+    return ca;
 }
 
-cv::cuda::GpuMat cuda_idct2(cv::cuda::GpuMat &img, ConstData &constGrids, VarMats &varMats){
-
-    varMats.z.release();
-    cv::cuda::transpose(idct(img, constGrids, varMats), varMats.x);
-    cv::cuda::transpose(idct(varMats.x, constGrids, varMats), varMats.z);
+cv::cuda::GpuMat &cuda_idct2(cv::cuda::GpuMat &img, ConstData &constGrids,
+                             VarMats &varMats) {
     varMats.x.release();
-    
-    return varMats.z;
+
+    cv::cuda::transpose(idct(img, constGrids, varMats), varMats.x);
+    cv::cuda::transpose(idct(varMats.x, constGrids, varMats), varMats.x);
+
+    return varMats.x;
 }
 
+cv::cuda::GpuMat &cudaLaplacian(cv::cuda::GpuMat &img, ConstData &constGrids,
+                                VarMats &varMats) {
+    auto &ca = varMats.ca;
+    const auto &l_grid = constGrids.cudaGridLaplacian;
+    const auto h = constGrids.height;
+    const auto w = constGrids.width;
 
-cv::cuda::GpuMat cudaLaplacian(cv::cuda::GpuMat &img, ConstData &constGrids, VarMats &varMats){
+    cv::cuda::multiply(cuda_dct2(img, constGrids, varMats), l_grid, ca);
+    auto &idct_out = cuda_idct2(ca, constGrids, varMats);
+    idct_out.convertTo(idct_out, idct_out.type(), -4 * M_PI * M_PI / (h * w));
 
-    cv::cuda::multiply(cuda_dct2(img, constGrids, varMats), constGrids.cudaGridLaplacian, varMats.ca);
-    varMats.ca = cuda_idct2(varMats.ca, constGrids, varMats);
-    varMats.ca.convertTo(varMats.ca, varMats.ca.type(), -4*M_PI*M_PI/(constGrids.height*constGrids.width));
-
-    return varMats.ca;
+    return idct_out;
 }
 
-cv::cuda::GpuMat cudaiLaplacian(cv::cuda::GpuMat &img, ConstData &constGrids, VarMats &varMats){
+cv::cuda::GpuMat &cudaiLaplacian(cv::cuda::GpuMat &img, ConstData &constGrids,
+                                 VarMats &varMats) {
+    auto &ca = varMats.ca;
+    const auto &l_grid = constGrids.cudaGridLaplacian;
+    const auto h = constGrids.height;
+    const auto w = constGrids.width;
 
-    cv::cuda::divide(cuda_dct2(img, constGrids, varMats), constGrids.cudaGridLaplacian, varMats.ica);
-    varMats.ica = cuda_idct2(varMats.ica, constGrids, varMats);
-    varMats.ica.convertTo(varMats.ica, varMats.ica.type(), (constGrids.height*constGrids.width)/(-4*M_PI*M_PI));
-    return varMats.ica;
+    cv::cuda::divide(cuda_dct2(img, constGrids, varMats), l_grid, ca);
+
+    auto &idct_out = cuda_idct2(ca, constGrids, varMats);
+    idct_out.convertTo(idct_out, idct_out.type(), (h * w) / (-4 * M_PI * M_PI));
+
+    return idct_out;
 }
 
-cv::cuda::GpuMat deltaPhi(cv::cuda::GpuMat &img, ConstData &constGrids, VarMats &varMats){
+cv::cuda::GpuMat &deltaPhi(cv::cuda::GpuMat &img, ConstData &constGrids,
+                           VarMats &varMats) {
+    auto &img_sin = varMats.imgSin;
+    auto &img_cos = varMats.imgCos;
+    auto &a1 = varMats.a1;
+    auto &a2 = varMats.a2;
 
-    cudaSin(img, varMats.imgSin);
-    cudaCos(img, varMats.imgCos);
-    cv::cuda::multiply(cudaLaplacian(varMats.imgSin, constGrids, varMats), varMats.imgCos, varMats.a1);
-    cv::cuda::multiply(cudaLaplacian(varMats.imgCos, constGrids, varMats), varMats.imgSin, varMats.a2);
-    cv::cuda::subtract(varMats.a1, varMats.a2, varMats.a1);
+    cudaSin(img, img_sin);
+    cudaCos(img, img_cos);
 
-    return cudaiLaplacian(varMats.a1, constGrids, varMats);
+    cv::cuda::multiply(cudaLaplacian(img_sin, constGrids, varMats), img_cos,
+                       a1);
+    cv::cuda::multiply(cudaLaplacian(img_cos, constGrids, varMats), img_sin,
+                       a2);
+    cv::cuda::subtract(a1, a2, a1);
+
+    return cudaiLaplacian(a1, constGrids, varMats);
 }
 
-
-cv::Scalar cudaMean(cv::cuda::GpuMat &img){
-    return cv::Scalar(cv::cuda::sum(img)[0]/img.cols/img.rows);
+cv::Scalar cudaMean(cv::cuda::GpuMat &img) {
+    return cv::Scalar(cv::cuda::sum(img)[0] / img.cols / img.rows);
 }
 
-void phaseUnwrap(cv::cuda::GpuMat &img, ConstData &constGrids, VarMats &varMats){
+void phaseUnwrap(cv::cuda::GpuMat &img, ConstData &constGrids,
+                 VarMats &varMats) {
+    auto &k1 = varMats.k1;
+    auto &phi1 = varMats.phi1;
+    auto &phi2 = varMats.phi2;
+    auto &error = varMats.error;
 
-    varMats.phi1 = deltaPhi(img, constGrids, varMats);
-    cv::cuda::subtract(varMats.phi1, cudaMean(varMats.phi1), varMats.phi1);
-    cv::cuda::add(varMats.phi1, cudaMean(img), varMats.phi1);
+    phi1 = deltaPhi(img, constGrids, varMats);
+    cv::cuda::subtract(phi1, cudaMean(phi1), phi1);
+    cv::cuda::add(phi1, cudaMean(img), phi1);
 
-    cv::cuda::subtract(varMats.phi1, img, varMats.k1);
-    varMats.k1.convertTo(varMats.k1, varMats.k1.type(), 0.5/M_PI);
+    cv::cuda::subtract(phi1, img, k1);
+    k1.convertTo(k1, k1.type(), 0.5 / M_PI);
 
-    cudaRound(varMats.k1, varMats.k1round);
-    varMats.k1round.convertTo(varMats.k1round, varMats.k1round.type(), 2*M_PI);
+    cudaRound(k1, k1);
+    k1.convertTo(k1, k1.type(), 2 * M_PI);
 
-    cv::cuda::add(img, varMats.k1round, varMats.phi2);
-    
-    for(auto i = 0; i < 3; i++){
-        cv::cuda::subtract(varMats.phi2, varMats.phi1, varMats.error);
-        cv::cuda::subtract(varMats.phi1, cudaMean(varMats.phi1), varMats.phi1);
-        cv::cuda::add(varMats.phi1, deltaPhi(varMats.error, constGrids, varMats), varMats.phi1);
-        cv::cuda::add(varMats.phi1, cudaMean(varMats.phi2), varMats.phi1);
-        
-        cv::cuda::subtract(varMats.phi1, img, varMats.k2);
-        varMats.k2.convertTo(varMats.k2, varMats.k2.type(), 0.5/M_PI);
-        cudaRound(varMats.k2, varMats.k2round);
-        varMats.k2round.convertTo(varMats.k2round, varMats.k2round.type(), 2*M_PI);
+    cv::cuda::add(img, k1, phi2);
 
-        cv::cuda::add(img, varMats.k2round, varMats.phi2);
-        varMats.k1round = varMats.k2round.clone();
+    for (auto i = 0; i < 3; i++) {
+        cv::cuda::subtract(phi2, phi1, error);
+        cv::cuda::subtract(phi1, cudaMean(phi1), phi1);
+        cv::cuda::add(phi1, deltaPhi(error, constGrids, varMats), phi1);
+        cv::cuda::add(phi1, cudaMean(phi2), phi1);
+
+        cv::cuda::subtract(phi1, img, k1);
+        k1.convertTo(k1, k1.type(), 0.5 / M_PI);
+        cudaRound(k1, k1);
+        k1.convertTo(k1, k1.type(), 2 * M_PI);
+
+        cv::cuda::add(img, k1, phi2);
     }
-    
+
     img = varMats.phi2;
     /*//SAVING IMG
     std::string s1 = "Reconstruction";

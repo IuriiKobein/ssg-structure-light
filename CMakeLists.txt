@@ -21,7 +21,7 @@ set(3dr_srcs main.cpp
     cuda_functions.cpp
     cuda_functions.h)
 
-add_library(cuda_alg SHARED cuda_impl.cu)
+add_library(cuda_alg SHARED cuda_kernels.cu)
 set_property(TARGET cuda_alg PROPERTY CUDA_STANDARD 14)
 set_target_properties(cuda_alg PROPERTIES POSITION_INDEPENDENT_CODE ON)
 #set_target_properties(CudaLib PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
