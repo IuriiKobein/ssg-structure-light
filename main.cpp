@@ -222,7 +222,7 @@ cv::Mat iLaplacian(cv::Mat &img) {
     return ca;
 }
 
-void CreateCudaGrids(cv::Size size, ConstData &constGrids){
+void CreateCudaGrids(cv::Size size, ConstData &constGrids) {
     int height = size.height;
     int width = size.width;
 
@@ -288,11 +288,10 @@ void CreateCudaGrids(cv::Size size, ConstData &constGrids){
     constGrids.cudaGridLaplacian.upload(gridLaplacian);
 }
 
-void InitVars(VarMats &varMats, int height, int width){
-
-    varMats.doubledMat = cv::cuda::GpuMat(2*height, 2*width, CV_32FC1);
+void InitVars(VarMats &varMats, int height, int width) {
+    varMats.doubledMat = cv::cuda::GpuMat(2 * height, 2 * width, CV_32FC1);
     varMats.Mat = cv::cuda::GpuMat(height, width, CV_32FC1);
-    varMats.fftOut = cv::cuda::GpuMat(2*height, width+1, CV_32FC2);
+    varMats.fftOut = cv::cuda::GpuMat(2 * height, width + 1, CV_32FC2);
     varMats.ifftIn = cv::cuda::GpuMat(height, width, CV_32FC2);
     varMats.imgSin = cv::cuda::GpuMat(height, width, CV_32FC1);
     varMats.imgCos = cv::cuda::GpuMat(height, width, CV_32FC1);
@@ -304,8 +303,7 @@ void InitVars(VarMats &varMats, int height, int width){
     varMats.phi2 = cv::cuda::GpuMat(height, width, CV_32FC1);
     varMats.error = cv::cuda::GpuMat(height, width, CV_32FC1);
     varMats.x = cv::cuda::GpuMat(height, width, CV_32FC1);
-    for(auto i = 0; i < 2; i++)
-    {
+    for (auto i = 0; i < 2; i++) {
         varMats.c_arr.push_back(varMats.Mat.clone());
     }
 }
@@ -384,61 +382,63 @@ int main(int argc, char *argv[]) {
 
     /*==============================================================================*/
     int i = 4;
-    while(i--){
-    auto srcs_u8 = cuda_imgs_from_dir_load(argv[1]);
-    auto refs_u8 = cuda_imgs_from_dir_load(argv[2]);
+    while (i--) {
+        auto srcs_u8 = cuda_imgs_from_dir_load(argv[1]);
+        auto refs_u8 = cuda_imgs_from_dir_load(argv[2]);
 
-    auto refs_f32 = cuda_imgs_alloc(refs_u8.size(), refs_u8[0].size(), CV_32F);
-    auto srcs_f32 = cuda_imgs_alloc(srcs_u8.size(), srcs_u8[0].size(), CV_32F);
+        auto refs_f32 =
+            cuda_imgs_alloc(refs_u8.size(), refs_u8[0].size(), CV_32F);
+        auto srcs_f32 =
+            cuda_imgs_alloc(srcs_u8.size(), srcs_u8[0].size(), CV_32F);
 
-    for (auto i = 0ul; i < refs_u8.size(); ++i) {
-        refs_u8[i].convertTo(refs_f32[i], refs_f32[i].type(), 1.0f / 255);
-        srcs_u8[i].convertTo(srcs_f32[i], srcs_f32[i].type(), 1.0f / 255);
-    }
+        for (auto i = 0ul; i < refs_u8.size(); ++i) {
+            refs_u8[i].convertTo(refs_f32[i], refs_f32[i].type(), 1.0f / 255);
+            srcs_u8[i].convertTo(srcs_f32[i], srcs_f32[i].type(), 1.0f / 255);
+        }
 
-    auto filt =
-        cv::cuda::createGaussianFilter(CV_32F, CV_32F, cv::Size(5, 5), 0);
-    std::for_each(std::begin(refs_f32), std::end(refs_f32),
-                  [&filt](auto &img) { filt->apply(img, img); });
-    std::for_each(std::begin(srcs_f32), std::end(srcs_f32),
-                  [&filt](auto &img) { filt->apply(img, img); });
+        auto filt =
+            cv::cuda::createGaussianFilter(CV_32F, CV_32F, cv::Size(5, 5), 0);
+        std::for_each(std::begin(refs_f32), std::end(refs_f32),
+                      [&filt](auto &img) { filt->apply(img, img); });
+        std::for_each(std::begin(srcs_f32), std::end(srcs_f32),
+                      [&filt](auto &img) { filt->apply(img, img); });
 
-    auto &ref_phase = cuda_diff_atan_inplace(refs_f32);
-    auto &src_phase = cuda_diff_atan_inplace(srcs_f32);
+        auto &ref_phase = cuda_diff_atan_inplace(refs_f32);
+        auto &src_phase = cuda_diff_atan_inplace(srcs_f32);
 
-    cv::cuda::subtract(src_phase, ref_phase, src_phase);
+        cv::cuda::subtract(src_phase, ref_phase, src_phase);
 
+        auto ts = std::chrono::high_resolution_clock::now();
+        auto te = std::chrono::high_resolution_clock::now();
+        if (argc == 4 && *argv[3] == 'c') {
+            cv::Mat h_in(cv::Size(512, 512), CV_32FC1),
+                h_out(cv::Size(512, 512), CV_32FC1);
 
-    auto ts = std::chrono::high_resolution_clock::now();
-    auto te = std::chrono::high_resolution_clock::now();
-    if ( argc == 4 &&  *argv[3] == 'c')
-    {
-	    cv::Mat h_in(cv::Size(512, 512), CV_32FC1),h_out(cv::Size(512, 512), CV_32FC1);
+            src_phase.download(h_in);
+            cv::phase_unwrapping::HistogramPhaseUnwrapping::Params params;
+            params.width = 512;
+            params.height = 512;
+            auto pu =
+                cv::phase_unwrapping::HistogramPhaseUnwrapping::create(params);
 
-	    src_phase.download(h_in);
-	    cv::phase_unwrapping::HistogramPhaseUnwrapping::Params params;
-	    params.width = 512;
-	    params.height = 512;
-	    auto pu = cv::phase_unwrapping::HistogramPhaseUnwrapping::create(params);
+            ts = std::chrono::high_resolution_clock::now();
 
-	    ts = std::chrono::high_resolution_clock::now();
+            pu->unwrapPhaseMap(h_in, h_out);
 
-	    pu->unwrapPhaseMap(h_in, h_out);
-
-	    te = std::chrono::high_resolution_clock::now();
-	    img_show("unwrapped", h_out);
-	    std::cout << "cpu phase unwrap:";
-    } else {
-	    ts = std::chrono::high_resolution_clock::now();
-	    phaseUnwrap(src_phase, constGrids, varMats);
-	    te = std::chrono::high_resolution_clock::now();
-	    cuda_img_show("unwrapped", src_phase);
-	    std::cout << "cuda phase unwrap:";
-    }
-    std::cout  << std::chrono::duration_cast<std::chrono::microseconds>(te - ts)
-                     .count()
-              << std::endl;
-
+            te = std::chrono::high_resolution_clock::now();
+            img_show("unwrapped", h_out);
+            std::cout << "cpu phase unwrap:";
+        } else {
+            ts = std::chrono::high_resolution_clock::now();
+            phaseUnwrap(src_phase, constGrids, varMats);
+            te = std::chrono::high_resolution_clock::now();
+            cuda_img_show("unwrapped", src_phase);
+            std::cout << "cuda phase unwrap:";
+        }
+        std::cout << std::chrono::duration_cast<std::chrono::microseconds>(te -
+                                                                           ts)
+                         .count()
+                  << std::endl;
     }
     cv::waitKey(0);
 

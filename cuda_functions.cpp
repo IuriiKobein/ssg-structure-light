@@ -1,5 +1,41 @@
 #include "cuda_functions.h"
+#include <opencv2/core/cuda.hpp>
+#include <opencv2/core/cuda_stream_accessor.hpp>
+#include <opencv2/cudaarithm.hpp>
 #include "cuda_kernels.h"
+
+namespace {
+
+void cuda_dft2dct_convert2(const cv::cuda::GpuMat &dft_out,
+                           ConstData &const_grid, VarMats &varMats,
+                           cv::cuda::GpuMat &out) {
+    const auto &cos_coeff = const_grid.cudaCosDCT;
+    const auto &sin_coeff = const_grid.cudaSinDCT;
+    auto &c_arr = varMats.c_arr;
+
+    cv::cuda::split(dft_out, c_arr);
+
+    cv::cuda::multiply(c_arr[0], cos_coeff, c_arr[0], 1, -1, varMats.s1);
+    cv::cuda::multiply(c_arr[1], sin_coeff, c_arr[1], 1, -1, varMats.s2);
+    varMats.s1.waitForCompletion();
+    varMats.s2.waitForCompletion();
+
+    cv::cuda::add(c_arr[0], c_arr[1], out);
+}
+
+void cuda_idft2idct_convert2(const cv::cuda::GpuMat &in, ConstData &const_grid,
+                             VarMats &varMats, cv::cuda::GpuMat &out) {
+    const auto &cos_coeff = const_grid.cudaCosDCT;
+    const auto &sin_coeff = const_grid.cudaSinDCT;
+    auto &c_arr = varMats.c_arr;
+
+    cv::cuda::multiply(in, cos_coeff, c_arr[0], 1, -1, varMats.s1);
+    cv::cuda::multiply(in, sin_coeff, c_arr[1], 1, -1, varMats.s2);
+    varMats.s1.waitForCompletion();
+    varMats.s2.waitForCompletion();
+
+    cv::cuda::merge(c_arr, out);
+}
 
 cv::cuda::GpuMat &cuda_dct2(cv::cuda::GpuMat &img, ConstData &constGrids,
                             VarMats &varMats) {
@@ -24,10 +60,12 @@ cv::cuda::GpuMat &cuda_dct2(cv::cuda::GpuMat &img, ConstData &constGrids,
 
     /* 3. crop roi of dct */
     const auto &crop_fft_out = fft_out(cv::Rect(0, 0, h, w));
-    //cv::cuda::split(crop_fft_out, carr);
 
     //* 4. convert dft out to dct by twiddle factors*/
-    cuda_dft2dct_out_convert(crop_fft_out, cos_coeff, sin_coeff, carr[0]);
+    carr[0].setTo(0);
+    cuda_dft2dct_out_convert2(crop_fft_out, cos_coeff, sin_coeff, carr[0],
+                              cv::cuda::StreamAccessor::getStream(varMats.s1),
+                              cv::cuda::StreamAccessor::getStream(varMats.s2));
 
     return carr[0];
 }
@@ -43,7 +81,9 @@ cv::cuda::GpuMat &idct(cv::cuda::GpuMat &img, ConstData &constGrids,
     const auto &sin_coeff = constGrids.cudaSinIDCT;
 
     //* 4. convert dft in to dct by twiddle factors*/
-    cuda_idft2idct_in_convert(img, cos_coeff, sin_coeff, ifft_in);
+    cuda_idft2idct_in_convert2(img, cos_coeff, sin_coeff, ifft_in,
+                              cv::cuda::StreamAccessor::getStream(varMats.s1),
+                              cv::cuda::StreamAccessor::getStream(varMats.s2));
 
     cv::cuda::dft(ifft_in, ifft_in, ifft_in.size(),
                   cv::DFT_ROWS + cv::DFT_INVERSE + cv::DFT_SCALE);
@@ -68,7 +108,7 @@ cv::cuda::GpuMat &cuda_idct2(cv::cuda::GpuMat &img, ConstData &constGrids,
 }
 
 void cudaLaplacian(cv::cuda::GpuMat &img, ConstData &constGrids,
-                                VarMats &varMats, cv::cuda::GpuMat& out) {
+                   VarMats &varMats, cv::cuda::GpuMat &out) {
     auto &ca = varMats.ca;
     const auto &l_grid = constGrids.cudaGridLaplacian;
     const auto h = constGrids.height;
@@ -102,10 +142,11 @@ cv::cuda::GpuMat &deltaPhi(cv::cuda::GpuMat &img, ConstData &constGrids,
     auto &a2 = varMats.a2;
 
     cudaSin(img, img_sin);
-    cudaCos(img, img_cos);
-
     cudaLaplacian(img_sin, constGrids, varMats, a1);
+
+    cudaCos(img, img_cos);
     cudaLaplacian(img_cos, constGrids, varMats, a2);
+
     cuda_delta_phi_mult_sub_inplace(a1, a2, img_cos, img_sin, a1);
 
     return cudaiLaplacian(a1, constGrids, varMats);
@@ -114,6 +155,7 @@ cv::cuda::GpuMat &deltaPhi(cv::cuda::GpuMat &img, ConstData &constGrids,
 cv::Scalar cudaMean(cv::cuda::GpuMat &img) {
     return cv::Scalar(cv::cuda::sum(img)[0] / img.cols / img.rows);
 }
+}  // namespace
 
 void phaseUnwrap(cv::cuda::GpuMat &img, ConstData &constGrids,
                  VarMats &varMats) {

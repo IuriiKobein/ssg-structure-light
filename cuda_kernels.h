@@ -16,9 +16,20 @@ void cuda_dft2dct_out_convert(const cv::cuda::GpuMat &d_input,
                             const cv::cuda::GpuMat &d_cos_f,
                             const cv::cuda::GpuMat &d_sin_f, cv::cuda::GpuMat &d_out);
 
+void cuda_dft2dct_out_convert2(const cv::cuda::GpuMat &d_input,
+                            const cv::cuda::GpuMat &d_cos_f,
+                            const cv::cuda::GpuMat &d_sin_f, cv::cuda::GpuMat &d_out,
+                            cudaStream_t s1, cudaStream_t s2);
+
 void cuda_idft2idct_in_convert(const cv::cuda::GpuMat &d_input,
                             const cv::cuda::GpuMat &d_cos_f,
                             const cv::cuda::GpuMat &d_sin_f, cv::cuda::GpuMat &d_out);
+
+void cuda_idft2idct_in_convert2(const cv::cuda::GpuMat &d_input,
+                                const cv::cuda::GpuMat &d_cos_f,
+                                const cv::cuda::GpuMat &d_sin_f,
+                                cv::cuda::GpuMat &d_out, cudaStream_t s1,
+                                cudaStream_t s2);
 
 void cuda_delta_phi_mult_sub_inplace(cv::cuda::GpuMat &d_in1, cv::cuda::GpuMat &d_in2,
                             const cv::cuda::GpuMat &d_cos_f,

@@ -22,10 +22,17 @@ __global__ void invert2D(cv::cuda::PtrStepSzf x, cv::cuda::PtrStepSzf y,
 
     if (i >= x.cols || j >= x.rows) return;
 
-    if (j % 2 == 0)
+    if (j % 2 == 0) {
         z(i, j) = x(i, j / 2);
-    else
+        //    z(4*i + 1, 4*j + 1) = x(4*i + 1, (4*j + 1) / 2);
+        //    z(4*i + 2, 4*j + 2) = x(4*i + 2, 2*j + 1);
+        //    z(4*i + 3, 4*j + 3) = x(4*i + 3, (4*j + 3) / 2);
+    } else {
         z(i, j) = y(i, (j - 1) / 2);
+        //    z(4*i + 1, 4*j + 1) = y(4*i + 1, 2*j);
+        //    z(4*i + 2, 4*j + 2) = y(4*i + 2, (4*j + 1)/2);
+        //    z(4*i + 3, 4*j + 3) = y(4*i + 3, 2*j + 1);
+    }
 }
 
 __global__ void sin(cv::cuda::PtrStepSzf x, cv::cuda::PtrStepSzf y) {
@@ -81,6 +88,28 @@ static __global__ void dft2dct_inplace(cv::cuda::PtrStepSz<float2> in0,
     out(x, y) += in0(x, y).y * sin_coeff(x, y);
 }
 
+static __global__ void dft2dct_real_inplace(cv::cuda::PtrStepSz<float2> in0,
+                                            cv::cuda::PtrStepSzf cos_coeff,
+                                            cv::cuda::PtrStepSzf out) {
+    const int x = blockIdx.x * blockDim.x + threadIdx.x;
+    const int y = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (x >= in0.cols || y >= in0.rows) return;
+
+    out(x, y) += in0(x, y).x * cos_coeff(x, y);
+}
+
+static __global__ void dft2dct_img_inplace(cv::cuda::PtrStepSz<float2> in0,
+                                           cv::cuda::PtrStepSzf sin_coeff,
+                                           cv::cuda::PtrStepSzf out) {
+    const int x = blockIdx.x * blockDim.x + threadIdx.x;
+    const int y = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (x >= in0.cols || y >= in0.rows) return;
+
+    out(x, y) += in0(x, y).y * sin_coeff(x, y);
+}
+
 static __global__ void idft2idct_inplace(cv::cuda::PtrStepSzf in0,
                                          cv::cuda::PtrStepSzf cos_coeff,
                                          cv::cuda::PtrStepSzf sin_coeff,
@@ -91,6 +120,28 @@ static __global__ void idft2idct_inplace(cv::cuda::PtrStepSzf in0,
     if (x >= in0.cols || y >= in0.rows) return;
 
     out(x, y).x = in0(x, y) * cos_coeff(x, y);
+    out(x, y).y = in0(x, y) * sin_coeff(x, y);
+}
+
+static __global__ void idft2idct_real_inplace(cv::cuda::PtrStepSzf in0,
+                                         cv::cuda::PtrStepSzf cos_coeff,
+                                         cv::cuda::PtrStepSz<float2> out) {
+    const int x = blockIdx.x * blockDim.x + threadIdx.x;
+    const int y = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (x >= in0.cols || y >= in0.rows) return;
+
+    out(x, y).x = in0(x, y) * cos_coeff(x, y);
+}
+
+static __global__ void idft2idct_img_inplace(cv::cuda::PtrStepSzf in0,
+                                         cv::cuda::PtrStepSzf sin_coeff,
+                                         cv::cuda::PtrStepSz<float2> out) {
+    const int x = blockIdx.x * blockDim.x + threadIdx.x;
+    const int y = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (x >= in0.cols || y >= in0.rows) return;
+
     out(x, y).y = in0(x, y) * sin_coeff(x, y);
 }
 
@@ -161,6 +212,22 @@ void cuda_dft2dct_out_convert(const cv::cuda::GpuMat &d_input,
     dft2dct_inplace<<<grid, block>>>(d_input, d_cos_f, d_sin_f, d_out);
 }
 
+void cuda_dft2dct_out_convert2(const cv::cuda::GpuMat &d_input,
+                               const cv::cuda::GpuMat &d_cos_f,
+                               const cv::cuda::GpuMat &d_sin_f,
+                               cv::cuda::GpuMat &d_out, cudaStream_t s1,
+                               cudaStream_t s2) {
+    const dim3 block(16, 16);
+
+    const dim3 grid(cv::cudev::divUp(d_input.cols, block.x),
+                    cv::cudev::divUp(d_input.rows, block.y));
+
+    dft2dct_real_inplace<<<grid, block, 0, s1>>>(d_input, d_cos_f, d_out);
+    dft2dct_img_inplace<<<grid, block, 0, s2>>>(d_input, d_sin_f, d_out);
+
+    cudaDeviceSynchronize();
+}
+
 void cuda_idft2idct_in_convert(const cv::cuda::GpuMat &d_input,
                                const cv::cuda::GpuMat &d_cos_f,
                                const cv::cuda::GpuMat &d_sin_f,
@@ -171,6 +238,22 @@ void cuda_idft2idct_in_convert(const cv::cuda::GpuMat &d_input,
                     cv::cudev::divUp(d_input.rows, block.y));
 
     idft2idct_inplace<<<grid, block>>>(d_input, d_cos_f, d_sin_f, d_out);
+}
+
+void cuda_idft2idct_in_convert2(const cv::cuda::GpuMat &d_input,
+                                const cv::cuda::GpuMat &d_cos_f,
+                                const cv::cuda::GpuMat &d_sin_f,
+                                cv::cuda::GpuMat &d_out, cudaStream_t s1,
+                                cudaStream_t s2) {
+    const dim3 block(16, 16);
+
+    const dim3 grid(cv::cudev::divUp(d_input.cols, block.x),
+                    cv::cudev::divUp(d_input.rows, block.y));
+
+    idft2idct_real_inplace<<<grid, block, 0, s1>>>(d_input, d_cos_f, d_out);
+    idft2idct_img_inplace<<<grid, block, 0, s2>>>(d_input,  d_sin_f, d_out);
+
+    cudaDeviceSynchronize();
 }
 
 void cuda_delta_phi_mult_sub_inplace(cv::cuda::GpuMat &d_in1,
