@@ -17,59 +17,31 @@ __global__ void invert2D(cv::cuda::PtrStepSzf x, cv::cuda::PtrStepSzf y,
                          cv::cuda::PtrStepSzf z) {
     const int i = threadIdx.y;
     const int j = blockIdx.y;
+    const int ii = 2*i;
 
-    if (j % 2 == 0) {
-        z(i, j) = x(i, j/2);
-        //    z(4*i + 1, 4*j + 1) = x(4*i + 1, (4*j + 1) / 2);
-        //    z(4*i + 2, 4*j + 2) = x(4*i + 2, 2*j + 1);
-        //    z(4*i + 3, 4*j + 3) = x(4*i + 3, (4*j + 3) / 2);
-    } else {
-        z(i, j) = y(i, (j - 1) / 2);
-        //    z(4*i + 1, 4*j + 1) = y(4*i + 1, 2*j);
-        //    z(4*i + 2, 4*j + 2) = y(4*i + 2, (4*j + 1)/2);
-        //    z(4*i + 3, 4*j + 3) = y(4*i + 3, 2*j + 1);
-    }
-}
-
-__global__ void invert2D_even(cv::cuda::PtrStepSzf x, cv::cuda::PtrStepSzf z) {
-    const int i = blockIdx.x * blockDim.x + threadIdx.x;
-    const int j = blockIdx.y * blockDim.y + threadIdx.y;
-    const int ii = 2 * i;
-    const int jj = 2 * j;
-
-    z(ii, jj) = x(ii, j);
-    z(ii + 1, jj + 1) = x(ii + 1, (2 * j + 1) / 2);
-}
-
-__global__ void invert2D_odd(cv::cuda::PtrStepSzf y, cv::cuda::PtrStepSzf z) {
-    const int i = blockIdx.x * blockDim.x + threadIdx.x;
-    const int j = blockIdx.y * blockDim.y + threadIdx.y;
-    const int ii = 2 * i;
-    const int jj = 2 * j;
-
-    z(ii, jj) = y(ii, j - 1);
-    z(ii + 1, jj + 1) = y(ii, j);
+    z(j, ii) = x(j, i);
+    z(j, ii + 1) = y(j, (ii + 1) / 2);
 }
 
 __global__ void sin(cv::cuda::PtrStepSzf x, cv::cuda::PtrStepSzf y) {
-    const int i = blockIdx.x * blockDim.x + threadIdx.x;
-    const int j = blockIdx.y * blockDim.y + threadIdx.y;
+    const int i = threadIdx.y;
+    const int j = blockIdx.y;
 
-    y(i, j) = sin(x(i, j));
+    y(j, i) = sin(x(j, i));
 }
 
 __global__ void cos(cv::cuda::PtrStepSzf x, cv::cuda::PtrStepSzf y) {
-    const int i = blockIdx.x * blockDim.x + threadIdx.x;
-    const int j = blockIdx.y * blockDim.y + threadIdx.y;
+    const int i = threadIdx.y;
+    const int j = blockIdx.y;
 
-    y(i, j) = cos(x(i, j));
+    y(j, i) = cos(x(j, i));
 }
 
 __global__ void round(cv::cuda::PtrStepSzf x, cv::cuda::PtrStepSzf y) {
-    const int i = blockIdx.x * blockDim.x + threadIdx.x;
-    const int j = blockIdx.y * blockDim.y + threadIdx.y;
+    const int i = threadIdx.y;
+    const int j = blockIdx.y;
 
-    y(i, j) = rint(x(i, j));
+    y(j, i) = rint(x(j, i));
 }
 
 static __global__ void img_atan_inplace(cv::cuda::PtrStepSzf in0,
@@ -126,62 +98,37 @@ static __global__ void delta_phi_inplace(cv::cuda::PtrStepSzf in0,
                                          cv::cuda::PtrStepSzf cos_coeff,
                                          cv::cuda::PtrStepSzf sin_coeff,
                                          cv::cuda::PtrStepSzf out) {
-    const int x = blockIdx.x * blockDim.x + threadIdx.x;
-    const int y = blockIdx.y * blockDim.y + threadIdx.y;
+    const int x = threadIdx.y;
+    const int y = blockIdx.y;
 
-    const int bx = threadIdx.x;
-    const int by = threadIdx.y;
-
-    __shared__ float sin0[16][16];
-    __shared__ float sin1[16][16];
-    __shared__ float sin[16][16];
-    __shared__ float cos[16][16];
-
-    sin0[bx][by] = in0(x, y);
-    sin1[bx][by] = in1(x, y);
-    sin[bx][by] = sin_coeff(x, y);
-    cos[bx][by] = cos_coeff(x, y);
-
-    __syncthreads();
-
-    out(x, y) = sin0[bx][by] * cos[bx][by] - sin1[bx][by] * sin[bx][by];
+    out(y, x) = in0(y,x) * cos_coeff(y,x) - in1(y,x) * sin_coeff(y,x);
 }
 
 void invertArray(cv::cuda::GpuMat &x, cv::cuda::GpuMat &y,
                  cv::cuda::GpuMat &z) {
-    const dim3 block(1, 512);
+    const dim3 block(1, 256);
     const dim3 grid(1, 512);
 
     invert2D<<<grid, block>>>(x, y, z);
 }
 
-void invertArray2(cv::cuda::GpuMat &x, cv::cuda::GpuMat &y,
-                  cv::cuda::GpuMat &z) {
-    const dim3 block(16, 16);
-    const dim3 grid(cv::cudev::divUp(x.cols / 2, block.x),
-                    cv::cudev::divUp(x.rows / 2, block.y));
-    invert2D_even<<<grid, block>>>(x, z);
-    invert2D_odd<<<grid, block>>>(y, z);
-}
-
 void cudaSin(cv::cuda::GpuMat &x, cv::cuda::GpuMat &y) {
-    const dim3 block(16, 16);
-    const dim3 grid(cv::cudev::divUp(x.cols, block.x),
-                    cv::cudev::divUp(x.rows, block.y));
+    const dim3 block(1, 512);
+    const dim3 grid(1, 512);
     sin<<<grid, block>>>(x, y);
 }
 
 void cudaCos(cv::cuda::GpuMat &x, cv::cuda::GpuMat &y) {
-    const dim3 block(16, 16);
-    const dim3 grid(cv::cudev::divUp(x.cols, block.x),
-                    cv::cudev::divUp(x.rows, block.y));
+    const dim3 block(1, 512);
+    const dim3 grid(1, 512);
+
     cos<<<grid, block>>>(x, y);
 }
 
 void cudaRound(cv::cuda::GpuMat &x, cv::cuda::GpuMat &y) {
-    const dim3 block(16, 16);
-    const dim3 grid(cv::cudev::divUp(x.cols, block.x),
-                    cv::cudev::divUp(x.rows, block.y));
+    const dim3 block(1, 512);
+    const dim3 grid(1, 512);
+
     round<<<grid, block>>>(x, y);
 }
 
@@ -221,10 +168,8 @@ void cuda_delta_phi_mult_sub_inplace(cv::cuda::GpuMat &d_in1,
                                      const cv::cuda::GpuMat &d_cos_f,
                                      const cv::cuda::GpuMat &d_sin_f,
                                      cv::cuda::GpuMat &d_out) {
-    const dim3 block(16, 16);
-
-    const dim3 grid(cv::cudev::divUp(d_in1.cols, block.x),
-                    cv::cudev::divUp(d_in1.rows, block.y));
+    const dim3 block(1, 512);
+    const dim3 grid(1, 512);
 
     delta_phi_inplace<<<grid, block>>>(d_in1, d_in2, d_cos_f, d_sin_f, d_out);
 }
