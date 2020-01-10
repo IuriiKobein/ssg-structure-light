@@ -5,10 +5,8 @@ struct ConstData
 {   
     int height;
     int width;
-    cv::cuda::GpuMat cudaCosDCT;
-    cv::cuda::GpuMat cudaSinDCT;
-    cv::cuda::GpuMat cudaCosIDCT;
-    cv::cuda::GpuMat cudaSinIDCT;
+    cv::cuda::GpuMat dct_twiddle;
+    cv::cuda::GpuMat idct_twiddle;
     cv::cuda::GpuMat cudaGridLaplacian;
 };
 

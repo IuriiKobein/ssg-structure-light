@@ -6,45 +6,13 @@
 
 namespace {
 
-void cuda_dft2dct_convert2(const cv::cuda::GpuMat &dft_out,
-                           ConstData &const_grid, VarMats &varMats,
-                           cv::cuda::GpuMat &out) {
-    const auto &cos_coeff = const_grid.cudaCosDCT;
-    const auto &sin_coeff = const_grid.cudaSinDCT;
-    auto &c_arr = varMats.c_arr;
-
-    cv::cuda::split(dft_out, c_arr);
-
-    cv::cuda::multiply(c_arr[0], cos_coeff, c_arr[0], 1, -1, varMats.s1);
-    cv::cuda::multiply(c_arr[1], sin_coeff, c_arr[1], 1, -1, varMats.s2);
-    varMats.s1.waitForCompletion();
-    varMats.s2.waitForCompletion();
-
-    cv::cuda::add(c_arr[0], c_arr[1], out);
-}
-
-void cuda_idft2idct_convert2(const cv::cuda::GpuMat &in, ConstData &const_grid,
-                             VarMats &varMats, cv::cuda::GpuMat &out) {
-    const auto &cos_coeff = const_grid.cudaCosDCT;
-    const auto &sin_coeff = const_grid.cudaSinDCT;
-    auto &c_arr = varMats.c_arr;
-
-    cv::cuda::multiply(in, cos_coeff, c_arr[0], 1, -1, varMats.s1);
-    cv::cuda::multiply(in, sin_coeff, c_arr[1], 1, -1, varMats.s2);
-    varMats.s1.waitForCompletion();
-    varMats.s2.waitForCompletion();
-
-    cv::cuda::merge(c_arr, out);
-}
-
 cv::cuda::GpuMat &cuda_dct2(cv::cuda::GpuMat &img, ConstData &constGrids,
                             VarMats &varMats) {
     /* 0. extract preallocated contstant and temp vars */
     auto &fft_in = varMats.doubledMat;
     auto &fft_out = varMats.fftOut;
     auto &carr = varMats.c_arr;
-    const auto &cos_coeff = constGrids.cudaCosDCT;
-    const auto &sin_coeff = constGrids.cudaSinDCT;
+    const auto &dct_coeff = constGrids.dct_twiddle;
     const auto h = constGrids.height;
     const auto w = constGrids.width;
 
@@ -62,10 +30,7 @@ cv::cuda::GpuMat &cuda_dct2(cv::cuda::GpuMat &img, ConstData &constGrids,
     const auto &crop_fft_out = fft_out(cv::Rect(0, 0, h, w));
 
     //* 4. convert dft out to dct by twiddle factors*/
-    carr[0].setTo(0);
-    cuda_dft2dct_out_convert2(crop_fft_out, cos_coeff, sin_coeff, carr[0],
-                              cv::cuda::StreamAccessor::getStream(varMats.s1),
-                              cv::cuda::StreamAccessor::getStream(varMats.s2));
+    cuda_dft2dct_out_convert(crop_fft_out, dct_coeff, carr[0]);
 
     return carr[0];
 }
@@ -77,13 +42,10 @@ cv::cuda::GpuMat &idct(cv::cuda::GpuMat &img, ConstData &constGrids,
     auto &ifft_in = varMats.ifftIn;
     auto &c_arr = varMats.c_arr;
     auto &mat = varMats.Mat;
-    const auto &cos_coeff = constGrids.cudaCosIDCT;
-    const auto &sin_coeff = constGrids.cudaSinIDCT;
+    const auto &idct_coeff = constGrids.idct_twiddle;
 
     //* 4. convert dft in to dct by twiddle factors*/
-    cuda_idft2idct_in_convert2(img, cos_coeff, sin_coeff, ifft_in,
-                              cv::cuda::StreamAccessor::getStream(varMats.s1),
-                              cv::cuda::StreamAccessor::getStream(varMats.s2));
+    cuda_idft2idct_in_convert(img, idct_coeff, ifft_in);
 
     cv::cuda::dft(ifft_in, ifft_in, ifft_in.size(),
                   cv::DFT_ROWS + cv::DFT_INVERSE + cv::DFT_SCALE);

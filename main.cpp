@@ -226,52 +226,50 @@ void CreateCudaGrids(cv::Size size, ConstData &constGrids) {
     int height = size.height;
     int width = size.width;
 
-    auto gridCosDCT = cv::Mat(height, width, CV_32FC1);
-    auto gridSinDCT = cv::Mat(height, width, CV_32FC1);
-    auto gridCosIDCT = cv::Mat(height, width, CV_32FC1);
-    auto gridSinIDCT = cv::Mat(height, width, CV_32FC1);
+    auto grid_dct_twiddle = cv::Mat(height, width, CV_32FC2);
+    auto grid_idct_twiddle = cv::Mat(height, width, CV_32FC2);
     auto gridLaplacian = cv::Mat(height, width, CV_32FC1);
 
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             if (i > 0 && j > 0) {
-                gridCosDCT.at<float>(i, j) = (2 / sqrt(height * width) / 4) *
+                grid_dct_twiddle.at<float2>(i, j).x = (2 / sqrt(height * width) / 4) *
                                              cos(((j)*height + (i)*width) *
                                                  (M_PI / (2 * width * height)));
-                gridSinDCT.at<float>(i, j) = (2 / sqrt(height * width) / 4) *
+                grid_dct_twiddle.at<float2>(i, j).y = (2 / sqrt(height * width) / 4) *
                                              sin(((j)*height + (i)*width) *
                                                  (M_PI / (2 * width * height)));
             } else if (i == 0 && j > 0) {
-                gridCosDCT.at<float>(i, j) = (2 / (sqrt(2) * width) / 4) *
+                grid_dct_twiddle.at<float2>(i, j).x = (2 / (sqrt(2) * width) / 4) *
                                              cos(((j)*height + (i)*width) *
                                                  (M_PI / (2 * width * height)));
-                gridSinDCT.at<float>(i, j) = (2 / (sqrt(2) * width) / 4) *
+                grid_dct_twiddle.at<float2>(i, j).y = (2 / (sqrt(2) * width) / 4) *
                                              sin(((j)*height + (i)*width) *
                                                  (M_PI / (2 * width * height)));
             } else if (i > 0 && j == 0) {
-                gridCosDCT.at<float>(i, j) = (2 / (sqrt(2) * height) / 4) *
+                grid_dct_twiddle.at<float2>(i, j).x = (2 / (sqrt(2) * height) / 4) *
                                              cos(((j)*height + (i)*width) *
                                                  (M_PI / (2 * width * height)));
-                gridSinDCT.at<float>(i, j) = (2 / (sqrt(2) * height) / 4) *
+                grid_dct_twiddle.at<float2>(i, j).y = (2 / (sqrt(2) * height) / 4) *
                                              sin(((j)*height + (i)*width) *
                                                  (M_PI / (2 * width * height)));
             } else if (i == 0 && j == 0) {
-                gridCosDCT.at<float>(i, j) = (1 / sqrt(height * width) / 4) *
+                grid_dct_twiddle.at<float2>(i, j).x = (1 / sqrt(height * width) / 4) *
                                              cos(((j)*height + (i)*width) *
                                                  (M_PI / (2 * width * height)));
-                gridSinDCT.at<float>(i, j) = (1 / sqrt(height * width) / 4) *
+                grid_dct_twiddle.at<float2>(i, j).y = (1 / sqrt(height * width) / 4) *
                                              sin(((j)*height + (i)*width) *
                                                  (M_PI / (2 * width * height)));
             }
             if (j > 0) {
-                gridCosIDCT.at<float>(i, j) =
+                grid_idct_twiddle.at<float2>(i, j).x =
                     sqrt(2 * width) * cos(M_PI * j / (2 * width));
-                gridSinIDCT.at<float>(i, j) =
+                grid_idct_twiddle.at<float2>(i, j).y =
                     sqrt(2 * width) * sin(M_PI * j / (2 * width));
             } else if (j == 0) {
-                gridCosIDCT.at<float>(i, j) =
+                grid_idct_twiddle.at<float2>(i, j).x =
                     sqrt(width) * cos(M_PI * j / (2 * width));
-                gridSinIDCT.at<float>(i, j) =
+                grid_idct_twiddle.at<float2>(i, j).y =
                     sqrt(width) * sin(M_PI * j / (2 * width));
             }
             gridLaplacian.at<float>(i, j) =
@@ -280,11 +278,8 @@ void CreateCudaGrids(cv::Size size, ConstData &constGrids) {
     }
     constGrids.height = height;
     constGrids.width = width;
-    constGrids.cudaCosDCT.upload(gridCosDCT);
-    constGrids.cudaCosDCT.upload(gridCosDCT);
-    constGrids.cudaSinDCT.upload(gridSinDCT);
-    constGrids.cudaCosIDCT.upload(gridCosIDCT);
-    constGrids.cudaSinIDCT.upload(gridSinIDCT);
+    constGrids.dct_twiddle.upload(grid_dct_twiddle);
+    constGrids.idct_twiddle.upload(grid_idct_twiddle);
     constGrids.cudaGridLaplacian.upload(gridLaplacian);
 }
 

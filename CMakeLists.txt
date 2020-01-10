@@ -11,7 +11,7 @@ enable_language("CUDA")
 find_package(OpenCV)
 
 find_package(CUDA)
-SET(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} ${CUDA_ARCH}")
+SET(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} ${CUDA_ARCH} -g")
 
 include_directories(${OpenCV_INCLUDE_DIRS} ${CUDA_INCLUDE_DIRS} src)
 
