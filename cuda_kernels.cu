@@ -45,28 +45,18 @@ __global__ void round(cv::cuda::PtrStepSzf x, cv::cuda::PtrStepSzf y) {
 }
 
 static __global__ void img_atan_inplace(cv::cuda::PtrStepSzf in0,
-                                        cv::cuda::PtrStepSzf in1,
-                                        cv::cuda::PtrStepSzf in2,
-                                        cv::cuda::PtrStepSzf in3,
+                                        const cv::cuda::PtrStepSzf in1,
+                                        const cv::cuda::PtrStepSzf in2,
+                                        const cv::cuda::PtrStepSzf in3,
                                         cv::cuda::PtrStepSzf out) {
-    const int x = blockIdx.x * blockDim.x + threadIdx.x;
-    const int y = blockIdx.y * blockDim.y + threadIdx.y;
+    const int x = threadIdx.y;
+    const int y = blockIdx.y;
 
-    out(x, y) = atan2f(in3(x, y) - in1(x, y), in0(x, y) - in2(x, y));
-}
-
-static __global__ void dft2dct_inplace(cv::cuda::PtrStepSz<float2> in0,
-                                       cv::cuda::PtrStepSzf cos_coeff,
-                                       cv::cuda::PtrStepSzf sin_coeff,
-                                       cv::cuda::PtrStepSzf out) {
-    const int x = blockIdx.x * blockDim.x + threadIdx.x;
-    const int y = blockIdx.y * blockDim.y + threadIdx.y;
-
-    out(x, y) = in0(x, y).x * cos_coeff(x, y) + in0(x, y).y * sin_coeff(x, y);
+    out(y, x) = atan2f(in3(y, x) - in1(y, x), in0(y, x) - in2(y, x));
 }
 
 static __global__ void vec_comp_elem_wise_mul2(
-    cv::cuda::PtrStepSz<float2> in0, cv::cuda::PtrStepSz<float2> dct_coeff,
+    cv::cuda::PtrStepSz<float2> in0, const cv::cuda::PtrStepSz<float2> dct_coeff,
     cv::cuda::PtrStepSzf out) {
     const int x = threadIdx.y;
     const int y = blockIdx.y;
@@ -78,7 +68,7 @@ static __global__ void vec_comp_elem_wise_mul2(
 }
 
 static __global__ void vec_real_elem_wise_mul2(
-    cv::cuda::PtrStepSzf in, cv::cuda::PtrStepSz<float2> idct_coeff,
+    cv::cuda::PtrStepSzf in, const cv::cuda::PtrStepSz<float2> idct_coeff,
     cv::cuda::PtrStepSz<float2> out) {
     const int x = threadIdx.y;
     const int y = blockIdx.y;
@@ -95,8 +85,8 @@ static __global__ void vec_real_elem_wise_mul2(
 
 static __global__ void delta_phi_inplace(cv::cuda::PtrStepSzf in0,
                                          cv::cuda::PtrStepSzf in1,
-                                         cv::cuda::PtrStepSzf cos_coeff,
-                                         cv::cuda::PtrStepSzf sin_coeff,
+                                         const cv::cuda::PtrStepSzf cos_coeff,
+                                         const cv::cuda::PtrStepSzf sin_coeff,
                                          cv::cuda::PtrStepSzf out) {
     const int x = threadIdx.y;
     const int y = blockIdx.y;
@@ -134,9 +124,8 @@ void cudaRound(cv::cuda::GpuMat &x, cv::cuda::GpuMat &y) {
 
 cv::cuda::GpuMat &cuda_diff_atan_inplace(
     std::vector<cv::cuda::GpuMat> &d_input) {
-    const dim3 block(16, 16);
-    const dim3 grid(cv::cudev::divUp(d_input[0].cols, block.x),
-                    cv::cudev::divUp(d_input[0].rows, block.y));
+    const dim3 block(1, 512);
+    const dim3 grid(1, 512);
 
     img_atan_inplace<<<grid, block>>>(d_input[0], d_input[1], d_input[2],
                                       d_input[3], d_input[0]);
