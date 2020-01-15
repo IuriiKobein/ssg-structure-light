@@ -1,10 +1,16 @@
 #include "cuda_functions.h"
-#include <opencv2/core/cuda.hpp>
-#include <opencv2/core/cuda_stream_accessor.hpp>
-#include <opencv2/cudaarithm.hpp>
 #include "cuda_kernels.h"
 
+#include <opencv2/core/cuda.hpp>
+#include <opencv2/core/cuda_stream_accessor.hpp>
+#include <opencv2/core/types.hpp>
+#include <opencv2/cudaarithm.hpp>
+
 namespace {
+auto dft = cv::cuda::createDFT(cv::Size(1024, 1024), 0);
+auto idft = cv::cuda::createDFT(
+    cv::Size(512, 512),
+    cv::DFT_COMPLEX_INPUT | cv::DFT_ROWS | cv::DFT_INVERSE | cv::DFT_SCALE);
 
 cv::cuda::GpuMat &cuda_dct2(cv::cuda::GpuMat &img, ConstData &constGrids,
                             VarMats &varMats) {
@@ -24,7 +30,7 @@ cv::cuda::GpuMat &cuda_dct2(cv::cuda::GpuMat &img, ConstData &constGrids,
     cv::cuda::flip(img, fft_in(cv::Rect(h, w, h, w)), -1);
 
     /* 2. apply real -> complex dft  */
-    cv::cuda::dft(fft_in, fft_out, fft_in.size());
+    dft->compute(fft_in, fft_out);
 
     /* 3. crop roi of dct */
     const auto &crop_fft_out = fft_out(cv::Rect(0, 0, h, w));
@@ -47,8 +53,9 @@ cv::cuda::GpuMat &idct(cv::cuda::GpuMat &img, ConstData &constGrids,
     //* 4. convert dft in to dct by twiddle factors*/
     cuda_idft2idct_in_convert(img, idct_coeff, ifft_in);
 
-    cv::cuda::dft(ifft_in, ifft_in, ifft_in.size(),
-                  cv::DFT_ROWS + cv::DFT_INVERSE + cv::DFT_SCALE);
+    // cv::cuda::dft(ifft_in, ifft_in, ifft_in.size(),
+    //              cv::DFT_ROWS + cv::DFT_INVERSE + cv::DFT_SCALE);
+    idft->compute(ifft_in, ifft_in);
     cv::cuda::split(ifft_in, c_arr);
 
     c_arr[0].convertTo(c_arr[0], c_arr[0].type(), 512);
@@ -76,7 +83,9 @@ void cudaLaplacian(cv::cuda::GpuMat &img, ConstData &constGrids,
     const auto h = constGrids.height;
     const auto w = constGrids.width;
 
-    cv::cuda::multiply(cuda_dct2(img, constGrids, varMats), l_grid, ca);
+    auto &temp = cuda_dct2(img, constGrids, varMats);
+
+    cv::cuda::multiply(temp, l_grid, ca);
     auto &idct_out = cuda_idct2(ca, constGrids, varMats);
     idct_out.convertTo(out, idct_out.type(), -4 * M_PI * M_PI / (h * w));
 }
@@ -117,6 +126,7 @@ cv::cuda::GpuMat &deltaPhi(cv::cuda::GpuMat &img, ConstData &constGrids,
 cv::Scalar cudaMean(cv::cuda::GpuMat &img) {
     return cv::Scalar(cv::cuda::sum(img)[0] / img.cols / img.rows);
 }
+
 }  // namespace
 
 void phaseUnwrap(cv::cuda::GpuMat &img, ConstData &constGrids,
@@ -125,6 +135,8 @@ void phaseUnwrap(cv::cuda::GpuMat &img, ConstData &constGrids,
     auto &phi1 = varMats.phi1;
     auto &phi2 = varMats.phi2;
     auto &error = varMats.error;
+
+    fft_2d_init(512, 512);
 
     phi1 = deltaPhi(img, constGrids, varMats);
     cv::cuda::subtract(phi1, cudaMean(phi1), phi1);
@@ -138,7 +150,7 @@ void phaseUnwrap(cv::cuda::GpuMat &img, ConstData &constGrids,
 
     cv::cuda::add(img, k1, phi2);
 
-    for (auto i = 0; i < 3; i++) {
+    for (auto i = 0; i < 2; i++) {
         cv::cuda::subtract(phi2, phi1, error);
         cv::cuda::subtract(phi1, cudaMean(phi1), phi1);
         cv::cuda::add(phi1, deltaPhi(error, constGrids, varMats), phi1);

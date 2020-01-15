@@ -1,5 +1,7 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
+#include <cufft.h>
+
 #include <opencv2/core/cuda.hpp>
 #include "cuda_kernels.h"
 
@@ -17,7 +19,7 @@ __global__ void invert2D(cv::cuda::PtrStepSzf x, cv::cuda::PtrStepSzf y,
                          cv::cuda::PtrStepSzf z) {
     const int i = threadIdx.y;
     const int j = blockIdx.y;
-    const int ii = 2*i;
+    const int ii = 2 * i;
 
     z(j, ii) = x(j, i);
     z(j, ii + 1) = y(j, (ii + 1) / 2);
@@ -44,6 +46,16 @@ __global__ void round(cv::cuda::PtrStepSzf x, cv::cuda::PtrStepSzf y) {
     y(j, i) = rint(x(j, i));
 }
 
+static __global__ void sin_cos(const cv::cuda::PtrStepSzf in,
+                               cv::cuda::PtrStepSzf sin_out,
+                               cv::cuda::PtrStepSzf cos_out) {
+    const int i = threadIdx.y;
+    const int j = blockIdx.y;
+
+    sin_out(j, i) = sin(in(j, i));
+    cos_out(j, i) = cos(in(j, i));
+}
+
 static __global__ void img_atan_inplace(cv::cuda::PtrStepSzf in0,
                                         const cv::cuda::PtrStepSzf in1,
                                         const cv::cuda::PtrStepSzf in2,
@@ -56,15 +68,17 @@ static __global__ void img_atan_inplace(cv::cuda::PtrStepSzf in0,
 }
 
 static __global__ void vec_comp_elem_wise_mul2(
-    cv::cuda::PtrStepSz<float2> in0, const cv::cuda::PtrStepSz<float2> dct_coeff,
-    cv::cuda::PtrStepSzf out) {
+    cv::cuda::PtrStepSz<float2> in0,
+    const cv::cuda::PtrStepSz<float2> dct_coeff, cv::cuda::PtrStepSzf out) {
     const int x = threadIdx.y;
     const int y = blockIdx.y;
 
     float2 in = in0(y, x);
     float2 coeff = dct_coeff(y, x);
 
-    out(y, x) = in.x * coeff.x + in.y * coeff.y;
+    float res = in.x * coeff.x + in.y * coeff.y;
+
+    out(y, x) = res;
 }
 
 static __global__ void vec_real_elem_wise_mul2(
@@ -91,7 +105,14 @@ static __global__ void delta_phi_inplace(cv::cuda::PtrStepSzf in0,
     const int x = threadIdx.y;
     const int y = blockIdx.y;
 
-    out(y, x) = in0(y,x) * cos_coeff(y,x) - in1(y,x) * sin_coeff(y,x);
+    out(y, x) = in0(y, x) * cos_coeff(y, x) - in1(y, x) * sin_coeff(y, x);
+}
+
+static cufftHandle plan;
+void fft_2d_init(int h, int w) { cufftPlan2d(&plan, w * 2, h * 2, CUFFT_R2C); }
+
+void fft_2d_exe(cv::cuda::GpuMat &in, cv::cuda::GpuMat &out) {
+    cufftExecR2C(plan, in.ptr<cufftReal>(), out.ptr<cufftComplex>());
 }
 
 void invertArray(cv::cuda::GpuMat &x, cv::cuda::GpuMat &y,
@@ -161,4 +182,12 @@ void cuda_delta_phi_mult_sub_inplace(cv::cuda::GpuMat &d_in1,
     const dim3 grid(1, 512);
 
     delta_phi_inplace<<<grid, block>>>(d_in1, d_in2, d_cos_f, d_sin_f, d_out);
+}
+
+void cuda_sin_cos(const cv::cuda::GpuMat &in, cv::cuda::GpuMat &sin_out,
+                  cv::cuda::GpuMat &cos_out) {
+    const dim3 block(1, 512);
+    const dim3 grid(1, 512);
+
+    sin_cos<<<grid, block>>>(in, sin_out, cos_out);
 }
