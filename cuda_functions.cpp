@@ -1,8 +1,10 @@
 #include "cuda_functions.h"
 #include "cuda_kernels.h"
 
+#include <opencv2/core/base.hpp>
 #include <opencv2/core/cuda.hpp>
 #include <opencv2/core/cuda_stream_accessor.hpp>
+#include <opencv2/core/mat.hpp>
 #include <opencv2/core/types.hpp>
 #include <opencv2/cudaarithm.hpp>
 
@@ -53,8 +55,6 @@ cv::cuda::GpuMat &idct(cv::cuda::GpuMat &img, ConstData &constGrids,
     //* 4. convert dft in to dct by twiddle factors*/
     cuda_idft2idct_in_convert(img, idct_coeff, ifft_in);
 
-    // cv::cuda::dft(ifft_in, ifft_in, ifft_in.size(),
-    //              cv::DFT_ROWS + cv::DFT_INVERSE + cv::DFT_SCALE);
     idft->compute(ifft_in, ifft_in);
     cv::cuda::split(ifft_in, c_arr);
 
@@ -136,31 +136,22 @@ void phaseUnwrap(cv::cuda::GpuMat &img, ConstData &constGrids,
     auto &phi2 = varMats.phi2;
     auto &error = varMats.error;
 
-    fft_2d_init(512, 512);
-
     phi1 = deltaPhi(img, constGrids, varMats);
     cv::cuda::subtract(phi1, cudaMean(phi1), phi1);
     cv::cuda::add(phi1, cudaMean(img), phi1);
 
     cv::cuda::subtract(phi1, img, k1);
-    k1.convertTo(k1, k1.type(), 0.5 / M_PI);
-
     cudaRound(k1, k1);
-    k1.convertTo(k1, k1.type(), 2 * M_PI);
-
     cv::cuda::add(img, k1, phi2);
 
-    for (auto i = 0; i < 2; i++) {
+    for (auto i = 0; i < 1; i++) {
         cv::cuda::subtract(phi2, phi1, error);
         cv::cuda::subtract(phi1, cudaMean(phi1), phi1);
         cv::cuda::add(phi1, deltaPhi(error, constGrids, varMats), phi1);
         cv::cuda::add(phi1, cudaMean(phi2), phi1);
 
         cv::cuda::subtract(phi1, img, k1);
-        k1.convertTo(k1, k1.type(), 0.5 / M_PI);
         cudaRound(k1, k1);
-        k1.convertTo(k1, k1.type(), 2 * M_PI);
-
         cv::cuda::add(img, k1, phi2);
     }
 

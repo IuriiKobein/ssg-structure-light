@@ -1,6 +1,5 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
-#include <cufft.h>
 
 #include <opencv2/core/cuda.hpp>
 #include "cuda_kernels.h"
@@ -39,11 +38,14 @@ __global__ void cos(cv::cuda::PtrStepSzf x, cv::cuda::PtrStepSzf y) {
     y(j, i) = cos(x(j, i));
 }
 
+__constant__ float pre = 0.5 / M_PI;
+__constant__ float post = 2* M_PI;
+
 __global__ void round(cv::cuda::PtrStepSzf x, cv::cuda::PtrStepSzf y) {
     const int i = threadIdx.y;
     const int j = blockIdx.y;
 
-    y(j, i) = rint(x(j, i));
+    y(j, i) = rint(x(j, i) * pre) * post;
 }
 
 static __global__ void sin_cos(const cv::cuda::PtrStepSzf in,
@@ -106,13 +108,6 @@ static __global__ void delta_phi_inplace(cv::cuda::PtrStepSzf in0,
     const int y = blockIdx.y;
 
     out(y, x) = in0(y, x) * cos_coeff(y, x) - in1(y, x) * sin_coeff(y, x);
-}
-
-static cufftHandle plan;
-void fft_2d_init(int h, int w) { cufftPlan2d(&plan, w * 2, h * 2, CUFFT_R2C); }
-
-void fft_2d_exe(cv::cuda::GpuMat &in, cv::cuda::GpuMat &out) {
-    cufftExecR2C(plan, in.ptr<cufftReal>(), out.ptr<cufftComplex>());
 }
 
 void invertArray(cv::cuda::GpuMat &x, cv::cuda::GpuMat &y,

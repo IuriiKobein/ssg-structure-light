@@ -32,7 +32,3 @@ void cuda_delta_phi_mult_sub_inplace(cv::cuda::GpuMat &d_in1,
                                      const cv::cuda::GpuMat &d_cos_f,
                                      const cv::cuda::GpuMat &d_sin_f,
                                      cv::cuda::GpuMat &d_out);
-
-
-void fft_2d_init(int h, int w);
-void fft_2d_exe(cv::cuda::GpuMat& in, cv::cuda::GpuMat& out);
