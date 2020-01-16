@@ -12,8 +12,6 @@ struct ConstData
 
 struct VarMats
 {
-    cv::cuda::Stream s1;
-    cv::cuda::Stream s2;
     cv::cuda::GpuMat doubledMat;
     cv::cuda::GpuMat Mat;
     std::vector<cv::cuda::GpuMat> c_arr;

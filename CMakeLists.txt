@@ -16,8 +16,9 @@ SET(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} ${CUDA_ARCH} -g")
 include_directories(${OpenCV_INCLUDE_DIRS} ${CUDA_INCLUDE_DIRS} src)
 
 set(3dr_srcs main.cpp
-    cuda_functions.cpp
-    cuda_functions.h)
+    alg_utils.cpp
+    cl_alg.cpp
+    cuda_phase_unwrap.cpp)
 
 add_library(cuda_alg SHARED cuda_kernels.cu)
 set_property(TARGET cuda_alg PROPERTY CUDA_STANDARD 14)

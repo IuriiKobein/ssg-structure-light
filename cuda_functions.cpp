@@ -112,10 +112,10 @@ cv::cuda::GpuMat &deltaPhi(cv::cuda::GpuMat &img, ConstData &constGrids,
     auto &a1 = varMats.a1;
     auto &a2 = varMats.a2;
 
-    cudaSin(img, img_sin);
+    cuda_sin(img, img_sin);
     cudaLaplacian(img_sin, constGrids, varMats, a1);
 
-    cudaCos(img, img_cos);
+    cuda_cos(img, img_cos);
     cudaLaplacian(img_cos, constGrids, varMats, a2);
 
     cuda_delta_phi_mult_sub_inplace(a1, a2, img_cos, img_sin, a1);
@@ -141,31 +141,19 @@ void phaseUnwrap(cv::cuda::GpuMat &img, ConstData &constGrids,
     cv::cuda::add(phi1, cudaMean(img), phi1);
 
     cv::cuda::subtract(phi1, img, k1);
-    cudaRound(k1, k1);
+    cuda_round(k1, k1);
     cv::cuda::add(img, k1, phi2);
 
-    for (auto i = 0; i < 1; i++) {
+    for (auto i = 0; i < 2; i++) {
         cv::cuda::subtract(phi2, phi1, error);
         cv::cuda::subtract(phi1, cudaMean(phi1), phi1);
         cv::cuda::add(phi1, deltaPhi(error, constGrids, varMats), phi1);
         cv::cuda::add(phi1, cudaMean(phi2), phi1);
 
         cv::cuda::subtract(phi1, img, k1);
-        cudaRound(k1, k1);
+        cuda_round(k1, k1);
         cv::cuda::add(img, k1, phi2);
     }
 
     img = varMats.phi2;
-    /*//SAVING IMG
-    std::string s1 = "Reconstruction";
-    std::string s2 = ".bmp";
-    cv::Mat cudaResult;
-    varMats.phi2.download(cudaResult);
-    double min, max;
-    cv::minMaxLoc(cudaResult, &min, &max);
-    cudaResult += 5;
-    cv::normalize(cudaResult, cudaResult, 255, 0, cv::NORM_MINMAX);
-    std::string s = std::to_string(1);
-    cv::imwrite( s1+s+s2, cudaResult);
-    */
 }

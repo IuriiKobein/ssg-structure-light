@@ -15,7 +15,7 @@ def idct2(a):
 #Custom DCT
 def fct(img):
     M = len(img)
-    
+
     y = np.empty(2*M)
     y[:M] = img
     y[M:] = img[::-1]
@@ -30,13 +30,13 @@ def fct(img):
 def fct2(img):
     M = img.shape[0]
     N = img.shape[1]
-    
+
     y = np.empty([2*M, 2*N])
     y[:M, :N] = img
     y[M:, :N] = img[::-1, :]
     y[:M, N:] = img[:, ::-1]
     y[M:, N:] = img[::-1, ::-1]
-    
+
     m = np.arange(0, M, 1)
     n = np.arange(0, N, 1)
     m, n = np.meshgrid(m, n)
@@ -51,11 +51,11 @@ def fct2(img):
 def ifct(img):
     M = len(img)
     m = np.arange(0, M, 1)
-    
+
     Y = img * np.exp(1j*np.pi*m/(2*M))
     Y[0] = Y[0]*(np.sqrt(M))
     Y[1:] = Y[1:]*np.sqrt(2*M)
-    
+
     y = Y
     y = scipy.fftpack.ifft(y).real
     z = np.empty([2*M])
@@ -79,35 +79,21 @@ def ifct2(img):
 def my_ifct2(img):
     M = img.shape[0]
     N = img.shape[1]
-    
+
     m = np.arange(0, M, 1)
     n = np.arange(0, N, 1)
     m, n = np.meshgrid(m, n)
-    
-    mask1 = m
-    mask1[0, :] = 0
-    mask2 = n
-    mask2[:, 0] = 0
 
-    Y = (img) * np.exp(1j*np.pi*(n*M+m*N)/(2*(N*M))) / 4
-    
-    Y[0, 0] = Y[0, 0]*(np.sqrt(M*N))
-    Y[1:, 0] = Y[1:, 0]*np.sqrt(2)/M/2
-    Y[0, 1:] = Y[0, 1:]*np.sqrt(2)/N/2
-    Y[1:, 1:] = Y[1:, 1:]/np.sqrt(2/N)/np.sqrt(2/M)
+    Y = (img) * np.exp(1j*np.pi*(n+m)/(2*(N*M)))
 
-    y = scipy.fftpack.ifft2(Y).imag
+    Y[0, 0] = Y[0, 0] / (np.sqrt(2))
+    Y[1:, 0] = Y[1:, 0]*np.sqrt(2 * M)
+    Y[0, 1:] = Y[0, 1:]*np.sqrt(2 * N)
+    Y[1:, 1:] = Y[1:, 1:]/np.sqrt(2*N)/np.sqrt(2*M)
 
-    z = np.empty([2*M, 2*N])
-     
-    m = np.arange(0, M, 1)
-    n = np.arange(0, N, 1)
-    z[0:2*M:2, 0:2*M:2] = y
-    z[1:2*M:2, 0:2*M:2] = y[M-1-m, :]
-    z[0:2*M:2, 1:2*M:2] = y[:, M-1-m]
-    z[1:2*M:2, 1:2*M:2] = y[M-1-m, M-1-m]
-    
-    return z[:M, :N]
+    y = scipy.fftpack.ifft2(Y).real
+
+    return y
 
 
 x = np.asarray([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]])
