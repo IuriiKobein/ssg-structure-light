@@ -2,9 +2,11 @@
 
 #include <experimental/filesystem>
 #include <iostream>
+#include <opencv2/core/hal/interface.h>
+#include <opencv2/imgcodecs.hpp>
 
 void img_show(const std::string title, cv::Mat &h_img) {
-    cv::normalize(h_img, h_img, 0, 1, cv::NORM_MINMAX, CV_32F);
+    cv::normalize(h_img, h_img, 0, 255, cv::NORM_MINMAX, CV_8U);
     cv::namedWindow(title, cv::WINDOW_NORMAL);
     cv::imshow(title, h_img);
 }

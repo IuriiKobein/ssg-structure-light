@@ -1,6 +1,8 @@
 #include "cuda_phase_unwrap.hpp"
 #include "cuda_kernels.h"
 
+#include "alg_utils.hpp"
+
 #include <cufft.h>
 #include <memory>
 #include <opencv2/core/cuda.hpp>
@@ -158,6 +160,7 @@ cv::cuda::GpuMat &idct(cv::cuda::GpuMat &img) {
     auto &c_arr = g_alg_env.t_mats->c_arr;
     auto &mat = g_alg_env.t_mats->mat;
     const auto &idct_coeff = g_alg_env.c_mats->idct_f;
+    const auto h = g_alg_env.c_mats->size.height;
 
     //* 4. convert dft in to dct by twiddle factors*/
     cuda_idft2idct_in_convert(img, idct_coeff, ifft_in);
@@ -165,7 +168,7 @@ cv::cuda::GpuMat &idct(cv::cuda::GpuMat &img) {
     g_alg_env.idft->compute(ifft_in, ifft_in);
     cv::cuda::split(ifft_in, c_arr);
 
-    c_arr[0].convertTo(c_arr[0], c_arr[0].type(), g_alg_env.c_mats->size.width);
+    c_arr[0].convertTo(c_arr[0], c_arr[0].type(), h);
 
     cv::cuda::flip(c_arr[0], mat, 1);
     cuda_invert_array(c_arr[0], mat, ca);
@@ -242,7 +245,7 @@ void cuda_phase_unwrap(cv::cuda::GpuMat &img) {
     cuda_round(k1, k1);
     cv::cuda::add(img, k1, phi2);
 
-    for (auto i = 0; i < 2; i++) {
+    for (auto i = 0; i < 100; i++) {
         cv::cuda::subtract(phi2, phi1, error);
         cv::cuda::subtract(phi1, cuda_mean(phi1), phi1);
         cv::cuda::add(phi1, delta_phi(error), phi1);

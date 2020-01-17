@@ -131,8 +131,8 @@ void cuda_round(cv::cuda::GpuMat &x, cv::cuda::GpuMat &y) {
 void cuda_diff_atan_inplace(
     const std::vector<cv::cuda::GpuMat> &input,
     cv::cuda::GpuMat& out) {
-    const dim3 block(1, 512);
-    const dim3 grid(1, 512);
+    const dim3 block(1, input[0].rows);
+    const dim3 grid(1, input[0].cols);
 
     img_atan_inplace<<<grid, block>>>(input[0], input[1], input[2],
                                       input[3], out);

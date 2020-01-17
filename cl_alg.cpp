@@ -5,6 +5,8 @@
 #include "cuda_kernels.h"
 #include "cuda_phase_unwrap.hpp"
 
+#include <algorithm>
+#include <iterator>
 #include <opencv2/core/cuda.hpp>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/core/types.hpp>
@@ -25,8 +27,10 @@ void to_float_scale(const std::vector<cv::cuda::GpuMat>& src,
 
 void cuda_phase_compute(const std::vector<cv::cuda::GpuMat>& src,
                         std::vector<cv::cuda::GpuMat>& dst,
-                        cv::cuda::GpuMat& out) {
+                        cv::cuda::GpuMat& out, cv::Ptr<cv::cuda::Filter> filt) {
     to_float_scale(src, dst);
+    std::for_each(std::begin(dst), std::end(dst), [&filt](auto& i) {
+        filt->apply(i, i);});
     cuda_diff_atan_inplace(dst, out);
 }
 }  // namespace
@@ -37,22 +41,19 @@ class structure_light_alg::sl_alg_impl {
         : _phases(cuda_imgs_alloc(4, size, CV_32F)),
           _src_phase(cv::cuda::GpuMat(size, CV_32F)),
           _ref_phase(cv::cuda::GpuMat(size, CV_32F)),
-          _cu_pu_alg(cuda_phase_unwrap_alg(size))
+          _cu_pu_alg(cuda_phase_unwrap_alg(size)),
+          _filt(
+              cv::cuda::createGaussianFilter(CV_32F, CV_32F, cv::Size(5, 5), 0))
 
     {}
 
-    int ref_phases_compute(const std::vector<cv::cuda::GpuMat>& imgs) { 
-        cuda_phase_compute(imgs, _phases, _ref_phase);
+    int ref_phases_compute(const std::vector<cv::cuda::GpuMat>& imgs) {
+        cuda_phase_compute(imgs, _phases, _ref_phase, _filt);
         return 0;
     }
 
     cv::Mat compute_3dr_impl(const std::vector<cv::cuda::GpuMat>& imgs) {
-        // auto filt =
-        //    cv::cuda::createGaussianFilter(CV_32F, CV_32F, cv::Size(5, 5), 0);
-        // std::for_each(std::begin(srcs_f32), std::end(srcs_f32),
-        //              [&filt](auto &img) { filt->apply(img, img); });
-
-        cuda_phase_compute(imgs, _phases, _src_phase);
+        cuda_phase_compute(imgs, _phases, _src_phase, _filt);
 
         cv::cuda::subtract(_src_phase, _ref_phase, _src_phase);
 
@@ -64,6 +65,7 @@ class structure_light_alg::sl_alg_impl {
     cv::cuda::GpuMat _src_phase;
     cv::cuda::GpuMat _ref_phase;
     cuda_phase_unwrap_alg _cu_pu_alg;
+    cv::Ptr<cv::cuda::Filter> _filt;
 };
 
 structure_light_alg::structure_light_alg(cv::Size size)
