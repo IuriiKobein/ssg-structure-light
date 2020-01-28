@@ -5,11 +5,14 @@
 
 #include <cufft.h>
 #include <memory>
+#include <opencv2/core/base.hpp>
 #include <opencv2/core/cuda.hpp>
 #include <opencv2/core/cvstd_wrapper.hpp>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/core/types.hpp>
 #include <opencv2/cudaarithm.hpp>
+
+#include <iostream>
 
 namespace {
 
@@ -58,9 +61,9 @@ alg_const_mats alg_make_const_mat(cv::Size size) {
     int h = size.height;
     int w = size.width;
 
-    auto dct_f = cv::Mat(h, w, CV_32FC2);
-    auto idct_f = cv::Mat(h, w, CV_32FC2);
-    auto laplacian = cv::Mat(h, w, CV_32FC1);
+    auto dct_f = cv::Mat(size, CV_32FC2);
+    auto idct_f = cv::Mat(size, CV_32FC2);
+    auto laplacian = cv::Mat(size, CV_32FC1);
 
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w; j++) {
@@ -93,7 +96,7 @@ alg_const_mats alg_make_const_mat(cv::Size size) {
         }
     }
 
-    return {size, dct_f, idct_f, laplacian};
+    return {size, dct_f, idct_f, laplacian };
 }
 
 alg_tmp_mats alg_make_tmp_mat(cv::Size size) {
@@ -190,26 +193,20 @@ cv::cuda::GpuMat &cuda_idct2(cv::cuda::GpuMat &img) {
 void cuda_laplacian(cv::cuda::GpuMat &img, cv::cuda::GpuMat &out) {
     auto &ca = g_alg_env.t_mats->ca;
     const auto &l_grid = g_alg_env.c_mats->laplacian;
-    const auto h = g_alg_env.c_mats->size.height;
-    const auto w = g_alg_env.c_mats->size.width;
 
     auto &temp = cuda_dct2(img);
 
     cv::cuda::multiply(temp, l_grid, ca);
-    auto &idct_out = cuda_idct2(ca);
-    idct_out.convertTo(out, idct_out.type(), -4 * M_PI * M_PI / (h * w));
+    out = cuda_idct2(ca);
 }
 
 cv::cuda::GpuMat &cudaiLaplacian(cv::cuda::GpuMat &img) {
     auto &ca = g_alg_env.t_mats->ca;
     const auto &l_grid = g_alg_env.c_mats->laplacian;
-    const auto h = g_alg_env.c_mats->size.height;
-    const auto w = g_alg_env.c_mats->size.width;
 
     cv::cuda::divide(cuda_dct2(img), l_grid, ca);
 
     auto &idct_out = cuda_idct2(ca);
-    idct_out.convertTo(idct_out, idct_out.type(), (h * w) / (-4 * M_PI * M_PI));
 
     return idct_out;
 }
@@ -238,18 +235,13 @@ void cuda_phase_unwrap(cv::cuda::GpuMat &img) {
     auto &error = g_alg_env.t_mats->error;
 
     phi1 = delta_phi(img);
-    cv::cuda::subtract(phi1, cuda_mean(phi1), phi1);
-    cv::cuda::add(phi1, cuda_mean(img), phi1);
-
     cv::cuda::subtract(phi1, img, k1);
     cuda_round(k1, k1);
     cv::cuda::add(img, k1, phi2);
 
-    for (auto i = 0; i < 100; i++) {
+    for (auto i = 0; i < 1; i++) {
         cv::cuda::subtract(phi2, phi1, error);
-        cv::cuda::subtract(phi1, cuda_mean(phi1), phi1);
         cv::cuda::add(phi1, delta_phi(error), phi1);
-        cv::cuda::add(phi1, cuda_mean(phi2), phi1);
 
         cv::cuda::subtract(phi1, img, k1);
         cuda_round(k1, k1);
