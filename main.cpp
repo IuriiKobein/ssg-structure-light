@@ -221,10 +221,13 @@ cv::Mat iLaplacian(cv::Mat &img) {
 
 }  // namespace
 
+
+// command to run ./build/3dr 1024 1024 4 test_images/lf/ref test_images/lf/phase test_images/hf/ref test_images/hf/phase
 int main(int argc, char *argv[]) {
     int h, w, c;
+    auto mode = (argc == 6) ? 1 : 2;
 
-    if (argc == 6) {
+    if (argc == 6 || argc == 8) {
         h = atoi(argv[1]);
         w = atoi(argv[2]);
         c = atoi(argv[3]);
@@ -234,25 +237,36 @@ int main(int argc, char *argv[]) {
         c = 4;
     }
 
-    auto srcs_u8 = cuda_imgs_from_dir_load(argv[5]);
-    auto refs_u8 = cuda_imgs_from_dir_load(argv[4]);
+    structure_light_alg sla(cv::Size(h, w), mode);
+    
+    std::vector<cv::cuda::GpuMat> srcs_u8;
+    std::vector<cv::cuda::GpuMat> refs_u8;
 
-    structure_light_alg sla(cv::Size(h, w));
-    sla.ref_phase_compute(refs_u8);
+    for (int i = 0; i < mode; i++){
+        srcs_u8 = cuda_imgs_from_dir_load(argv[2*i+5]);
+        refs_u8 = cuda_imgs_from_dir_load(argv[2*i+4]);
+        sla.ref_phase_compute(refs_u8, i);
+        sla.obj_phase_compute(srcs_u8, i);        
+    }
 
-    auto out = sla.compute_3d_reconstruction(srcs_u8);
-    out = sla.compute_3d_reconstruction(srcs_u8);
+    auto out = sla.compute_3d_reconstruction(mode);
+    out = sla.compute_3d_reconstruction(mode);
 
     int i = c;
     while (i--) {
         auto ts = std::chrono::high_resolution_clock::now();
-        out = sla.compute_3d_reconstruction(srcs_u8);
+        //for (int i = 0; i < mode; i++){
+        //    sla.obj_phase_compute(srcs_u8, i);        
+        //}
+        out = sla.compute_3d_reconstruction(mode);
         auto te = std::chrono::high_resolution_clock::now();
         std::cout << std::chrono::duration_cast<std::chrono::microseconds>(te -
                                                                            ts)
                          .count()
                   << std::endl;
+        
     }
+
     img_show("cuda", out);
     cv::waitKey(0);
 

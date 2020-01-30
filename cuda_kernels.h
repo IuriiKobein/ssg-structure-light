@@ -31,3 +31,7 @@ void cuda_delta_phi_mult_sub_inplace(cv::cuda::GpuMat &d_in1,
                                      const cv::cuda::GpuMat &d_in2,
                                      const cv::cuda::GpuMat &d_cos_f,
                                      const cv::cuda::GpuMat &d_sin_f);
+
+void cuda_wrap(cv::cuda::GpuMat &x);
+void cuda_temporal_unwrap(cv::cuda::GpuMat &x, cv::cuda::GpuMat &y, 
+                          cv::cuda::GpuMat &z, float scale);

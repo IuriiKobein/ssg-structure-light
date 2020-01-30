@@ -9,13 +9,15 @@
 
 class structure_light_alg {
    public:
-    structure_light_alg(cv::Size size);
+    structure_light_alg(cv::Size size, int flag);
     ~structure_light_alg();
     structure_light_alg& operator=(const structure_light_alg&) = delete;
     structure_light_alg& operator=(structure_light_alg&&) = delete;
 
-    int ref_phase_compute(const std::vector<cv::cuda::GpuMat>& imgs);
-    cv::Mat compute_3d_reconstruction(const std::vector<cv::cuda::GpuMat>& imgs);
+    int ref_phase_compute(const std::vector<cv::cuda::GpuMat>& imgs, int i);
+    int obj_phase_compute(const std::vector<cv::cuda::GpuMat>& imgs, int i);
+
+    cv::Mat compute_3d_reconstruction(int mode);
 
    private:
     class sl_alg_impl;

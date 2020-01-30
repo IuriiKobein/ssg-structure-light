@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.0)
 project(OpenCVProject)
 set(CMAKE_CXX_STANDARD 17)
-
+set(CMAKE_CUDA_COMPILER /usr/local/cuda-10.2/bin/nvcc)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -g -O2")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 enable_language("CUDA")
+
 
 find_package(OpenCV)
 

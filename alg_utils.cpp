@@ -41,6 +41,19 @@ std::vector<cv::cuda::GpuMat> cuda_imgs_alloc(std::size_t num, cv::Size size,
     return d_imgs;
 }
 
+std::vector<cv::cuda::GpuMat> cuda_imgs_alloc_type(int flag, cv::Size size,
+                                              int type) {
+    std::vector<cv::cuda::GpuMat> d_imgs;
+
+    d_imgs.reserve(flag);
+
+    for (auto i = 0ul; i < flag; ++i) {
+        d_imgs.emplace_back(size, type);
+    }
+
+    return d_imgs;
+}
+
 std::vector<cv::cuda::GpuMat> cuda_imgs_load(
     const std::vector<std::string> &path_list) {
     auto h_imgs = host_imgs_load(path_list);

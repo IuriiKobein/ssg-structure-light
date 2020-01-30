@@ -37,48 +37,61 @@ void cuda_phase_compute(const std::vector<cv::cuda::GpuMat>& src,
 
 class structure_light_alg::sl_alg_impl {
    public:
-    sl_alg_impl(cv::Size size)
-        : _phases(cuda_imgs_alloc(4, size, CV_32F)),
-          _src_phase(cv::cuda::GpuMat(size, CV_32F)),
-          _ref_phase(cv::cuda::GpuMat(size, CV_32F)),
+    sl_alg_impl(cv::Size size, float flag)
+        : _temp_phases(cuda_imgs_alloc(4, size, CV_32F)),
+          _src_phase(cuda_imgs_alloc_type(flag, size, CV_32F)),
+          _ref_phase(cuda_imgs_alloc_type(flag, size, CV_32F)),
           _cu_pu_alg(cuda_phase_unwrap_alg(size)),
           _filt(
               cv::cuda::createGaussianFilter(CV_32F, CV_32F, cv::Size(5, 5), 0))
 
     {}
 
-    int ref_phases_compute(const std::vector<cv::cuda::GpuMat>& imgs) {
-        cuda_phase_compute(imgs, _phases, _ref_phase, _filt);
+    int ref_phases_compute(const std::vector<cv::cuda::GpuMat>& imgs, int i) {
+
+        cuda_phase_compute(imgs, _temp_phases, _ref_phase[i], _filt);
         return 0;
     }
 
-    cv::Mat compute_3dr_impl(const std::vector<cv::cuda::GpuMat>& imgs) {
-        cuda_phase_compute(imgs, _phases, _src_phase, _filt);
+    int obj_phases_compute(const std::vector<cv::cuda::GpuMat>& imgs, int i) {
 
-        cv::cuda::subtract(_src_phase, _ref_phase, _src_phase);
+        cuda_phase_compute(imgs, _temp_phases, _src_phase[i], _filt);
+        cv::cuda::subtract(_src_phase[i], _ref_phase[i], _src_phase[i]);
+        return 0;
+    }
 
-        return _cu_pu_alg.compute(_src_phase);
+    cv::Mat compute_3dr_impl(int mode) {
+
+        if(mode == 1){
+            return _cu_pu_alg.gradient_unwrap(_src_phase[0]);
+        }else{
+            return _cu_pu_alg.temporal_unwrap(_src_phase[0], _src_phase[1], 20);
+        }
     }
 
    private:
-    std::vector<cv::cuda::GpuMat> _phases;
-    cv::cuda::GpuMat _src_phase;
-    cv::cuda::GpuMat _ref_phase;
+    std::vector<cv::cuda::GpuMat> _temp_phases;
+    std::vector<cv::cuda::GpuMat> _src_phase;
+    std::vector<cv::cuda::GpuMat> _ref_phase;
     cuda_phase_unwrap_alg _cu_pu_alg;
     cv::Ptr<cv::cuda::Filter> _filt;
 };
 
-structure_light_alg::structure_light_alg(cv::Size size)
-    : _pimpl(std::make_unique<sl_alg_impl>(size)) {}
+structure_light_alg::structure_light_alg(cv::Size size, int flag)
+    : _pimpl(std::make_unique<sl_alg_impl>(size, flag)) {}
 
 structure_light_alg::~structure_light_alg() = default;
 
 int structure_light_alg::ref_phase_compute(
-    const std::vector<cv::cuda::GpuMat>& imgs) {
-    return _pimpl->ref_phases_compute(imgs);
+    const std::vector<cv::cuda::GpuMat>& imgs, int i) {
+    return _pimpl->ref_phases_compute(imgs, i);
 }
 
-cv::Mat structure_light_alg::compute_3d_reconstruction(
-    const std::vector<cv::cuda::GpuMat>& imgs) {
-    return _pimpl->compute_3dr_impl(imgs);
+int structure_light_alg::obj_phase_compute(
+    const std::vector<cv::cuda::GpuMat>& imgs, int i) {
+    return _pimpl->obj_phases_compute(imgs, i);
+}
+
+cv::Mat structure_light_alg::compute_3d_reconstruction(int mode) {
+    return _pimpl->compute_3dr_impl(mode);
 }

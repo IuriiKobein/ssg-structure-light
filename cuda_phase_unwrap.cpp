@@ -165,7 +165,7 @@ cv::cuda::GpuMat &idct(cv::cuda::GpuMat &img) {
     const auto &idct_coeff = g_alg_env.c_mats->idct_f;
     const auto h = g_alg_env.c_mats->size.height;
 
-    //* 4. convert dft in to dct by twiddle factors*/
+    //* 1. convert dft in to dct by twiddle factors*/
     cuda_idft2idct_in_convert(img, idct_coeff, ifft_in);
 
     g_alg_env.idft->compute(ifft_in, ifft_in);
@@ -250,6 +250,17 @@ void cuda_phase_unwrap(cv::cuda::GpuMat &img) {
 
     img = phi2;
 }
+void cuda_temp_unwrap(cv::cuda::GpuMat &phase1, cv::cuda::GpuMat &phase2, float scale){
+    //add filering?
+
+    auto &phi = g_alg_env.t_mats->phi2;
+
+    cuda_wrap(phase1);
+    cuda_temporal_unwrap(phase1, phase2, phi, scale);
+
+    phase2 = phi;
+
+}
 }  // namespace
 
 class cuda_phase_unwrap_alg::cu_pu_impl {
@@ -269,11 +280,20 @@ class cuda_phase_unwrap_alg::cu_pu_impl {
         g_alg_env.idft = _idft.get();
     }
 
-    cv::Mat compute(cv::cuda::GpuMat &in) {
+    cv::Mat gradient_unwrap(cv::cuda::GpuMat &in) {
         cv::Mat out;
 
         cuda_phase_unwrap(in);
         in.download(out);
+
+        return out;
+    }
+
+    cv::Mat temporal_unwrap(cv::cuda::GpuMat &in1, cv::cuda::GpuMat &in2, float scale) {
+        cv::Mat out;
+
+        cuda_temp_unwrap(in1, in2, scale);
+        in2.download(out);
 
         return out;
     }
@@ -290,6 +310,10 @@ cuda_phase_unwrap_alg::cuda_phase_unwrap_alg(cv::Size size)
 
 cuda_phase_unwrap_alg::~cuda_phase_unwrap_alg() = default;
 
-cv::Mat cuda_phase_unwrap_alg::compute(cv::cuda::GpuMat &in) {
-    return _pimpl->compute(in);
+cv::Mat cuda_phase_unwrap_alg::gradient_unwrap(cv::cuda::GpuMat &in) {
+    return _pimpl->gradient_unwrap(in);
+}
+
+cv::Mat cuda_phase_unwrap_alg::temporal_unwrap(cv::cuda::GpuMat &in1, cv::cuda::GpuMat &in2, float scale) {
+    return _pimpl->temporal_unwrap(in1, in2, scale);
 }

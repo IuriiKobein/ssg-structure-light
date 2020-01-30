@@ -15,3 +15,5 @@ std::vector<cv::cuda::GpuMat> cuda_imgs_load(
 
 std::vector<cv::cuda::GpuMat> cuda_imgs_from_dir_load(const char *dir_path);
 
+std::vector<cv::cuda::GpuMat> cuda_imgs_alloc_type(int flag, cv::Size size,
+                                              int type);

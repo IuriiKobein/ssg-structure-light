@@ -10,8 +10,9 @@ class cuda_phase_unwrap_alg {
     cuda_phase_unwrap_alg(cv::Size size);
     ~cuda_phase_unwrap_alg();
 
-    cv::Mat compute(cv::cuda::GpuMat& in);
-
+    cv::Mat gradient_unwrap(cv::cuda::GpuMat& in);
+    cv::Mat temporal_unwrap(cv::cuda::GpuMat &in1, cv::cuda::GpuMat &in2, float scale);
+    
    private:
     class cu_pu_impl;
     std::unique_ptr<cu_pu_impl> _pimpl;

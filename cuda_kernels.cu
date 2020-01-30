@@ -28,8 +28,30 @@ static __global__ void cos(cv::cuda::PtrStepSzf x, cv::cuda::PtrStepSzf y) {
     y(j, i) = cos(x(j, i));
 }
 
+__device__ int sign(float x)
+{ 
+	int t = x<0 ? -1 : 0;
+	return x > 0 ? 1 : t;
+}
+
+static __global__ void wrap(cv::cuda::PtrStepSzf x) {
+    const int i = threadIdx.y;
+    const int j = blockIdx.y;
+
+    while(abs(x(j, i)) > M_PI){
+        x(j, i) -= sign(x(j, i)) * 2 * M_PI;
+    }
+}
+
 static __constant__ float pre = 0.5 / M_PI;
 static __constant__ float post = 2 * M_PI;
+
+static __global__ void temporal_unwrap(cv::cuda::PtrStepSzf x, cv::cuda::PtrStepSzf y, 
+                                 cv::cuda::PtrStepSzf z, float scale) {
+    const int i = threadIdx.y;
+    const int j = blockIdx.y;
+    z(j, i) = (rint((x(j, i)*scale - y(j, i)) * pre) * post + y(j, i));
+}
 
 static __global__ void round(cv::cuda::PtrStepSzf x, cv::cuda::PtrStepSzf y) {
     const int i = threadIdx.y;
@@ -173,4 +195,18 @@ void cuda_sin_cos(const cv::cuda::GpuMat &in, cv::cuda::GpuMat &sin_out,
     const dim3 grid(1, in.cols);
 
     sin_cos<<<grid, block>>>(in, sin_out, cos_out);
+}
+
+void cuda_temporal_unwrap(cv::cuda::GpuMat &x, cv::cuda::GpuMat &y, cv::cuda::GpuMat &z, float scale) {
+    const dim3 block(1, x.rows);
+    const dim3 grid(1, x.cols);
+
+    temporal_unwrap<<<grid, block>>>(x, y, z, scale);
+}
+
+void cuda_wrap(cv::cuda::GpuMat &x) {
+    const dim3 block(1, x.rows);
+    const dim3 grid(1, x.cols);
+
+    wrap<<<grid, block>>>(x);
 }
