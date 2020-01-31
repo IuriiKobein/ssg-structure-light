@@ -254,10 +254,11 @@ int main(int argc, char *argv[]) {
 
     int i = c;
     while (i--) {
+        for (int i = 0; i < mode; i++){
+            srcs_u8 = cuda_imgs_from_dir_load(argv[2*i+5]);
+            sla.obj_phase_compute(srcs_u8, i);        
+        }
         auto ts = std::chrono::high_resolution_clock::now();
-        //for (int i = 0; i < mode; i++){
-        //    sla.obj_phase_compute(srcs_u8, i);        
-        //}
         out = sla.compute_3d_reconstruction(mode);
         auto te = std::chrono::high_resolution_clock::now();
         std::cout << std::chrono::duration_cast<std::chrono::microseconds>(te -

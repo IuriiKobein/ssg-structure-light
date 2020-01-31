@@ -57,6 +57,7 @@ class structure_light_alg::sl_alg_impl {
 
         cuda_phase_compute(imgs, _temp_phases, _src_phase[i], _filt);
         cv::cuda::subtract(_src_phase[i], _ref_phase[i], _src_phase[i]);
+        
         return 0;
     }
 
