@@ -37,7 +37,7 @@ void cuda_phase_compute(const std::vector<cv::cuda::GpuMat>& src,
 
 class structure_light_alg::sl_alg_impl {
    public:
-    sl_alg_impl(cv::Size size, float flag)
+    sl_alg_impl(cv::Size size, int flag)
         : _temp_phases(cuda_imgs_alloc(4, size, CV_32F)),
           _src_phase(cuda_imgs_alloc_type(flag, size, CV_32F)),
           _ref_phase(cuda_imgs_alloc_type(flag, size, CV_32F)),
