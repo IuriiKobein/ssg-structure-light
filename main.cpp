@@ -1,5 +1,3 @@
-#include <cufft.h>
-#include <npp.h>
 #include <stdio.h>
 #include <algorithm>
 #include <chrono>
@@ -10,6 +8,7 @@
 #include <iomanip>
 #include <iostream>
 #include <iterator>
+#include <memory>
 #include <opencv2/core/mat.hpp>
 
 #include <opencv2/core.hpp>
@@ -22,68 +21,66 @@
 #include <opencv2/phase_unwrapping.hpp>
 
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #include <cxxopts.hpp>
 
 #include "alg_utils.hpp"
-#include "cl_alg.hpp"
+#include "sl_pcg_alg.hpp"
+#include "sl_tpu_alg.hpp"
 
 namespace {
-enum alg_type { PCG = 1, TEMPORAL_PHASE_UNWRAP = 2 };
+enum alg_type { PCG = 1, TPU = 2 };
 
-struct alg_env {
-    std::vector<cv::cuda::GpuMat> lf_img;
-    std::vector<cv::cuda::GpuMat> hf_img;
-};
+void alg_3dr_tpu_ref_upload(sl_alg& alg, cxxopts::ParseResult& input) {
+    auto lf_ref = cuda_imgs_from_dir_load(input["lf_ref"].as<std::string>());
+    auto hf_ref = cuda_imgs_from_dir_load(input["hf_ref"].as<std::string>());
 
-void alg_3dr_temporal_pu_ref_upload(structure_light_alg& alg,
-                                    cxxopts::ParseResult& input, alg_env& env) {
-    env.lf_img =
-        cuda_imgs_from_dir_load(input["lf_ref"].as<std::string>().c_str());
-    env.hf_img =
-        cuda_imgs_from_dir_load(input["hf_ref"].as<std::string>().c_str());
-
-    alg.ref_phase_compute(env.lf_img, 0);
-    alg.ref_phase_compute(env.hf_img, 1);
+    lf_ref.insert(lf_ref.end(), std::make_move_iterator(lf_ref.begin()),
+                  std::make_move_iterator(hf_ref.end()));
+    alg.ref_phase_compute(lf_ref);
 }
 
-void alg_3dr_temporal_pu_src_upload(structure_light_alg& alg,
-                                    cxxopts::ParseResult& input, alg_env& env) {
-    env.lf_img =
-        cuda_imgs_from_dir_load(input["lf_tar"].as<std::string>().c_str());
-    env.hf_img =
-        cuda_imgs_from_dir_load(input["hf_tar"].as<std::string>().c_str());
+void alg_3dr_tpu_obj_upload(sl_alg& alg, cxxopts::ParseResult& input) {
+    auto lf_obj = cuda_imgs_from_dir_load(input["lf_obj"].as<std::string>());
+    auto hf_obj = cuda_imgs_from_dir_load(input["hf_obj"].as<std::string>());
 
-    alg.obj_phase_compute(env.lf_img, 0);
-    alg.obj_phase_compute(env.hf_img, 1);
+    lf_obj.insert(lf_obj.end(), std::make_move_iterator(lf_obj.begin()),
+                  std::make_move_iterator(hf_obj.end()));
+    alg.obj_phase_compute(lf_obj);
 }
 
-void alg_3dr_pcg_pu_ref_upload(structure_light_alg& alg,
-                               cxxopts::ParseResult& input, alg_env& env) {
-    env.hf_img =
-        cuda_imgs_from_dir_load(input["hf_ref"].as<std::string>().c_str());
+void alg_3dr_pcg_pu_ref_upload(sl_alg& alg, cxxopts::ParseResult& input) {
+    auto hf_img = cuda_imgs_from_dir_load(input["hf_ref"].as<std::string>());
 
-    alg.ref_phase_compute(env.hf_img, 0);
+    alg.ref_phase_compute(hf_img);
 }
 
-void alg_3dr_pcg_pu_src_upload(structure_light_alg& alg,
-                               cxxopts::ParseResult& input, alg_env& env) {
-    env.hf_img =
-        cuda_imgs_from_dir_load(input["hf_tar"].as<std::string>().c_str());
+void alg_3dr_pcg_pu_obj_upload(sl_alg& alg, cxxopts::ParseResult& input) {
+    auto hf_obj = cuda_imgs_from_dir_load(input["hf_obj"].as<std::string>());
 
-    alg.obj_phase_compute(env.hf_img, 0);
+    alg.obj_phase_compute(hf_obj);
 }
 
-void alg_3dr_imgs_upload(structure_light_alg& alg, cxxopts::ParseResult& input,
-                         alg_env& env, int type) {
-    if (type == TEMPORAL_PHASE_UNWRAP) {
-        alg_3dr_temporal_pu_ref_upload(alg, input, env);
-        alg_3dr_temporal_pu_src_upload(alg, input, env);
+void alg_3dr_imgs_upload(sl_alg& alg, cxxopts::ParseResult& input, int type) {
+    if (type == TPU) {
+        alg_3dr_tpu_ref_upload(alg, input);
+        alg_3dr_tpu_obj_upload(alg, input);
     } else if (type == PCG) {
-        alg_3dr_pcg_pu_ref_upload(alg, input, env);
-        alg_3dr_pcg_pu_src_upload(alg, input, env);
+        alg_3dr_pcg_pu_ref_upload(alg, input);
+        alg_3dr_pcg_pu_obj_upload(alg, input);
     }
+}
+
+std::unique_ptr<sl_alg> sl_alg_create(int type, cv::Size size) {
+    if (type == PCG) {
+        return std::make_unique<sl_pcg_alg>(size);
+    } else if (type == TPU) {
+        return std::make_unique<sl_tpu_alg>(size);
+    }
+
+    return nullptr;
 }
 }  // namespace
 
@@ -101,26 +98,25 @@ int main(int argc, char* argv[]) {
             cxxopts::value<int>(t))("lf_ref",
                                     "path to low freq reference images",
                                     cxxopts::value<std::string>())(
-            "lf_tar", "path to low freq target images",
+            "lf_obj", "path to low freq target images",
             cxxopts::value<std::string>())("hf_ref",
                                            "path to high freq reference images",
                                            cxxopts::value<std::string>())(
-            "hf_tar", "path to high freq target images",
+            "hf_obj", "path to high freq target images",
             cxxopts::value<std::string>())(
             "c, counter", "number of repetitions", cxxopts::value<int>(c));
 
         auto result = opt.parse(argc, argv);
 
-        alg_env env;
-        structure_light_alg sla(cv::Size(h, w), t);
-        alg_3dr_imgs_upload(sla, result, env, t);
+        auto alg = sl_alg_create(t, {h, w});
+        alg_3dr_imgs_upload(*alg, result, t);
 
-        auto out = sla.compute_3d_reconstruction(t);
+        auto out = alg->compute_3d_reconstruction();
 
         int i = c;
         while (i--) {
             auto ts = std::chrono::high_resolution_clock::now();
-            out = sla.compute_3d_reconstruction(t);
+            out = alg->compute_3d_reconstruction();
             auto te = std::chrono::high_resolution_clock::now();
             std::cout << std::chrono::duration_cast<std::chrono::microseconds>(
                              te - ts)
