@@ -54,8 +54,8 @@ class sl_tpu_alg::alg_impl {
     int ref_phase_compute(const std::vector<cv::cuda::GpuMat>& hf_refs) {
         auto it = std::begin(hf_refs);
 
-        cuda_phase_compute(it, (it + 4), _temp_phases, *_filt, _lf_ref_phase);
-        cuda_phase_compute((it+4), (it + 8), _temp_phases, *_filt, _hf_ref_phase);
+        cuda_phase_compute(it, (it + 4), _temp_phases, *_filt, _lf_ref_phase[0]);
+        cuda_phase_compute((it+4), (it + 8), _temp_phases, *_filt, _hf_ref_phase[0]);
 
         return 0;
     }
@@ -63,24 +63,24 @@ class sl_tpu_alg::alg_impl {
     int obj_phase_compute(const std::vector<cv::cuda::GpuMat>& hf_objs) {
         auto it = std::begin(hf_objs);
 
-        cuda_phase_compute(it, (it + 4), _temp_phases, *_filt, _lf_ref_phase);
-        cv::cuda::subtract(_hf_obj_phase, _hf_ref_phase, _hf_obj_phase);
+        cuda_phase_compute(it, (it + 4), _temp_phases, *_filt, _lf_ref_phase[0]);
+        cv::cuda::subtract(_hf_obj_phase, _hf_ref_phase, _hf_obj_phase[0]);
 
-        cuda_phase_compute((it+4), (it + 8), _temp_phases, *_filt, _hf_ref_phase);
-        cv::cuda::subtract(_hf_obj_phase, _hf_ref_phase, _hf_obj_phase);
+        cuda_phase_compute((it+4), (it + 8), _temp_phases, *_filt, _hf_ref_phase[0]);
+        cv::cuda::subtract(_hf_obj_phase, _hf_ref_phase, _hf_obj_phase[0]);
         return 0;
     }
 
     cv::Mat compute_3dr_impl() {
-        return _cu_pu_alg.temporal_unwrap(_lf_obj_phase, _hf_obj_phase, 20);
+        return _cu_pu_alg.temporal_unwrap(_lf_obj_phase[0], _hf_obj_phase[0], 20);
     }
 
    private:
     std::vector<cv::cuda::GpuMat> _temp_phases;
-    cv::cuda::GpuMat _lf_obj_phase;
-    cv::cuda::GpuMat _hf_obj_phase;
-    cv::cuda::GpuMat _lf_ref_phase;
-    cv::cuda::GpuMat _hf_ref_phase;
+    std::vector<cv::cuda::GpuMat> _lf_obj_phase;
+    std::vector<cv::cuda::GpuMat> _hf_obj_phase;
+    std::vector<cv::cuda::GpuMat> _lf_ref_phase;
+    std::vector<cv::cuda::GpuMat> _hf_ref_phase;
     cuda_phase_unwrap_alg _cu_pu_alg;
     cv::Ptr<cv::cuda::Filter> _filt;
 };

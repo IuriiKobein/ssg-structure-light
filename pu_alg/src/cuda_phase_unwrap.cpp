@@ -96,7 +96,7 @@ alg_const_mats alg_make_const_mat(cv::Size size) {
         }
     }
 
-    return {size, dct_f, idct_f, laplacian };
+    return {size, dct_f, idct_f, laplacian};
 }
 
 alg_tmp_mats alg_make_tmp_mat(cv::Size size) {
@@ -124,7 +124,7 @@ alg_tmp_mats alg_make_tmp_mat(cv::Size size) {
     return mats;
 }
 
-void cuda_dct2(cv::cuda::GpuMat &img, cv::cuda::GpuMat& out) {
+void cuda_dct2(cv::cuda::GpuMat &img, cv::cuda::GpuMat &out) {
     /* 0. extract preallocated contstant and temp vars */
     auto &fft_in = g_alg_env.t_mats->doubled_mat;
     auto &fft_out = g_alg_env.t_mats->fft_out;
@@ -172,7 +172,7 @@ cv::cuda::GpuMat &idct(cv::cuda::GpuMat &img) {
     return ca;
 }
 
-void cuda_idct2(cv::cuda::GpuMat &img, cv::cuda::GpuMat& out) {
+void cuda_idct2(cv::cuda::GpuMat &img, cv::cuda::GpuMat &out) {
     out.release();
 
     cv::cuda::transpose(idct(img), out);
@@ -188,7 +188,7 @@ void cuda_laplacian(cv::cuda::GpuMat &img, cv::cuda::GpuMat &out) {
     cuda_idct2(ca, out);
 }
 
-void cudaiLaplacian(cv::cuda::GpuMat &img, cv::cuda::GpuMat& out) {
+void cudaiLaplacian(cv::cuda::GpuMat &img, cv::cuda::GpuMat &out) {
     auto &ca = g_alg_env.t_mats->ca;
     const auto &l_grid = g_alg_env.c_mats->laplacian;
 
@@ -197,7 +197,7 @@ void cudaiLaplacian(cv::cuda::GpuMat &img, cv::cuda::GpuMat& out) {
     cuda_idct2(ca, out);
 }
 
-void delta_phi(cv::cuda::GpuMat &img, cv::cuda::GpuMat& out) {
+void delta_phi(cv::cuda::GpuMat &img, cv::cuda::GpuMat &out) {
     auto &img_sin = g_alg_env.t_mats->img_sin;
     auto &img_cos = g_alg_env.t_mats->img_cos;
     auto &a1 = g_alg_env.t_mats->a1;
@@ -236,8 +236,9 @@ void cuda_phase_unwrap(cv::cuda::GpuMat &img) {
 
     img = phi2;
 }
-void cuda_temp_unwrap(cv::cuda::GpuMat &phase1, cv::cuda::GpuMat &phase2, float scale){
-    //add filering?
+void cuda_temp_unwrap(cv::cuda::GpuMat &phase1, cv::cuda::GpuMat &phase2,
+                      float scale) {
+    // add filering?
 
     auto &phi = g_alg_env.t_mats->phi2;
 
@@ -245,7 +246,6 @@ void cuda_temp_unwrap(cv::cuda::GpuMat &phase1, cv::cuda::GpuMat &phase2, float 
     cuda_temporal_unwrap(phase1, phase2, phi, scale);
 
     phase2 = phi;
-
 }
 }  // namespace
 
@@ -275,7 +275,8 @@ class cuda_phase_unwrap_alg::cu_pu_impl {
         return out;
     }
 
-    cv::Mat temporal_unwrap(cv::cuda::GpuMat &in1, cv::cuda::GpuMat &in2, float scale) {
+    cv::Mat temporal_unwrap(cv::cuda::GpuMat &in1, cv::cuda::GpuMat &in2,
+                            float scale) {
         cv::Mat out;
 
         cuda_temp_unwrap(in1, in2, scale);
@@ -300,6 +301,8 @@ cv::Mat cuda_phase_unwrap_alg::gradient_unwrap(cv::cuda::GpuMat &in) {
     return _pimpl->gradient_unwrap(in);
 }
 
-cv::Mat cuda_phase_unwrap_alg::temporal_unwrap(cv::cuda::GpuMat &in1, cv::cuda::GpuMat &in2, float scale) {
+cv::Mat cuda_phase_unwrap_alg::temporal_unwrap(cv::cuda::GpuMat &in1,
+                                               cv::cuda::GpuMat &in2,
+                                               float scale) {
     return _pimpl->temporal_unwrap(in1, in2, scale);
 }

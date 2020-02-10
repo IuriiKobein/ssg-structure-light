@@ -37,7 +37,7 @@ void alg_3dr_tpu_ref_upload(sl_alg& alg, cxxopts::ParseResult& input) {
     auto lf_ref = cuda_imgs_from_dir_load(input["lf_ref"].as<std::string>());
     auto hf_ref = cuda_imgs_from_dir_load(input["hf_ref"].as<std::string>());
 
-    lf_ref.insert(lf_ref.end(), std::make_move_iterator(lf_ref.begin()),
+    lf_ref.insert(lf_ref.end(), std::make_move_iterator(hf_ref.begin()),
                   std::make_move_iterator(hf_ref.end()));
     alg.ref_phase_compute(lf_ref);
 }
@@ -46,7 +46,7 @@ void alg_3dr_tpu_obj_upload(sl_alg& alg, cxxopts::ParseResult& input) {
     auto lf_obj = cuda_imgs_from_dir_load(input["lf_obj"].as<std::string>());
     auto hf_obj = cuda_imgs_from_dir_load(input["hf_obj"].as<std::string>());
 
-    lf_obj.insert(lf_obj.end(), std::make_move_iterator(lf_obj.begin()),
+    lf_obj.insert(lf_obj.end(), std::make_move_iterator(hf_obj.begin()),
                   std::make_move_iterator(hf_obj.end()));
     alg.obj_phase_compute(lf_obj);
 }
