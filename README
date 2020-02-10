@@ -1,0 +1,6 @@
+3d reconstruction algorithm based on structured light algotirhm using 2 different algorithm for phase unwraping:
+Preconditioned conjugate gradient (PCG) phase unwrap algorithm:
+./3dr -w 1024 -h 1024 -t 1 --hf_ref test_images/hf/ref/  --hf_obj test_images/hf/phase -c 1
+
+Temporary phase unwraping algotirm
+./3dr -w 1024 -h 1024 -t 2 --lf_ref test_images/lf/ref/ --lf_obj test_images/lf/phase/   --hf_ref test_images/hf/ref/  --hf_obj test_images/hf/phase -c 1
