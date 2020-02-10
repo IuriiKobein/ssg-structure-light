@@ -41,46 +41,47 @@ class sl_tpu_alg::alg_impl {
    public:
     alg_impl(cv::Size size)
         : _temp_phases(cuda_imgs_alloc(4, size, CV_32F)),
-          _lf_obj_phase(cuda_imgs_alloc(1, size, CV_32F)),
-          _hf_obj_phase(cuda_imgs_alloc(1, size, CV_32F)),
-          _lf_ref_phase(cuda_imgs_alloc(1, size, CV_32F)),
-          _hf_ref_phase(cuda_imgs_alloc(1, size, CV_32F)),
+          _lf_obj_phase(cuda_img_alloc(size, CV_32F)),
+          _hf_obj_phase(cuda_img_alloc(size, CV_32F)),
+          _lf_ref_phase(cuda_img_alloc(size, CV_32F)),
+          _hf_ref_phase(cuda_img_alloc(size, CV_32F)),
           _cu_pu_alg(cuda_phase_unwrap_alg(size)),
           _filt(
               cv::cuda::createGaussianFilter(CV_32F, CV_32F, cv::Size(5, 5), 0))
 
     {}
 
-    int ref_phase_compute(const std::vector<cv::cuda::GpuMat>& hf_refs) {
-        auto it = std::begin(hf_refs);
+    int ref_phase_compute(const std::vector<cv::cuda::GpuMat>& refs) {
+        auto it = std::begin(refs);
 
-        cuda_phase_compute(it, (it + 4), _temp_phases, *_filt, _lf_ref_phase[0]);
-        cuda_phase_compute((it+4), (it + 8), _temp_phases, *_filt, _hf_ref_phase[0]);
+        cuda_phase_compute(it, (it + 4), _temp_phases, *_filt, _lf_ref_phase);
+        cuda_phase_compute((it+4), (it + 8), _temp_phases, *_filt, _hf_ref_phase);
 
         return 0;
     }
 
-    int obj_phase_compute(const std::vector<cv::cuda::GpuMat>& hf_objs) {
-        auto it = std::begin(hf_objs);
+    int obj_phase_compute(const std::vector<cv::cuda::GpuMat>& objs) {
+        auto it = std::begin(objs);
 
-        cuda_phase_compute(it, (it + 4), _temp_phases, *_filt, _lf_ref_phase[0]);
-        cv::cuda::subtract(_hf_obj_phase, _hf_ref_phase, _hf_obj_phase[0]);
+        cuda_phase_compute(it, it + 4, _temp_phases, *_filt, _lf_obj_phase);
+        cuda_phase_compute(it + 4, it + 8, _temp_phases, *_filt, _hf_obj_phase);
 
-        cuda_phase_compute((it+4), (it + 8), _temp_phases, *_filt, _hf_ref_phase[0]);
-        cv::cuda::subtract(_hf_obj_phase, _hf_ref_phase, _hf_obj_phase[0]);
+        cv::cuda::subtract(_lf_obj_phase, _lf_ref_phase, _lf_obj_phase);
+        cv::cuda::subtract(_hf_obj_phase, _hf_ref_phase, _hf_obj_phase);
+
         return 0;
     }
 
     cv::Mat compute_3dr_impl() {
-        return _cu_pu_alg.temporal_unwrap(_lf_obj_phase[0], _hf_obj_phase[0], 20);
+        return _cu_pu_alg.temporal_unwrap(_lf_obj_phase, _hf_obj_phase, 20);
     }
 
    private:
     std::vector<cv::cuda::GpuMat> _temp_phases;
-    std::vector<cv::cuda::GpuMat> _lf_obj_phase;
-    std::vector<cv::cuda::GpuMat> _hf_obj_phase;
-    std::vector<cv::cuda::GpuMat> _lf_ref_phase;
-    std::vector<cv::cuda::GpuMat> _hf_ref_phase;
+    cv::cuda::GpuMat _lf_obj_phase;
+    cv::cuda::GpuMat _hf_obj_phase;
+    cv::cuda::GpuMat _lf_ref_phase;
+    cv::cuda::GpuMat _hf_ref_phase;
     cuda_phase_unwrap_alg _cu_pu_alg;
     cv::Ptr<cv::cuda::Filter> _filt;
 };

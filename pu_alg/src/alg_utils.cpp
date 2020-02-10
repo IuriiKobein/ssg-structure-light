@@ -53,6 +53,11 @@ std::vector<cv::Mat> host_imgs_load(const std::vector<std::string> &path_list) {
     return imgs;
 }
 
+cv::cuda::GpuMat cuda_img_alloc(cv::Size size, int type)
+{
+    return cv::cuda::GpuMat(size, type);
+}
+
 std::vector<cv::cuda::GpuMat> cuda_imgs_alloc(std::size_t num, cv::Size size,
                                               int type) {
     std::vector<cv::cuda::GpuMat> d_imgs;

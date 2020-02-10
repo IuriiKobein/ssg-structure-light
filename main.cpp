@@ -104,9 +104,16 @@ int main(int argc, char* argv[]) {
                                            cxxopts::value<std::string>())(
             "hf_obj", "path to high freq target images",
             cxxopts::value<std::string>())(
-            "c, counter", "number of repetitions", cxxopts::value<int>(c));
+            "c, counter", "number of repetitions", cxxopts::value<int>(c))(
+            "help", "print help");
 
         auto result = opt.parse(argc, argv);
+
+        if (result.count("help"))
+        {
+            std::cout << opt.help() << std::endl;
+            return 0;
+        }
 
         auto alg = sl_alg_create(t, {h, w});
         alg_3dr_imgs_upload(*alg, result, t);
