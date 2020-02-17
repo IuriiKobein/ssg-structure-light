@@ -7,6 +7,9 @@ from scipy.signal import medfilt
 from skimage.restoration import unwrap_phase
 import cv2
 import numpy as np
+import sys
+import os
+import phase_unwrap as pu
 
 def display_plot(img, spectr, img2, ccol):
     magnitude_spectrum = 20*np.log(np.absolute(spectr))
@@ -54,64 +57,65 @@ def q_lpf(ref, img):
     #display_plot(img, fshift, img_back, ccol)
     return img_back
 
+def imgs_load(path):
+    imgs = []
+    files = []
+    for e in os.scandir(path):
+        if e.is_file() == False:
+            continue
+        files.append(e.path)
+    files = sorted(files)
+
+    for f in files:
+        print(f)
+        img = cv2.imread(f, cv2.IMREAD_GRAYSCALE)
+        gray = np.asarray(img, dtype="float32")
+        imgs.append(gray)
+
+    return imgs
+
+def compute_phase(refs, objs):
+    ref_phase = np.arctan2((refs[3] - refs[1]), (refs[0] - refs[2]))
+    obj_phase = np.arctan2((objs[3] - objs[1]), (objs[0] - objs[2]))
+
+    return obj_phase - ref_phase
+
 if __name__ == '__main__':
-    imgs_path = '/home/rnd/Pictures/dragon/images'
-    refs_files = [imgs_path + '/31_ref1.png',imgs_path +  '/31_ref2.png',imgs_path +  '/31_ref3.png',imgs_path +  '/31_ref4.png']
-    refs = []
-    for filename in refs_files:
-        img = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
-        gray = np.asarray(img, dtype="float32")
-        #ref = gray - lpf(gray)
-        refs.append(gray)
 
-    images_files = [imgs_path + '/31_phase1.png',imgs_path + '/31_phase2.png', imgs_path +'/31_phase3.png', imgs_path +'/31_phase4.png']
-    images = []
-    for filename in images_files:
-        img = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
-        gray = np.asarray(img, dtype="float32")
-        #ref = gray - lpf(gray)
-        images.append(gray)
+    hf_refs_path = sys.argv[1]
+    hf_objs_path = sys.argv[2]
 
-    images_x = []
-    for i in range(len(images)):
-        images_x.append(images[i]) #- q_lpf(refs[i], images[i]))
+    refs = imgs_load(hf_refs_path)
+    objs = imgs_load(hf_objs_path)
 
-    a = sum(images_x) / 4
-    filter_img = []
-    for img in images_x:
-        #img = img - a
-        filter_img.append(img)
-
+    #for i in range(4):
+    #    refs[i] = lpf(refs[i])
+    #    objs[i] = lpf(objs[i])
     #compute wrapped phase
-    ref_phase = np.arctan2((refs[3] - refs[1]),(refs[0] - refs[2]))
-    test_phase = np.arctan2((filter_img[3] - filter_img[1]),(filter_img[0] - filter_img[2]))
 
-    phase1 = test_phase - ref_phase
+    phase = compute_phase(refs, objs)
 
-    np.savetxt('phase1.txt', phase1, fmt='%f')
+    unwraped_phase = pu.skimage_unwrap(phase)
+    plt.imshow(unwraped_phase, cmap='gray')
     plt.show()
 
-    #phase1 = phase1 - np.mean(phase1)
-    #plt.imshow(test_phase, cmap='gray')
-    #plt.show()
+    unwraped_phase = pu.iterative_unwrap(phase)
+    plt.imshow(unwraped_phase, cmap='gray')
+    plt.show()
 
-    #plt.imshow(test_phase - ref_phase, cmap='gray')
-    #plt.show()
-    #np.save('test_data.npy', test_phase - ref_phase)
+    if len(sys.argv) == 3:
+        sys.exit(0)
 
-    #matplotlib.image.imsave("output.jpg", phase, cmap='gray')
+    lf_refs_path = sys.argv[3]
+    lf_objs_path = sys.argv[4]
 
+    lf_refs = imgs_load(lf_refs_path)
+    lf_objs = imgs_load(lf_objs_path)
 
-    unwraped_phase = unwrap_phase(phase1)
-    plt.imshow(-unwraped_phase, cmap='gray')
+    lf_phase = compute_phase(lf_refs, lf_objs)
+
+    unwraped_phase = pu.temporal_unwrap(lf_phase, phase, 30, 0.25 )
+    plt.imshow(unwraped_phase, cmap='gray')
     plt.show()
 
 
-    fig = plt.figure()
-    ax = fig.add_subplot(projection='3d')
-    Y = np.arange(0, 1024, 1)
-    X = np.arange(0, 1024, 1)
-    X, Y = np.meshgrid(X, Y)
-    surf = ax.plot_surface(X, Y, -unwraped_phase, cmap='gray',
-                           linewidth=0, antialiased=False)
-    plt.show()

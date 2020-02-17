@@ -22,7 +22,7 @@ def laplacian(a):
     output = idct2(ca)
     output = - 4 *np.pi*np.pi*output/(a.shape[0]*a.shape[1])
     return output
-    
+
 def ilaplacian(a):
     ca = np.zeros(a.shape)
 
@@ -48,8 +48,8 @@ def wrap(x):
 wrap = np.vectorize(wrap)
 
 def iterative_unwrap(phase):
-    phase = wrap(phase)
-    phi1 = ilaplacian(delta_phi(phase)) 
+    #phase = wrap(phase)
+    phi1 = ilaplacian(delta_phi(phase))
     k1 = np.around((phi1 - phase)*0.5/np.pi)
     phi2 = phase + 2*k1*np.pi
     for i in range(1,10):
@@ -61,8 +61,6 @@ def iterative_unwrap(phase):
         if (np.array_equal(k1, k2)):
             break
         k1 = k2
-        plt.imshow(phi2)
-        plt.show()
     return phi2
 
 def temporal_unwrap(phase1, phase2, scale, real_scale):
@@ -72,7 +70,7 @@ def temporal_unwrap(phase1, phase2, scale, real_scale):
 
     k1 = np.around((scale*phase1 - phase2)*0.5/np.pi)
     phi2 = phase2 + 2*k1*np.pi
-  
+
     phi2 = phi2*real_scale
     return phi2
 
@@ -88,7 +86,7 @@ def compute_error(phase, object_type):
 
     object3D = np.empty(phi2.shape)
 
-    if (object_type == 'cube'):    
+    if (object_type == 'cube'):
         for i in range(phi2.shape[0]):
             for j in range(phi2.shape[1]):
                 if(np.abs(x[i, j]) <= 2.5 and np.abs(y[i, j]) <= 2.5):
@@ -101,9 +99,9 @@ def compute_error(phase, object_type):
                 if((2.5*2.5 - x[i, j]*x[i, j] - y[i, j]*y[i, j]) >= 0):
                     object3D[i,j] = np.sqrt(2.5*2.5 - x[i, j]*x[i, j] - y[i, j]*y[i, j])
                 else:
-                    object3D[i, j] = 0	
+                    object3D[i, j] = 0
 
-    
+
     rel_error = (object3D-phi2)/object3D
     rel_error[rel_error == np.inf] = 0
     rel_error[rel_error != rel_error] = 0
