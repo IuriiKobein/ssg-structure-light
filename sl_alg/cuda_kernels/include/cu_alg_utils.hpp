@@ -21,4 +21,4 @@ std::vector<cv::cuda::GpuMat> cuda_imgs_from_dir_load(
 void cuda_phase_compute(const std::vector<cv::Mat> &src,
                         std::vector<cv::Mat> &tmp,
                         std::vector<cv::cuda::GpuMat> &cu_tmp,
-                        cv::cuda::GpuMat &out, cv::cuda::Filter &filt);
+                        cv::cuda::Filter &filt, cv::cuda::GpuMat &out);

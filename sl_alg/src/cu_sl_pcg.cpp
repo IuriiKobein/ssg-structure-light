@@ -16,7 +16,7 @@
 #include <opencv2/highgui.hpp>
 
 #include <string>
-#include <type_traits>
+#include <iostream>
 #include <vector>
 
 namespace {
@@ -223,7 +223,7 @@ void delta_phi(cv::cuda::GpuMat &img, cv::cuda::GpuMat &out) {
     cudaiLaplacian(a1, out);
 }
 
-void cuda_phase_unwrap(cv::cuda::GpuMat &img) {
+void cuda_pcg_phase_unwrap(cv::cuda::GpuMat &img) {
     auto &k1 = g_alg_env.t_mats->k1;
     auto &phi1 = g_alg_env.t_mats->phi1;
     auto &phi2 = g_alg_env.t_mats->phi2;
@@ -266,8 +266,14 @@ class cu_pu_pcg {
     cv::Mat phase_unwrap(cv::cuda::GpuMat &in) {
         cv::Mat out;
 
-        cuda_phase_unwrap(in);
+        auto ts = std::chrono::high_resolution_clock::now();
+        cuda_pcg_phase_unwrap(in);
         in.download(out);
+        auto te = std::chrono::high_resolution_clock::now();
+        std::cout << std::chrono::duration_cast<std::chrono::microseconds>(te -
+                                                                           ts)
+                         .count()
+                  << std::endl;
 
         return out;
     }
@@ -294,12 +300,12 @@ class cu_sl_pcg::cu_sl_pcg_impl {
     {}
 
     int ref_phase_compute(const std::vector<cv::Mat> &refs) {
-        cuda_phase_compute(refs, _tmp, _cu_tmp, _ref_phase, *_filt);
+        cuda_phase_compute(refs, _tmp, _cu_tmp, *_filt, _ref_phase);
         return 0;
     }
 
     cv::Mat depth_compute(const std::vector<cv::Mat> &objs) {
-        cuda_phase_compute(objs, _tmp, _cu_tmp, _obj_phase, *_filt);
+        cuda_phase_compute(objs, _tmp, _cu_tmp, *_filt, _obj_phase);
         cv::cuda::subtract(_obj_phase, _ref_phase, _obj_phase);
 
         return _alg.phase_unwrap(_obj_phase);
@@ -319,10 +325,20 @@ cu_sl_pcg::cu_sl_pcg(cv::Size size)
 
 cu_sl_pcg::~cu_sl_pcg() = default;
 
-int cu_sl_pcg::ref_phase_compute(const std::vector<cv::Mat> &ref_phases) {
-    return _pimpl->ref_phase_compute(ref_phases);
+int cu_sl_pcg::ref_phase_compute(const std::vector<cv::Mat> &refs) {
+    return _pimpl->ref_phase_compute(refs);
 }
 
-cv::Mat cu_sl_pcg::depth_compute(const std::vector<cv::Mat> &obj_phases) {
-    return _pimpl->depth_compute(obj_phases);
+cv::Mat cu_sl_pcg::depth_compute(const std::vector<cv::Mat> &objs) {
+    return _pimpl->depth_compute(objs);
+}
+
+int cu_sl_pcg::ref_phase_compute(const std::vector<cv::Mat> &,
+                                 const std::vector<cv::Mat> &) {
+    return -ENOTSUP;
+}
+
+cv::Mat cu_sl_pcg::depth_compute(const std::vector<cv::Mat> &,
+                                 const std::vector<cv::Mat> &) {
+    return cv::Mat();
 }

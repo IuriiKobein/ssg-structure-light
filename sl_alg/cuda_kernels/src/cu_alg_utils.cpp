@@ -113,7 +113,7 @@ void to_gpu_mat(const std::vector<cv::Mat> &src,
 void cuda_phase_compute(const std::vector<cv::Mat> &src,
                         std::vector<cv::Mat> &tmp,
                         std::vector<cv::cuda::GpuMat> &cu_tmp,
-                        cv::cuda::GpuMat &out, cv::cuda::Filter &filt) {
+                        cv::cuda::Filter &filt, cv::cuda::GpuMat &out) {
     to_float_scale<cv::Mat>(src, tmp);
     to_gpu_mat(tmp, cu_tmp);
 

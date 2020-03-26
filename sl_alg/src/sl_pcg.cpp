@@ -198,3 +198,13 @@ int sl_pcg::ref_phase_compute(const std::vector<cv::Mat> &ref_phases) {
 cv::Mat sl_pcg::depth_compute(const std::vector<cv::Mat> &obj_phases) {
     return _pimpl->depth_compute(obj_phases);
 }
+
+int sl_pcg::ref_phase_compute(const std::vector<cv::Mat> &,
+                                 const std::vector<cv::Mat> &) {
+    return -ENOTSUP;
+}
+
+cv::Mat sl_pcg::depth_compute(const std::vector<cv::Mat> &,
+                                 const std::vector<cv::Mat> &) {
+    return cv::Mat();
+}

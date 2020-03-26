@@ -1,6 +1,7 @@
 list(APPEND sl_alg_srcs
     ${CMAKE_CURRENT_LIST_DIR}/src/alg_utils.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/sl_pcg.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/sl_tpu.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/sl_alg_factory.cpp
 )
 
@@ -11,7 +12,8 @@ find_package(CUDA)
 if (CUDA_FOUND)
     add_subdirectory(cuda_kernels)
     list(APPEND sl_alg_srcs
-        ${CMAKE_CURRENT_LIST_DIR}/src/cu_sl_pcg.cpp)
+        ${CMAKE_CURRENT_LIST_DIR}/src/cu_sl_pcg.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/cu_sl_tpu.cpp)
     list(APPEND sl_alg_libs cuda_kern)
 endif(CUDA_FOUND)
 

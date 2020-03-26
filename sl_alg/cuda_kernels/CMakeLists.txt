@@ -1,3 +1,4 @@
+enable_language(CUDA)
 find_package(CUDA)
 find_package(OpenCV)
 

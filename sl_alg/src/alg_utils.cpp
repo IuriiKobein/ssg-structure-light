@@ -60,13 +60,14 @@ std::vector<cv::Mat> host_imgs_load(const std::vector<std::string> &path_list) {
 
     std::transform(
         std::begin(path_list), std::end(path_list), std::back_inserter(imgs),
-        [](const auto &p) { return cv::imread(p, cv::IMREAD_GRAYSCALE); });
+        [](const auto &p) {
+            return cv::imread(p, cv::IMREAD_GRAYSCALE);
+        });
 
     return imgs;
 }
 
-std::vector<cv::Mat> imgs_alloc(std::size_t num, cv::Size size, int type)
-{
+std::vector<cv::Mat> imgs_alloc(std::size_t num, cv::Size size, int type) {
     std::vector<cv::Mat> h_imgs;
     h_imgs.reserve(num);
 
@@ -91,3 +92,10 @@ void cpu_phase_compute(const std::vector<cv::Mat> &src, cv::Mat &out) {
     cpu_diff_atan(tmp, out);
 }
 
+void cv_round(cv::Mat &img) {
+    for (auto i = 0; i < img.rows; i++) {
+        for (auto j = 0; j < img.cols; j++) {
+            img.at<float>(i, j) = round(img.at<float>(i, j));
+        }
+    }
+}
