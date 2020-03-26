@@ -3,15 +3,6 @@
 #include <exception>
 #include <iostream>
 #include <memory>
-#include <opencv2/core/mat.hpp>
-
-#include <opencv2/core.hpp>
-#include <opencv2/core/cuda.hpp>
-#include <opencv2/core/types.hpp>
-#include <opencv2/cudaarithm.hpp>
-#include <opencv2/cudafilters.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgcodecs.hpp>
 
 #include <string>
 #include <type_traits>
@@ -104,7 +95,7 @@ int sla_run_once(int alg_type, sl_alg* alg, cxxopts::ParseResult& parse_res,
 // command to run ./build/3dr 1024 1024 test_images/lf/ref test_images/lf/phase
 // test_images/hf/ref test_images/hf/phase 4
 int main(int argc, char* argv[]) {
-    int h, w, c;
+    int h, w, c = 1;
     std::string m;
 
     try {

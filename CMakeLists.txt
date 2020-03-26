@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.13)
 
 set(proj_langs CXX)
 
-project(3d_reconstruction CUDA CXX)
+project(3d_reconstruction CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

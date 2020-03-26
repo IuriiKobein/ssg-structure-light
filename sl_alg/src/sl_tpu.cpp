@@ -4,9 +4,6 @@
 #include "sl_alg_factory.hpp"
 
 #include <opencv2/core.hpp>
-#include <opencv2/core/cuda.hpp>
-#include <opencv2/core/matx.hpp>
-#include <opencv2/cudafilters.hpp>
 
 #include <algorithm>
 #include <iostream>
