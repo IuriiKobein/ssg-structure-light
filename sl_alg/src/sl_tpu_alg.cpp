@@ -39,13 +39,13 @@ void cuda_phase_compute(Iter begin, Iter end,
 
 class sl_tpu_alg::alg_impl {
    public:
-    alg_impl(cv::Size size)
+    alg_impl(cv::Size size, tpu_params_t params)
         : _temp_phases(cuda_imgs_alloc(4, size, CV_32F)),
           _lf_obj_phase(cuda_img_alloc(size, CV_32F)),
           _hf_obj_phase(cuda_img_alloc(size, CV_32F)),
           _lf_ref_phase(cuda_img_alloc(size, CV_32F)),
           _hf_ref_phase(cuda_img_alloc(size, CV_32F)),
-          _cu_pu_alg(cuda_phase_unwrap_alg(size)),
+          _cu_pu_alg(cuda_phase_unwrap_alg(size, params)),
           _filt(
               cv::cuda::createGaussianFilter(CV_32F, CV_32F, cv::Size(5, 5), 0))
 
@@ -82,8 +82,8 @@ class sl_tpu_alg::alg_impl {
     cv::cuda::GpuMat _hf_obj_phase;
     cv::cuda::GpuMat _lf_ref_phase;
     cv::cuda::GpuMat _hf_ref_phase;
-    cuda_phase_unwrap_alg _cu_pu_alg;
     cv::Ptr<cv::cuda::Filter> _filt;
+    cuda_phase_unwrap_alg _cu_pu_alg;
 };
 
 sl_tpu_alg::sl_tpu_alg(cv::Size size)

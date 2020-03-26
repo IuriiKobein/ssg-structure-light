@@ -1,14 +1,19 @@
-#include "alg_utils.hpp"
-
-#include <opencv2/core/hal/interface.h>
-#include <experimental/filesystem>
-#include <iostream>
-#include <opencv2/imgcodecs.hpp>
-#include <string>
-
+#include "cu_alg_utils.hpp"
 #include "cuda_kernels.h"
 
+#include <cstdint>
+#include <experimental/filesystem>
+#include <iostream>
+#include <opencv2/core/cuda.hpp>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/core/types.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
+#include <string>
+
 namespace {
+
 std::vector<cv::cuda::GpuMat> cuda_imgs_from_dir_load_impl(
     const char *dir_path) {
     using namespace std::experimental;
@@ -27,19 +32,18 @@ std::vector<cv::cuda::GpuMat> cuda_imgs_from_dir_load_impl(
     return cuda_imgs_load(path_list);
 }
 
-}  // namespace
+template <typename MatType>
+static void to_float_scale(const std::vector<MatType> &src,
+                           std::vector<MatType> &dst) {
+    for (auto i = 0ul; i < src.size(); ++i) {
+        src[i].convertTo(dst[i], CV_32FC1, 1.0f / 255);
+    }
+}
 
 void img_show(const std::string title, cv::Mat &h_img) {
     cv::normalize(h_img, h_img, 0, 255, cv::NORM_MINMAX, CV_8U);
     cv::namedWindow(title, cv::WINDOW_NORMAL);
     cv::imshow(title, h_img);
-}
-
-void cuda_img_show(const std::string title, cv::cuda::GpuMat &d_img) {
-    cv::Mat h_img(d_img.size(), d_img.type());
-
-    d_img.download(h_img);
-    img_show(title, h_img);
 }
 
 std::vector<cv::Mat> host_imgs_load(const std::vector<std::string> &path_list) {
@@ -52,9 +56,17 @@ std::vector<cv::Mat> host_imgs_load(const std::vector<std::string> &path_list) {
 
     return imgs;
 }
+}  // namespace
 
-cv::cuda::GpuMat cuda_img_alloc(cv::Size size, int type)
-{
+void cuda_img_show(const std::string title, cv::cuda::GpuMat &d_img) {
+    cv::Mat h_img(d_img.size(), d_img.type());
+
+    d_img.download(h_img);
+    img_show(title, h_img);
+    cv::waitKey(0);
+}
+
+cv::cuda::GpuMat cuda_img_alloc(cv::Size size, int type) {
     return cv::cuda::GpuMat(size, type);
 }
 
@@ -82,8 +94,7 @@ std::vector<cv::cuda::GpuMat> cuda_imgs_load(
     return d_imgs;
 }
 
-std::vector<cv::cuda::GpuMat> cuda_imgs_from_dir_load(
-    const char *dir_path) {
+std::vector<cv::cuda::GpuMat> cuda_imgs_from_dir_load(const char *dir_path) {
     return cuda_imgs_from_dir_load_impl(dir_path);
 }
 
@@ -92,20 +103,21 @@ std::vector<cv::cuda::GpuMat> cuda_imgs_from_dir_load(
     return cuda_imgs_from_dir_load_impl(dir_path.c_str());
 }
 
-void to_float_scale(const std::vector<cv::cuda::GpuMat>& src,
-                    std::vector<cv::cuda::GpuMat>& dst) {
+void to_gpu_mat(const std::vector<cv::Mat> &src,
+                std::vector<cv::cuda::GpuMat> &dst) {
     for (auto i = 0ul; i < src.size(); ++i) {
-        src[i].convertTo(dst[i], dst[i].type(), 1.0f / 255);
+        dst[i].upload(src[i]);
     }
 }
 
-void cuda_phase_compute(const std::vector<cv::cuda::GpuMat>& src,
-                        std::vector<cv::cuda::GpuMat>& dst,
-                        cv::cuda::GpuMat& out, cv::cuda::Filter &filt) {
-    to_float_scale(src, dst);
-    std::for_each(std::begin(dst), std::end(dst),
-                  [&filt](auto& i) { filt.apply(i, i); });
-    cuda_diff_atan_inplace(dst, out);
+void cuda_phase_compute(const std::vector<cv::Mat> &src,
+                        std::vector<cv::Mat> &tmp,
+                        std::vector<cv::cuda::GpuMat> &cu_tmp,
+                        cv::cuda::GpuMat &out, cv::cuda::Filter &filt) {
+    to_float_scale<cv::Mat>(src, tmp);
+    to_gpu_mat(tmp, cu_tmp);
+
+    std::for_each(std::begin(cu_tmp), std::end(cu_tmp),
+                  [&filt](auto &img) { filt.apply(img, img); });
+    cuda_diff_atan_inplace(cu_tmp, out);
 }
-
-

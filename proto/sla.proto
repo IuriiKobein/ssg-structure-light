@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package sla;
+
+service tpu {
+  rpc _init(tpu_conf_req) returns (tpu_conf_res) {}
+  rpc _invoke(tpu_calc_req) returns (tpu_calc_res) {}
+}
+
+message tpu_conf_req {
+    int32 width = 1;
+    int32 height = 2;
+    int32 scale1 = 3;
+    int32 scale2 = 4;
+}
+
+message tpu_conf_res {
+    int32 status = 1;
+}
+
+message tpu_calc_req {
+  string ref_lf = 1;
+  string ref_hf = 2;
+  string obj_lf = 3;
+  string obj_hf = 4;
+}
+
+message tpu_calc_res {
+  string url_unwrap_phase = 1;
+}
