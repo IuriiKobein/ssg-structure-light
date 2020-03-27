@@ -45,7 +45,7 @@ class cu_sl_tpu::alg_impl {
 
     {}
 
-    int tpu_config_set(const tpu_params_t& params) {
+    int config_set(const tpu_params_t& params) {
         _params = params;
         return 0;
     }
@@ -85,6 +85,10 @@ cu_sl_tpu::cu_sl_tpu(cv::Size size)
     : _pimpl(std::make_unique<alg_impl>(size)) {}
 
 cu_sl_tpu::~cu_sl_tpu() = default;
+
+int cu_sl_tpu::config_set(const tpu_params_t& params) {
+    return _pimpl->config_set(params);
+}
 
 int cu_sl_tpu::ref_phase_compute(const std::vector<cv::Mat>& refs) {
     return -ENOTSUP;

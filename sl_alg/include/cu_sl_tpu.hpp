@@ -21,7 +21,7 @@ class cu_sl_tpu : public sl_alg {
     cu_sl_tpu(cv::Size size);
     ~cu_sl_tpu();
 
-    int tpu_config_set(const tpu_params_t &params);
+    int config_set(const tpu_params_t &params);
 
     virtual int ref_phase_compute(
         const std::vector<cv::Mat>& refs);

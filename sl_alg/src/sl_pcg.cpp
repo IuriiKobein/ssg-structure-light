@@ -127,14 +127,6 @@ cv::Mat delta_compute(cv::Mat &img, cv::Mat &grid) {
     return x1;
 }
 
-void cv_round(cv::Mat &img) {
-    for (auto i = 0; i < img.rows; i++) {
-        for (auto j = 0; j < img.cols; j++) {
-            img.at<float>(i, j) = round(img.at<float>(i, j));
-        }
-    }
-}
-
 cv::Mat pcg_phase_unwrap(cv::Mat &img) {
     cv::Mat phase1 = delta_compute(img, g_laplacian);
     cv::Mat error, k1, k2, phase2;

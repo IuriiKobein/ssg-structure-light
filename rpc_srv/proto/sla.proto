@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package sla;
+
+service tpu {
+  rpc _init(tpu_conf_req) returns (tpu_status_res) {}
+  rpc _ref_phase_compute(tpu_env_req) returns (tpu_status_res) {}
+  rpc _depth_compute(tpu_env_req) returns (depth_env_res) {}
+}
+
+message tpu_conf_req {
+    string impl = 1;
+    int32 width = 2;
+    int32 height = 3;
+    int32 freq_ratio = 4;
+    int32 real_scale = 5;
+}
+
+message tpu_status_res {
+    int32 status = 1;
+}
+
+message tpu_env_req {
+  repeated string lf_img = 1;
+  repeated string hf_img = 2;
+}
+
+message depth_env_res {
+  string url_unwrap_phase = 1;
+}
