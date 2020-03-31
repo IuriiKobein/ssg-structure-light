@@ -4,7 +4,7 @@
 
 class sl_pcg : public sl_alg {
    public:
-    sl_pcg(cv::Size size);
+    sl_pcg(const params_t& params);
     ~sl_pcg();
 
     virtual int ref_phase_compute(const std::vector<cv::Mat> &ref_phases);

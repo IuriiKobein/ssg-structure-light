@@ -55,24 +55,24 @@ struct TableStruct_sla_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_sla_2eproto;
 namespace sla {
-class tpu_calc_req;
-class tpu_calc_reqDefaultTypeInternal;
-extern tpu_calc_reqDefaultTypeInternal _tpu_calc_req_default_instance_;
-class tpu_calc_res;
-class tpu_calc_resDefaultTypeInternal;
-extern tpu_calc_resDefaultTypeInternal _tpu_calc_res_default_instance_;
+class depth_env_res;
+class depth_env_resDefaultTypeInternal;
+extern depth_env_resDefaultTypeInternal _depth_env_res_default_instance_;
 class tpu_conf_req;
 class tpu_conf_reqDefaultTypeInternal;
 extern tpu_conf_reqDefaultTypeInternal _tpu_conf_req_default_instance_;
-class tpu_conf_res;
-class tpu_conf_resDefaultTypeInternal;
-extern tpu_conf_resDefaultTypeInternal _tpu_conf_res_default_instance_;
+class tpu_env_req;
+class tpu_env_reqDefaultTypeInternal;
+extern tpu_env_reqDefaultTypeInternal _tpu_env_req_default_instance_;
+class tpu_status_res;
+class tpu_status_resDefaultTypeInternal;
+extern tpu_status_resDefaultTypeInternal _tpu_status_res_default_instance_;
 }  // namespace sla
 PROTOBUF_NAMESPACE_OPEN
-template<> ::sla::tpu_calc_req* Arena::CreateMaybeMessage<::sla::tpu_calc_req>(Arena*);
-template<> ::sla::tpu_calc_res* Arena::CreateMaybeMessage<::sla::tpu_calc_res>(Arena*);
+template<> ::sla::depth_env_res* Arena::CreateMaybeMessage<::sla::depth_env_res>(Arena*);
 template<> ::sla::tpu_conf_req* Arena::CreateMaybeMessage<::sla::tpu_conf_req>(Arena*);
-template<> ::sla::tpu_conf_res* Arena::CreateMaybeMessage<::sla::tpu_conf_res>(Arena*);
+template<> ::sla::tpu_env_req* Arena::CreateMaybeMessage<::sla::tpu_env_req>(Arena*);
+template<> ::sla::tpu_status_res* Arena::CreateMaybeMessage<::sla::tpu_status_res>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace sla {
 
@@ -184,12 +184,29 @@ class tpu_conf_req :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kWidthFieldNumber = 1,
-    kHeightFieldNumber = 2,
-    kScale1FieldNumber = 3,
-    kScale2FieldNumber = 4,
+    kImplFieldNumber = 1,
+    kWidthFieldNumber = 2,
+    kHeightFieldNumber = 3,
+    kFreqRatioFieldNumber = 4,
+    kRealScaleFieldNumber = 5,
   };
-  // int32 width = 1;
+  // string impl = 1;
+  void clear_impl();
+  const std::string& impl() const;
+  void set_impl(const std::string& value);
+  void set_impl(std::string&& value);
+  void set_impl(const char* value);
+  void set_impl(const char* value, size_t size);
+  std::string* mutable_impl();
+  std::string* release_impl();
+  void set_allocated_impl(std::string* impl);
+  private:
+  const std::string& _internal_impl() const;
+  void _internal_set_impl(const std::string& value);
+  std::string* _internal_mutable_impl();
+  public:
+
+  // int32 width = 2;
   void clear_width();
   ::PROTOBUF_NAMESPACE_ID::int32 width() const;
   void set_width(::PROTOBUF_NAMESPACE_ID::int32 value);
@@ -198,7 +215,7 @@ class tpu_conf_req :
   void _internal_set_width(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // int32 height = 2;
+  // int32 height = 3;
   void clear_height();
   ::PROTOBUF_NAMESPACE_ID::int32 height() const;
   void set_height(::PROTOBUF_NAMESPACE_ID::int32 value);
@@ -207,22 +224,22 @@ class tpu_conf_req :
   void _internal_set_height(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // int32 scale1 = 3;
-  void clear_scale1();
-  ::PROTOBUF_NAMESPACE_ID::int32 scale1() const;
-  void set_scale1(::PROTOBUF_NAMESPACE_ID::int32 value);
+  // float freq_ratio = 4;
+  void clear_freq_ratio();
+  float freq_ratio() const;
+  void set_freq_ratio(float value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_scale1() const;
-  void _internal_set_scale1(::PROTOBUF_NAMESPACE_ID::int32 value);
+  float _internal_freq_ratio() const;
+  void _internal_set_freq_ratio(float value);
   public:
 
-  // int32 scale2 = 4;
-  void clear_scale2();
-  ::PROTOBUF_NAMESPACE_ID::int32 scale2() const;
-  void set_scale2(::PROTOBUF_NAMESPACE_ID::int32 value);
+  // float real_scale = 5;
+  void clear_real_scale();
+  float real_scale() const;
+  void set_real_scale(float value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_scale2() const;
-  void _internal_set_scale2(::PROTOBUF_NAMESPACE_ID::int32 value);
+  float _internal_real_scale() const;
+  void _internal_set_real_scale(float value);
   public:
 
   // @@protoc_insertion_point(class_scope:sla.tpu_conf_req)
@@ -230,32 +247,33 @@ class tpu_conf_req :
   class _Internal;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr impl_;
   ::PROTOBUF_NAMESPACE_ID::int32 width_;
   ::PROTOBUF_NAMESPACE_ID::int32 height_;
-  ::PROTOBUF_NAMESPACE_ID::int32 scale1_;
-  ::PROTOBUF_NAMESPACE_ID::int32 scale2_;
+  float freq_ratio_;
+  float real_scale_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_sla_2eproto;
 };
 // -------------------------------------------------------------------
 
-class tpu_conf_res :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sla.tpu_conf_res) */ {
+class tpu_status_res :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sla.tpu_status_res) */ {
  public:
-  tpu_conf_res();
-  virtual ~tpu_conf_res();
+  tpu_status_res();
+  virtual ~tpu_status_res();
 
-  tpu_conf_res(const tpu_conf_res& from);
-  tpu_conf_res(tpu_conf_res&& from) noexcept
-    : tpu_conf_res() {
+  tpu_status_res(const tpu_status_res& from);
+  tpu_status_res(tpu_status_res&& from) noexcept
+    : tpu_status_res() {
     *this = ::std::move(from);
   }
 
-  inline tpu_conf_res& operator=(const tpu_conf_res& from) {
+  inline tpu_status_res& operator=(const tpu_status_res& from) {
     CopyFrom(from);
     return *this;
   }
-  inline tpu_conf_res& operator=(tpu_conf_res&& from) noexcept {
+  inline tpu_status_res& operator=(tpu_status_res&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -273,37 +291,37 @@ class tpu_conf_res :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return GetMetadataStatic().reflection;
   }
-  static const tpu_conf_res& default_instance();
+  static const tpu_status_res& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const tpu_conf_res* internal_default_instance() {
-    return reinterpret_cast<const tpu_conf_res*>(
-               &_tpu_conf_res_default_instance_);
+  static inline const tpu_status_res* internal_default_instance() {
+    return reinterpret_cast<const tpu_status_res*>(
+               &_tpu_status_res_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     1;
 
-  friend void swap(tpu_conf_res& a, tpu_conf_res& b) {
+  friend void swap(tpu_status_res& a, tpu_status_res& b) {
     a.Swap(&b);
   }
-  inline void Swap(tpu_conf_res* other) {
+  inline void Swap(tpu_status_res* other) {
     if (other == this) return;
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline tpu_conf_res* New() const final {
-    return CreateMaybeMessage<tpu_conf_res>(nullptr);
+  inline tpu_status_res* New() const final {
+    return CreateMaybeMessage<tpu_status_res>(nullptr);
   }
 
-  tpu_conf_res* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<tpu_conf_res>(arena);
+  tpu_status_res* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<tpu_status_res>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
   void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const tpu_conf_res& from);
-  void MergeFrom(const tpu_conf_res& from);
+  void CopyFrom(const tpu_status_res& from);
+  void MergeFrom(const tpu_status_res& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
   bool IsInitialized() const final;
 
@@ -317,10 +335,10 @@ class tpu_conf_res :
   inline void SharedCtor();
   inline void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(tpu_conf_res* other);
+  void InternalSwap(tpu_status_res* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "sla.tpu_conf_res";
+    return "sla.tpu_status_res";
   }
   private:
   inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
@@ -356,7 +374,7 @@ class tpu_conf_res :
   void _internal_set_status(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // @@protoc_insertion_point(class_scope:sla.tpu_conf_res)
+  // @@protoc_insertion_point(class_scope:sla.tpu_status_res)
  private:
   class _Internal;
 
@@ -367,23 +385,23 @@ class tpu_conf_res :
 };
 // -------------------------------------------------------------------
 
-class tpu_calc_req :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sla.tpu_calc_req) */ {
+class tpu_env_req :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sla.tpu_env_req) */ {
  public:
-  tpu_calc_req();
-  virtual ~tpu_calc_req();
+  tpu_env_req();
+  virtual ~tpu_env_req();
 
-  tpu_calc_req(const tpu_calc_req& from);
-  tpu_calc_req(tpu_calc_req&& from) noexcept
-    : tpu_calc_req() {
+  tpu_env_req(const tpu_env_req& from);
+  tpu_env_req(tpu_env_req&& from) noexcept
+    : tpu_env_req() {
     *this = ::std::move(from);
   }
 
-  inline tpu_calc_req& operator=(const tpu_calc_req& from) {
+  inline tpu_env_req& operator=(const tpu_env_req& from) {
     CopyFrom(from);
     return *this;
   }
-  inline tpu_calc_req& operator=(tpu_calc_req&& from) noexcept {
+  inline tpu_env_req& operator=(tpu_env_req&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -401,37 +419,37 @@ class tpu_calc_req :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return GetMetadataStatic().reflection;
   }
-  static const tpu_calc_req& default_instance();
+  static const tpu_env_req& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const tpu_calc_req* internal_default_instance() {
-    return reinterpret_cast<const tpu_calc_req*>(
-               &_tpu_calc_req_default_instance_);
+  static inline const tpu_env_req* internal_default_instance() {
+    return reinterpret_cast<const tpu_env_req*>(
+               &_tpu_env_req_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     2;
 
-  friend void swap(tpu_calc_req& a, tpu_calc_req& b) {
+  friend void swap(tpu_env_req& a, tpu_env_req& b) {
     a.Swap(&b);
   }
-  inline void Swap(tpu_calc_req* other) {
+  inline void Swap(tpu_env_req* other) {
     if (other == this) return;
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline tpu_calc_req* New() const final {
-    return CreateMaybeMessage<tpu_calc_req>(nullptr);
+  inline tpu_env_req* New() const final {
+    return CreateMaybeMessage<tpu_env_req>(nullptr);
   }
 
-  tpu_calc_req* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<tpu_calc_req>(arena);
+  tpu_env_req* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<tpu_env_req>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
   void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const tpu_calc_req& from);
-  void MergeFrom(const tpu_calc_req& from);
+  void CopyFrom(const tpu_env_req& from);
+  void MergeFrom(const tpu_env_req& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
   bool IsInitialized() const final;
 
@@ -445,10 +463,10 @@ class tpu_calc_req :
   inline void SharedCtor();
   inline void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(tpu_calc_req* other);
+  void InternalSwap(tpu_env_req* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "sla.tpu_calc_req";
+    return "sla.tpu_env_req";
   }
   private:
   inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
@@ -473,106 +491,86 @@ class tpu_calc_req :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kRefLfFieldNumber = 1,
-    kRefHfFieldNumber = 2,
-    kObjLfFieldNumber = 3,
-    kObjHfFieldNumber = 4,
+    kLfImgFieldNumber = 1,
+    kHfImgFieldNumber = 2,
   };
-  // string ref_lf = 1;
-  void clear_ref_lf();
-  const std::string& ref_lf() const;
-  void set_ref_lf(const std::string& value);
-  void set_ref_lf(std::string&& value);
-  void set_ref_lf(const char* value);
-  void set_ref_lf(const char* value, size_t size);
-  std::string* mutable_ref_lf();
-  std::string* release_ref_lf();
-  void set_allocated_ref_lf(std::string* ref_lf);
+  // repeated string lf_img = 1;
+  int lf_img_size() const;
   private:
-  const std::string& _internal_ref_lf() const;
-  void _internal_set_ref_lf(const std::string& value);
-  std::string* _internal_mutable_ref_lf();
+  int _internal_lf_img_size() const;
+  public:
+  void clear_lf_img();
+  const std::string& lf_img(int index) const;
+  std::string* mutable_lf_img(int index);
+  void set_lf_img(int index, const std::string& value);
+  void set_lf_img(int index, std::string&& value);
+  void set_lf_img(int index, const char* value);
+  void set_lf_img(int index, const char* value, size_t size);
+  std::string* add_lf_img();
+  void add_lf_img(const std::string& value);
+  void add_lf_img(std::string&& value);
+  void add_lf_img(const char* value);
+  void add_lf_img(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& lf_img() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_lf_img();
+  private:
+  const std::string& _internal_lf_img(int index) const;
+  std::string* _internal_add_lf_img();
   public:
 
-  // string ref_hf = 2;
-  void clear_ref_hf();
-  const std::string& ref_hf() const;
-  void set_ref_hf(const std::string& value);
-  void set_ref_hf(std::string&& value);
-  void set_ref_hf(const char* value);
-  void set_ref_hf(const char* value, size_t size);
-  std::string* mutable_ref_hf();
-  std::string* release_ref_hf();
-  void set_allocated_ref_hf(std::string* ref_hf);
+  // repeated string hf_img = 2;
+  int hf_img_size() const;
   private:
-  const std::string& _internal_ref_hf() const;
-  void _internal_set_ref_hf(const std::string& value);
-  std::string* _internal_mutable_ref_hf();
+  int _internal_hf_img_size() const;
+  public:
+  void clear_hf_img();
+  const std::string& hf_img(int index) const;
+  std::string* mutable_hf_img(int index);
+  void set_hf_img(int index, const std::string& value);
+  void set_hf_img(int index, std::string&& value);
+  void set_hf_img(int index, const char* value);
+  void set_hf_img(int index, const char* value, size_t size);
+  std::string* add_hf_img();
+  void add_hf_img(const std::string& value);
+  void add_hf_img(std::string&& value);
+  void add_hf_img(const char* value);
+  void add_hf_img(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& hf_img() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_hf_img();
+  private:
+  const std::string& _internal_hf_img(int index) const;
+  std::string* _internal_add_hf_img();
   public:
 
-  // string obj_lf = 3;
-  void clear_obj_lf();
-  const std::string& obj_lf() const;
-  void set_obj_lf(const std::string& value);
-  void set_obj_lf(std::string&& value);
-  void set_obj_lf(const char* value);
-  void set_obj_lf(const char* value, size_t size);
-  std::string* mutable_obj_lf();
-  std::string* release_obj_lf();
-  void set_allocated_obj_lf(std::string* obj_lf);
-  private:
-  const std::string& _internal_obj_lf() const;
-  void _internal_set_obj_lf(const std::string& value);
-  std::string* _internal_mutable_obj_lf();
-  public:
-
-  // string obj_hf = 4;
-  void clear_obj_hf();
-  const std::string& obj_hf() const;
-  void set_obj_hf(const std::string& value);
-  void set_obj_hf(std::string&& value);
-  void set_obj_hf(const char* value);
-  void set_obj_hf(const char* value, size_t size);
-  std::string* mutable_obj_hf();
-  std::string* release_obj_hf();
-  void set_allocated_obj_hf(std::string* obj_hf);
-  private:
-  const std::string& _internal_obj_hf() const;
-  void _internal_set_obj_hf(const std::string& value);
-  std::string* _internal_mutable_obj_hf();
-  public:
-
-  // @@protoc_insertion_point(class_scope:sla.tpu_calc_req)
+  // @@protoc_insertion_point(class_scope:sla.tpu_env_req)
  private:
   class _Internal;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr ref_lf_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr ref_hf_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr obj_lf_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr obj_hf_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> lf_img_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> hf_img_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_sla_2eproto;
 };
 // -------------------------------------------------------------------
 
-class tpu_calc_res :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sla.tpu_calc_res) */ {
+class depth_env_res :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sla.depth_env_res) */ {
  public:
-  tpu_calc_res();
-  virtual ~tpu_calc_res();
+  depth_env_res();
+  virtual ~depth_env_res();
 
-  tpu_calc_res(const tpu_calc_res& from);
-  tpu_calc_res(tpu_calc_res&& from) noexcept
-    : tpu_calc_res() {
+  depth_env_res(const depth_env_res& from);
+  depth_env_res(depth_env_res&& from) noexcept
+    : depth_env_res() {
     *this = ::std::move(from);
   }
 
-  inline tpu_calc_res& operator=(const tpu_calc_res& from) {
+  inline depth_env_res& operator=(const depth_env_res& from) {
     CopyFrom(from);
     return *this;
   }
-  inline tpu_calc_res& operator=(tpu_calc_res&& from) noexcept {
+  inline depth_env_res& operator=(depth_env_res&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -590,37 +588,37 @@ class tpu_calc_res :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return GetMetadataStatic().reflection;
   }
-  static const tpu_calc_res& default_instance();
+  static const depth_env_res& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const tpu_calc_res* internal_default_instance() {
-    return reinterpret_cast<const tpu_calc_res*>(
-               &_tpu_calc_res_default_instance_);
+  static inline const depth_env_res* internal_default_instance() {
+    return reinterpret_cast<const depth_env_res*>(
+               &_depth_env_res_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     3;
 
-  friend void swap(tpu_calc_res& a, tpu_calc_res& b) {
+  friend void swap(depth_env_res& a, depth_env_res& b) {
     a.Swap(&b);
   }
-  inline void Swap(tpu_calc_res* other) {
+  inline void Swap(depth_env_res* other) {
     if (other == this) return;
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline tpu_calc_res* New() const final {
-    return CreateMaybeMessage<tpu_calc_res>(nullptr);
+  inline depth_env_res* New() const final {
+    return CreateMaybeMessage<depth_env_res>(nullptr);
   }
 
-  tpu_calc_res* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<tpu_calc_res>(arena);
+  depth_env_res* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<depth_env_res>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
   void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const tpu_calc_res& from);
-  void MergeFrom(const tpu_calc_res& from);
+  void CopyFrom(const depth_env_res& from);
+  void MergeFrom(const depth_env_res& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
   bool IsInitialized() const final;
 
@@ -634,10 +632,10 @@ class tpu_calc_res :
   inline void SharedCtor();
   inline void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(tpu_calc_res* other);
+  void InternalSwap(depth_env_res* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "sla.tpu_calc_res";
+    return "sla.depth_env_res";
   }
   private:
   inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
@@ -680,7 +678,7 @@ class tpu_calc_res :
   std::string* _internal_mutable_url_unwrap_phase();
   public:
 
-  // @@protoc_insertion_point(class_scope:sla.tpu_calc_res)
+  // @@protoc_insertion_point(class_scope:sla.depth_env_res)
  private:
   class _Internal;
 
@@ -700,7 +698,67 @@ class tpu_calc_res :
 #endif  // __GNUC__
 // tpu_conf_req
 
-// int32 width = 1;
+// string impl = 1;
+inline void tpu_conf_req::clear_impl() {
+  impl_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& tpu_conf_req::impl() const {
+  // @@protoc_insertion_point(field_get:sla.tpu_conf_req.impl)
+  return _internal_impl();
+}
+inline void tpu_conf_req::set_impl(const std::string& value) {
+  _internal_set_impl(value);
+  // @@protoc_insertion_point(field_set:sla.tpu_conf_req.impl)
+}
+inline std::string* tpu_conf_req::mutable_impl() {
+  // @@protoc_insertion_point(field_mutable:sla.tpu_conf_req.impl)
+  return _internal_mutable_impl();
+}
+inline const std::string& tpu_conf_req::_internal_impl() const {
+  return impl_.GetNoArena();
+}
+inline void tpu_conf_req::_internal_set_impl(const std::string& value) {
+  
+  impl_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void tpu_conf_req::set_impl(std::string&& value) {
+  
+  impl_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:sla.tpu_conf_req.impl)
+}
+inline void tpu_conf_req::set_impl(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  impl_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:sla.tpu_conf_req.impl)
+}
+inline void tpu_conf_req::set_impl(const char* value, size_t size) {
+  
+  impl_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:sla.tpu_conf_req.impl)
+}
+inline std::string* tpu_conf_req::_internal_mutable_impl() {
+  
+  return impl_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* tpu_conf_req::release_impl() {
+  // @@protoc_insertion_point(field_release:sla.tpu_conf_req.impl)
+  
+  return impl_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void tpu_conf_req::set_allocated_impl(std::string* impl) {
+  if (impl != nullptr) {
+    
+  } else {
+    
+  }
+  impl_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), impl);
+  // @@protoc_insertion_point(field_set_allocated:sla.tpu_conf_req.impl)
+}
+
+// int32 width = 2;
 inline void tpu_conf_req::clear_width() {
   width_ = 0;
 }
@@ -720,7 +778,7 @@ inline void tpu_conf_req::set_width(::PROTOBUF_NAMESPACE_ID::int32 value) {
   // @@protoc_insertion_point(field_set:sla.tpu_conf_req.width)
 }
 
-// int32 height = 2;
+// int32 height = 3;
 inline void tpu_conf_req::clear_height() {
   height_ = 0;
 }
@@ -740,376 +798,284 @@ inline void tpu_conf_req::set_height(::PROTOBUF_NAMESPACE_ID::int32 value) {
   // @@protoc_insertion_point(field_set:sla.tpu_conf_req.height)
 }
 
-// int32 scale1 = 3;
-inline void tpu_conf_req::clear_scale1() {
-  scale1_ = 0;
+// float freq_ratio = 4;
+inline void tpu_conf_req::clear_freq_ratio() {
+  freq_ratio_ = 0;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 tpu_conf_req::_internal_scale1() const {
-  return scale1_;
+inline float tpu_conf_req::_internal_freq_ratio() const {
+  return freq_ratio_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 tpu_conf_req::scale1() const {
-  // @@protoc_insertion_point(field_get:sla.tpu_conf_req.scale1)
-  return _internal_scale1();
+inline float tpu_conf_req::freq_ratio() const {
+  // @@protoc_insertion_point(field_get:sla.tpu_conf_req.freq_ratio)
+  return _internal_freq_ratio();
 }
-inline void tpu_conf_req::_internal_set_scale1(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void tpu_conf_req::_internal_set_freq_ratio(float value) {
   
-  scale1_ = value;
+  freq_ratio_ = value;
 }
-inline void tpu_conf_req::set_scale1(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_set_scale1(value);
-  // @@protoc_insertion_point(field_set:sla.tpu_conf_req.scale1)
+inline void tpu_conf_req::set_freq_ratio(float value) {
+  _internal_set_freq_ratio(value);
+  // @@protoc_insertion_point(field_set:sla.tpu_conf_req.freq_ratio)
 }
 
-// int32 scale2 = 4;
-inline void tpu_conf_req::clear_scale2() {
-  scale2_ = 0;
+// float real_scale = 5;
+inline void tpu_conf_req::clear_real_scale() {
+  real_scale_ = 0;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 tpu_conf_req::_internal_scale2() const {
-  return scale2_;
+inline float tpu_conf_req::_internal_real_scale() const {
+  return real_scale_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 tpu_conf_req::scale2() const {
-  // @@protoc_insertion_point(field_get:sla.tpu_conf_req.scale2)
-  return _internal_scale2();
+inline float tpu_conf_req::real_scale() const {
+  // @@protoc_insertion_point(field_get:sla.tpu_conf_req.real_scale)
+  return _internal_real_scale();
 }
-inline void tpu_conf_req::_internal_set_scale2(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void tpu_conf_req::_internal_set_real_scale(float value) {
   
-  scale2_ = value;
+  real_scale_ = value;
 }
-inline void tpu_conf_req::set_scale2(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_set_scale2(value);
-  // @@protoc_insertion_point(field_set:sla.tpu_conf_req.scale2)
+inline void tpu_conf_req::set_real_scale(float value) {
+  _internal_set_real_scale(value);
+  // @@protoc_insertion_point(field_set:sla.tpu_conf_req.real_scale)
 }
 
 // -------------------------------------------------------------------
 
-// tpu_conf_res
+// tpu_status_res
 
 // int32 status = 1;
-inline void tpu_conf_res::clear_status() {
+inline void tpu_status_res::clear_status() {
   status_ = 0;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 tpu_conf_res::_internal_status() const {
+inline ::PROTOBUF_NAMESPACE_ID::int32 tpu_status_res::_internal_status() const {
   return status_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 tpu_conf_res::status() const {
-  // @@protoc_insertion_point(field_get:sla.tpu_conf_res.status)
+inline ::PROTOBUF_NAMESPACE_ID::int32 tpu_status_res::status() const {
+  // @@protoc_insertion_point(field_get:sla.tpu_status_res.status)
   return _internal_status();
 }
-inline void tpu_conf_res::_internal_set_status(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void tpu_status_res::_internal_set_status(::PROTOBUF_NAMESPACE_ID::int32 value) {
   
   status_ = value;
 }
-inline void tpu_conf_res::set_status(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void tpu_status_res::set_status(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_status(value);
-  // @@protoc_insertion_point(field_set:sla.tpu_conf_res.status)
+  // @@protoc_insertion_point(field_set:sla.tpu_status_res.status)
 }
 
 // -------------------------------------------------------------------
 
-// tpu_calc_req
+// tpu_env_req
 
-// string ref_lf = 1;
-inline void tpu_calc_req::clear_ref_lf() {
-  ref_lf_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+// repeated string lf_img = 1;
+inline int tpu_env_req::_internal_lf_img_size() const {
+  return lf_img_.size();
 }
-inline const std::string& tpu_calc_req::ref_lf() const {
-  // @@protoc_insertion_point(field_get:sla.tpu_calc_req.ref_lf)
-  return _internal_ref_lf();
+inline int tpu_env_req::lf_img_size() const {
+  return _internal_lf_img_size();
 }
-inline void tpu_calc_req::set_ref_lf(const std::string& value) {
-  _internal_set_ref_lf(value);
-  // @@protoc_insertion_point(field_set:sla.tpu_calc_req.ref_lf)
+inline void tpu_env_req::clear_lf_img() {
+  lf_img_.Clear();
 }
-inline std::string* tpu_calc_req::mutable_ref_lf() {
-  // @@protoc_insertion_point(field_mutable:sla.tpu_calc_req.ref_lf)
-  return _internal_mutable_ref_lf();
+inline std::string* tpu_env_req::add_lf_img() {
+  // @@protoc_insertion_point(field_add_mutable:sla.tpu_env_req.lf_img)
+  return _internal_add_lf_img();
 }
-inline const std::string& tpu_calc_req::_internal_ref_lf() const {
-  return ref_lf_.GetNoArena();
+inline const std::string& tpu_env_req::_internal_lf_img(int index) const {
+  return lf_img_.Get(index);
 }
-inline void tpu_calc_req::_internal_set_ref_lf(const std::string& value) {
-  
-  ref_lf_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+inline const std::string& tpu_env_req::lf_img(int index) const {
+  // @@protoc_insertion_point(field_get:sla.tpu_env_req.lf_img)
+  return _internal_lf_img(index);
 }
-inline void tpu_calc_req::set_ref_lf(std::string&& value) {
-  
-  ref_lf_.SetNoArena(
-    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:sla.tpu_calc_req.ref_lf)
+inline std::string* tpu_env_req::mutable_lf_img(int index) {
+  // @@protoc_insertion_point(field_mutable:sla.tpu_env_req.lf_img)
+  return lf_img_.Mutable(index);
 }
-inline void tpu_calc_req::set_ref_lf(const char* value) {
+inline void tpu_env_req::set_lf_img(int index, const std::string& value) {
+  // @@protoc_insertion_point(field_set:sla.tpu_env_req.lf_img)
+  lf_img_.Mutable(index)->assign(value);
+}
+inline void tpu_env_req::set_lf_img(int index, std::string&& value) {
+  // @@protoc_insertion_point(field_set:sla.tpu_env_req.lf_img)
+  lf_img_.Mutable(index)->assign(std::move(value));
+}
+inline void tpu_env_req::set_lf_img(int index, const char* value) {
   GOOGLE_DCHECK(value != nullptr);
-  
-  ref_lf_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:sla.tpu_calc_req.ref_lf)
+  lf_img_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:sla.tpu_env_req.lf_img)
 }
-inline void tpu_calc_req::set_ref_lf(const char* value, size_t size) {
-  
-  ref_lf_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:sla.tpu_calc_req.ref_lf)
+inline void tpu_env_req::set_lf_img(int index, const char* value, size_t size) {
+  lf_img_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:sla.tpu_env_req.lf_img)
 }
-inline std::string* tpu_calc_req::_internal_mutable_ref_lf() {
-  
-  return ref_lf_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+inline std::string* tpu_env_req::_internal_add_lf_img() {
+  return lf_img_.Add();
 }
-inline std::string* tpu_calc_req::release_ref_lf() {
-  // @@protoc_insertion_point(field_release:sla.tpu_calc_req.ref_lf)
-  
-  return ref_lf_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+inline void tpu_env_req::add_lf_img(const std::string& value) {
+  lf_img_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:sla.tpu_env_req.lf_img)
 }
-inline void tpu_calc_req::set_allocated_ref_lf(std::string* ref_lf) {
-  if (ref_lf != nullptr) {
-    
-  } else {
-    
-  }
-  ref_lf_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ref_lf);
-  // @@protoc_insertion_point(field_set_allocated:sla.tpu_calc_req.ref_lf)
+inline void tpu_env_req::add_lf_img(std::string&& value) {
+  lf_img_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:sla.tpu_env_req.lf_img)
 }
-
-// string ref_hf = 2;
-inline void tpu_calc_req::clear_ref_hf() {
-  ref_hf_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline const std::string& tpu_calc_req::ref_hf() const {
-  // @@protoc_insertion_point(field_get:sla.tpu_calc_req.ref_hf)
-  return _internal_ref_hf();
-}
-inline void tpu_calc_req::set_ref_hf(const std::string& value) {
-  _internal_set_ref_hf(value);
-  // @@protoc_insertion_point(field_set:sla.tpu_calc_req.ref_hf)
-}
-inline std::string* tpu_calc_req::mutable_ref_hf() {
-  // @@protoc_insertion_point(field_mutable:sla.tpu_calc_req.ref_hf)
-  return _internal_mutable_ref_hf();
-}
-inline const std::string& tpu_calc_req::_internal_ref_hf() const {
-  return ref_hf_.GetNoArena();
-}
-inline void tpu_calc_req::_internal_set_ref_hf(const std::string& value) {
-  
-  ref_hf_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
-}
-inline void tpu_calc_req::set_ref_hf(std::string&& value) {
-  
-  ref_hf_.SetNoArena(
-    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:sla.tpu_calc_req.ref_hf)
-}
-inline void tpu_calc_req::set_ref_hf(const char* value) {
+inline void tpu_env_req::add_lf_img(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
-  
-  ref_hf_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:sla.tpu_calc_req.ref_hf)
+  lf_img_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:sla.tpu_env_req.lf_img)
 }
-inline void tpu_calc_req::set_ref_hf(const char* value, size_t size) {
-  
-  ref_hf_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:sla.tpu_calc_req.ref_hf)
+inline void tpu_env_req::add_lf_img(const char* value, size_t size) {
+  lf_img_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:sla.tpu_env_req.lf_img)
 }
-inline std::string* tpu_calc_req::_internal_mutable_ref_hf() {
-  
-  return ref_hf_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+tpu_env_req::lf_img() const {
+  // @@protoc_insertion_point(field_list:sla.tpu_env_req.lf_img)
+  return lf_img_;
 }
-inline std::string* tpu_calc_req::release_ref_hf() {
-  // @@protoc_insertion_point(field_release:sla.tpu_calc_req.ref_hf)
-  
-  return ref_hf_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline void tpu_calc_req::set_allocated_ref_hf(std::string* ref_hf) {
-  if (ref_hf != nullptr) {
-    
-  } else {
-    
-  }
-  ref_hf_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ref_hf);
-  // @@protoc_insertion_point(field_set_allocated:sla.tpu_calc_req.ref_hf)
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+tpu_env_req::mutable_lf_img() {
+  // @@protoc_insertion_point(field_mutable_list:sla.tpu_env_req.lf_img)
+  return &lf_img_;
 }
 
-// string obj_lf = 3;
-inline void tpu_calc_req::clear_obj_lf() {
-  obj_lf_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+// repeated string hf_img = 2;
+inline int tpu_env_req::_internal_hf_img_size() const {
+  return hf_img_.size();
 }
-inline const std::string& tpu_calc_req::obj_lf() const {
-  // @@protoc_insertion_point(field_get:sla.tpu_calc_req.obj_lf)
-  return _internal_obj_lf();
+inline int tpu_env_req::hf_img_size() const {
+  return _internal_hf_img_size();
 }
-inline void tpu_calc_req::set_obj_lf(const std::string& value) {
-  _internal_set_obj_lf(value);
-  // @@protoc_insertion_point(field_set:sla.tpu_calc_req.obj_lf)
+inline void tpu_env_req::clear_hf_img() {
+  hf_img_.Clear();
 }
-inline std::string* tpu_calc_req::mutable_obj_lf() {
-  // @@protoc_insertion_point(field_mutable:sla.tpu_calc_req.obj_lf)
-  return _internal_mutable_obj_lf();
+inline std::string* tpu_env_req::add_hf_img() {
+  // @@protoc_insertion_point(field_add_mutable:sla.tpu_env_req.hf_img)
+  return _internal_add_hf_img();
 }
-inline const std::string& tpu_calc_req::_internal_obj_lf() const {
-  return obj_lf_.GetNoArena();
+inline const std::string& tpu_env_req::_internal_hf_img(int index) const {
+  return hf_img_.Get(index);
 }
-inline void tpu_calc_req::_internal_set_obj_lf(const std::string& value) {
-  
-  obj_lf_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+inline const std::string& tpu_env_req::hf_img(int index) const {
+  // @@protoc_insertion_point(field_get:sla.tpu_env_req.hf_img)
+  return _internal_hf_img(index);
 }
-inline void tpu_calc_req::set_obj_lf(std::string&& value) {
-  
-  obj_lf_.SetNoArena(
-    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:sla.tpu_calc_req.obj_lf)
+inline std::string* tpu_env_req::mutable_hf_img(int index) {
+  // @@protoc_insertion_point(field_mutable:sla.tpu_env_req.hf_img)
+  return hf_img_.Mutable(index);
 }
-inline void tpu_calc_req::set_obj_lf(const char* value) {
+inline void tpu_env_req::set_hf_img(int index, const std::string& value) {
+  // @@protoc_insertion_point(field_set:sla.tpu_env_req.hf_img)
+  hf_img_.Mutable(index)->assign(value);
+}
+inline void tpu_env_req::set_hf_img(int index, std::string&& value) {
+  // @@protoc_insertion_point(field_set:sla.tpu_env_req.hf_img)
+  hf_img_.Mutable(index)->assign(std::move(value));
+}
+inline void tpu_env_req::set_hf_img(int index, const char* value) {
   GOOGLE_DCHECK(value != nullptr);
-  
-  obj_lf_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:sla.tpu_calc_req.obj_lf)
+  hf_img_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:sla.tpu_env_req.hf_img)
 }
-inline void tpu_calc_req::set_obj_lf(const char* value, size_t size) {
-  
-  obj_lf_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:sla.tpu_calc_req.obj_lf)
+inline void tpu_env_req::set_hf_img(int index, const char* value, size_t size) {
+  hf_img_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:sla.tpu_env_req.hf_img)
 }
-inline std::string* tpu_calc_req::_internal_mutable_obj_lf() {
-  
-  return obj_lf_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+inline std::string* tpu_env_req::_internal_add_hf_img() {
+  return hf_img_.Add();
 }
-inline std::string* tpu_calc_req::release_obj_lf() {
-  // @@protoc_insertion_point(field_release:sla.tpu_calc_req.obj_lf)
-  
-  return obj_lf_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+inline void tpu_env_req::add_hf_img(const std::string& value) {
+  hf_img_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:sla.tpu_env_req.hf_img)
 }
-inline void tpu_calc_req::set_allocated_obj_lf(std::string* obj_lf) {
-  if (obj_lf != nullptr) {
-    
-  } else {
-    
-  }
-  obj_lf_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), obj_lf);
-  // @@protoc_insertion_point(field_set_allocated:sla.tpu_calc_req.obj_lf)
+inline void tpu_env_req::add_hf_img(std::string&& value) {
+  hf_img_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:sla.tpu_env_req.hf_img)
 }
-
-// string obj_hf = 4;
-inline void tpu_calc_req::clear_obj_hf() {
-  obj_hf_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline const std::string& tpu_calc_req::obj_hf() const {
-  // @@protoc_insertion_point(field_get:sla.tpu_calc_req.obj_hf)
-  return _internal_obj_hf();
-}
-inline void tpu_calc_req::set_obj_hf(const std::string& value) {
-  _internal_set_obj_hf(value);
-  // @@protoc_insertion_point(field_set:sla.tpu_calc_req.obj_hf)
-}
-inline std::string* tpu_calc_req::mutable_obj_hf() {
-  // @@protoc_insertion_point(field_mutable:sla.tpu_calc_req.obj_hf)
-  return _internal_mutable_obj_hf();
-}
-inline const std::string& tpu_calc_req::_internal_obj_hf() const {
-  return obj_hf_.GetNoArena();
-}
-inline void tpu_calc_req::_internal_set_obj_hf(const std::string& value) {
-  
-  obj_hf_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
-}
-inline void tpu_calc_req::set_obj_hf(std::string&& value) {
-  
-  obj_hf_.SetNoArena(
-    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:sla.tpu_calc_req.obj_hf)
-}
-inline void tpu_calc_req::set_obj_hf(const char* value) {
+inline void tpu_env_req::add_hf_img(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
-  
-  obj_hf_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:sla.tpu_calc_req.obj_hf)
+  hf_img_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:sla.tpu_env_req.hf_img)
 }
-inline void tpu_calc_req::set_obj_hf(const char* value, size_t size) {
-  
-  obj_hf_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:sla.tpu_calc_req.obj_hf)
+inline void tpu_env_req::add_hf_img(const char* value, size_t size) {
+  hf_img_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:sla.tpu_env_req.hf_img)
 }
-inline std::string* tpu_calc_req::_internal_mutable_obj_hf() {
-  
-  return obj_hf_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+tpu_env_req::hf_img() const {
+  // @@protoc_insertion_point(field_list:sla.tpu_env_req.hf_img)
+  return hf_img_;
 }
-inline std::string* tpu_calc_req::release_obj_hf() {
-  // @@protoc_insertion_point(field_release:sla.tpu_calc_req.obj_hf)
-  
-  return obj_hf_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline void tpu_calc_req::set_allocated_obj_hf(std::string* obj_hf) {
-  if (obj_hf != nullptr) {
-    
-  } else {
-    
-  }
-  obj_hf_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), obj_hf);
-  // @@protoc_insertion_point(field_set_allocated:sla.tpu_calc_req.obj_hf)
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+tpu_env_req::mutable_hf_img() {
+  // @@protoc_insertion_point(field_mutable_list:sla.tpu_env_req.hf_img)
+  return &hf_img_;
 }
 
 // -------------------------------------------------------------------
 
-// tpu_calc_res
+// depth_env_res
 
 // string url_unwrap_phase = 1;
-inline void tpu_calc_res::clear_url_unwrap_phase() {
+inline void depth_env_res::clear_url_unwrap_phase() {
   url_unwrap_phase_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline const std::string& tpu_calc_res::url_unwrap_phase() const {
-  // @@protoc_insertion_point(field_get:sla.tpu_calc_res.url_unwrap_phase)
+inline const std::string& depth_env_res::url_unwrap_phase() const {
+  // @@protoc_insertion_point(field_get:sla.depth_env_res.url_unwrap_phase)
   return _internal_url_unwrap_phase();
 }
-inline void tpu_calc_res::set_url_unwrap_phase(const std::string& value) {
+inline void depth_env_res::set_url_unwrap_phase(const std::string& value) {
   _internal_set_url_unwrap_phase(value);
-  // @@protoc_insertion_point(field_set:sla.tpu_calc_res.url_unwrap_phase)
+  // @@protoc_insertion_point(field_set:sla.depth_env_res.url_unwrap_phase)
 }
-inline std::string* tpu_calc_res::mutable_url_unwrap_phase() {
-  // @@protoc_insertion_point(field_mutable:sla.tpu_calc_res.url_unwrap_phase)
+inline std::string* depth_env_res::mutable_url_unwrap_phase() {
+  // @@protoc_insertion_point(field_mutable:sla.depth_env_res.url_unwrap_phase)
   return _internal_mutable_url_unwrap_phase();
 }
-inline const std::string& tpu_calc_res::_internal_url_unwrap_phase() const {
+inline const std::string& depth_env_res::_internal_url_unwrap_phase() const {
   return url_unwrap_phase_.GetNoArena();
 }
-inline void tpu_calc_res::_internal_set_url_unwrap_phase(const std::string& value) {
+inline void depth_env_res::_internal_set_url_unwrap_phase(const std::string& value) {
   
   url_unwrap_phase_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void tpu_calc_res::set_url_unwrap_phase(std::string&& value) {
+inline void depth_env_res::set_url_unwrap_phase(std::string&& value) {
   
   url_unwrap_phase_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:sla.tpu_calc_res.url_unwrap_phase)
+  // @@protoc_insertion_point(field_set_rvalue:sla.depth_env_res.url_unwrap_phase)
 }
-inline void tpu_calc_res::set_url_unwrap_phase(const char* value) {
+inline void depth_env_res::set_url_unwrap_phase(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   url_unwrap_phase_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:sla.tpu_calc_res.url_unwrap_phase)
+  // @@protoc_insertion_point(field_set_char:sla.depth_env_res.url_unwrap_phase)
 }
-inline void tpu_calc_res::set_url_unwrap_phase(const char* value, size_t size) {
+inline void depth_env_res::set_url_unwrap_phase(const char* value, size_t size) {
   
   url_unwrap_phase_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:sla.tpu_calc_res.url_unwrap_phase)
+  // @@protoc_insertion_point(field_set_pointer:sla.depth_env_res.url_unwrap_phase)
 }
-inline std::string* tpu_calc_res::_internal_mutable_url_unwrap_phase() {
+inline std::string* depth_env_res::_internal_mutable_url_unwrap_phase() {
   
   return url_unwrap_phase_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* tpu_calc_res::release_url_unwrap_phase() {
-  // @@protoc_insertion_point(field_release:sla.tpu_calc_res.url_unwrap_phase)
+inline std::string* depth_env_res::release_url_unwrap_phase() {
+  // @@protoc_insertion_point(field_release:sla.depth_env_res.url_unwrap_phase)
   
   return url_unwrap_phase_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void tpu_calc_res::set_allocated_url_unwrap_phase(std::string* url_unwrap_phase) {
+inline void depth_env_res::set_allocated_url_unwrap_phase(std::string* url_unwrap_phase) {
   if (url_unwrap_phase != nullptr) {
     
   } else {
     
   }
   url_unwrap_phase_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), url_unwrap_phase);
-  // @@protoc_insertion_point(field_set_allocated:sla.tpu_calc_res.url_unwrap_phase)
+  // @@protoc_insertion_point(field_set_allocated:sla.depth_env_res.url_unwrap_phase)
 }
 
 #ifdef __GNUC__

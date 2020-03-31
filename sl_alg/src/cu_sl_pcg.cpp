@@ -21,8 +21,8 @@
 
 namespace {
 
-sl_alg_auto_reg s_cu_sl_pcg_reg("cuda_pcg", [](cv::Size size) {
-    return std::make_unique<cu_sl_pcg>(size);
+sl_alg_auto_reg s_cu_sl_pcg_reg("cuda_pcg", [](const sl_alg::params_t& params) {
+    return std::make_unique<cu_sl_pcg>(params);
 });
 
 struct alg_const_mats {
@@ -288,12 +288,13 @@ class cu_pu_pcg {
 
 class cu_sl_pcg::cu_sl_pcg_impl {
    public:
-    cu_sl_pcg_impl(cv::Size size)
-        : _tmp(imgs_alloc(4, size, CV_32FC1)),
-          _cu_tmp(cuda_imgs_alloc(4, size, CV_32FC1)),
-          _obj_phase(cuda_img_alloc(size, CV_32FC1)),
-          _ref_phase(cuda_img_alloc(size, CV_32FC1)),
-          _alg(size),
+    cu_sl_pcg_impl(const params_t& params)
+        : _params(params),
+          _tmp(imgs_alloc(4, _params.size, CV_32FC1)),
+          _cu_tmp(cuda_imgs_alloc(4, _params.size, CV_32FC1)),
+          _obj_phase(cuda_img_alloc(_params.size, CV_32FC1)),
+          _ref_phase(cuda_img_alloc(_params.size, CV_32FC1)),
+          _alg(_params.size),
           _filt(
               cv::cuda::createGaussianFilter(CV_32F, CV_32F, cv::Size(5, 5), 0))
 
@@ -312,6 +313,7 @@ class cu_sl_pcg::cu_sl_pcg_impl {
     }
 
    private:
+    params_t _params;
     std::vector<cv::Mat> _tmp;
     std::vector<cv::cuda::GpuMat> _cu_tmp;
     cv::cuda::GpuMat _obj_phase;
@@ -320,8 +322,8 @@ class cu_sl_pcg::cu_sl_pcg_impl {
     cv::Ptr<cv::cuda::Filter> _filt;
 };
 
-cu_sl_pcg::cu_sl_pcg(cv::Size size)
-    : _pimpl(std::make_unique<cu_sl_pcg_impl>(size)) {}
+cu_sl_pcg::cu_sl_pcg(const params_t& params)
+    : _pimpl(std::make_unique<cu_sl_pcg_impl>(params)) {}
 
 cu_sl_pcg::~cu_sl_pcg() = default;
 

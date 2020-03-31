@@ -26,11 +26,35 @@ def run():
     # NOTE(gRPC Python Team): .close() is possible on a channel and should be
     # used in circumstances in which the with statement does not fit the needs
     # of the code.
-    with grpc.insecure_channel('localhost:50051') as channel:
-        stub = sla_pb2_grpc.phase_unwrapStub(channel)
-        response = stub.tpu_invoke(sla_pb2.tpu_req(url_ref_lf="ref1", url_ref_hf="ref2", url_obj_lf="obj1", url_obj_hf="obj2"))
-    print("sla client received: " + response.url_unwrap_phase)
+    with grpc.insecure_channel('localhost:12321') as channel:
+        print(channel)
+        stub = sla_pb2_grpc.tpuStub(channel)
+        print(stub)
 
+        response = stub._init(sla_pb2.tpu_conf_req(impl="cuda_tpu",width=1024,height=1024,freq_ratio=20,real_scale=1))
+        print(response)
+
+        lf_imgs = (["/home/rnd/dev/opencv_training/test_images/lf/ref/sphere_1_ref0.png",
+                   "/home/rnd/dev/opencv_training/test_images/lf/ref/sphere_1_ref1.png",
+                   "/home/rnd/dev/opencv_training/test_images/lf/ref/sphere_1_ref2.png",
+                   "/home/rnd/dev/opencv_training/test_images/lf/ref/sphere_1_ref3.png"])
+        hf_imgs = (["/home/rnd/dev/opencv_training/test_images/hf/ref/sphere_20_ref0.png",
+                   "/home/rnd/dev/opencv_training/test_images/hf/ref/sphere_20_ref1.png",
+                   "/home/rnd/dev/opencv_training/test_images/hf/ref/sphere_20_ref2.png",
+                   "/home/rnd/dev/opencv_training/test_images/hf/ref/sphere_20_ref3.png"])
+        response = stub._ref_phase_compute(sla_pb2.tpu_env_req(lf_img = lf_imgs,
+                                                               hf_img = hf_imgs))
+
+        lf_imgs = (["/home/rnd/dev/opencv_training/test_images/lf/phase/sphere_1_phase0.png",
+                   "/home/rnd/dev/opencv_training/test_images/lf/phase/sphere_1_phase1.png",
+                   "/home/rnd/dev/opencv_training/test_images/lf/phase/sphere_1_phase2.png",
+                   "/home/rnd/dev/opencv_training/test_images/lf/phase/sphere_1_phase3.png"])
+        hf_imgs = (["/home/rnd/dev/opencv_training/test_images/hf/phase/sphere_20_phase0.png",
+                   "/home/rnd/dev/opencv_training/test_images/hf/phase/sphere_20_phase1.png",
+                   "/home/rnd/dev/opencv_training/test_images/hf/phase/sphere_20_phase2.png",
+                   "/home/rnd/dev/opencv_training/test_images/hf/phase/sphere_20_phase3.png"])
+        response = stub._depth_compute(sla_pb2.tpu_env_req(lf_img = lf_imgs,
+                                                               hf_img = hf_imgs))
 
 if __name__ == '__main__':
     logging.basicConfig()

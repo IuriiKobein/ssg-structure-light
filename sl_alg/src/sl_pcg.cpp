@@ -16,8 +16,8 @@
 
 namespace {
 
-sl_alg_auto_reg s_sl_pcg_reg("cpu_pcg", [](cv::Size size) {
-    return std::make_unique<sl_pcg>(size);
+sl_alg_auto_reg s_sl_pcg_reg("cpu_pcg", [](const sl_alg::params_t& params) {
+    return std::make_unique<sl_pcg>(params);
 });
 
 cv::Mat g_laplacian;
@@ -157,9 +157,11 @@ cv::Mat pcg_phase_unwrap(cv::Mat &img) {
 
 class sl_pcg::sl_pcg_impl {
    public:
-    sl_pcg_impl(cv::Size size)
-        : _obj_phase(size, CV_32F), _ref_phase(size, CV_32F) {
-        g_laplacian = create_grid(size);
+    sl_pcg_impl(const params_t &params)
+        : _params(params),
+          _obj_phase(_params.size, CV_32F),
+          _ref_phase(_params.size, CV_32F) {
+        g_laplacian = create_grid(_params.size);
     }
 
     int ref_phase_compute(const std::vector<cv::Mat> &refs) {
@@ -175,11 +177,13 @@ class sl_pcg::sl_pcg_impl {
     }
 
    private:
+    params_t _params;
     cv::Mat _obj_phase;
     cv::Mat _ref_phase;
 };
 
-sl_pcg::sl_pcg(cv::Size size) : _pimpl(std::make_unique<sl_pcg_impl>(size)) {}
+sl_pcg::sl_pcg(const params_t &params)
+    : _pimpl(std::make_unique<sl_pcg_impl>(params)) {}
 
 sl_pcg::~sl_pcg() = default;
 
@@ -192,11 +196,11 @@ cv::Mat sl_pcg::depth_compute(const std::vector<cv::Mat> &obj_phases) {
 }
 
 int sl_pcg::ref_phase_compute(const std::vector<cv::Mat> &,
-                                 const std::vector<cv::Mat> &) {
+                              const std::vector<cv::Mat> &) {
     return -ENOTSUP;
 }
 
 cv::Mat sl_pcg::depth_compute(const std::vector<cv::Mat> &,
-                                 const std::vector<cv::Mat> &) {
+                              const std::vector<cv::Mat> &) {
     return cv::Mat();
 }

@@ -36,12 +36,13 @@ int sl_factory_alg_register(const std::string& name, sl_alg_maker_fn maker) {
     return 0;
 }
 
-std::unique_ptr<sl_alg> sl_alg_make(const std::string& name, cv::Size size) {
+std::unique_ptr<sl_alg> sl_alg_make(const std::string& name,
+                                    const sl_alg::params_t& params) {
     auto& reg = registrar_map_get();
 
     if (!reg.count(name)) {
         return nullptr;
     }
 
-    return reg[name](size);
+    return reg[name](params);
 }

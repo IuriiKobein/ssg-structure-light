@@ -14,14 +14,8 @@
 
 class cu_sl_tpu : public sl_alg {
    public:
-    struct tpu_params_t {
-        std::uint32_t freq_ratio;
-        std::float_t real_scale;
-    };
-    cu_sl_tpu(cv::Size size);
+    cu_sl_tpu(const params_t& params);
     ~cu_sl_tpu();
-
-    int config_set(const tpu_params_t &params);
 
     virtual int ref_phase_compute(
         const std::vector<cv::Mat>& refs);

@@ -23,7 +23,8 @@ namespace sla {
 
 static const char* tpu_method_names[] = {
   "/sla.tpu/_init",
-  "/sla.tpu/_invoke",
+  "/sla.tpu/_ref_phase_compute",
+  "/sla.tpu/_depth_compute",
 };
 
 std::unique_ptr< tpu::Stub> tpu::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -34,89 +35,130 @@ std::unique_ptr< tpu::Stub> tpu::NewStub(const std::shared_ptr< ::grpc::ChannelI
 
 tpu::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
   : channel_(channel), rpcmethod__init_(tpu_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod__invoke_(tpu_method_names[1], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod__ref_phase_compute_(tpu_method_names[1], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod__depth_compute_(tpu_method_names[2], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
-::grpc::Status tpu::Stub::_init(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::sla::tpu_conf_res* response) {
+::grpc::Status tpu::Stub::_init(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::sla::tpu_status_res* response) {
   return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod__init_, context, request, response);
 }
 
-void tpu::Stub::experimental_async::_init(::grpc::ClientContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_conf_res* response, std::function<void(::grpc::Status)> f) {
+void tpu::Stub::experimental_async::_init(::grpc::ClientContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_status_res* response, std::function<void(::grpc::Status)> f) {
   ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod__init_, context, request, response, std::move(f));
 }
 
-void tpu::Stub::experimental_async::_init(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_conf_res* response, std::function<void(::grpc::Status)> f) {
+void tpu::Stub::experimental_async::_init(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_status_res* response, std::function<void(::grpc::Status)> f) {
   ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod__init_, context, request, response, std::move(f));
 }
 
-void tpu::Stub::experimental_async::_init(::grpc::ClientContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_conf_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+void tpu::Stub::experimental_async::_init(::grpc::ClientContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_status_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
   ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod__init_, context, request, response, reactor);
 }
 
-void tpu::Stub::experimental_async::_init(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_conf_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+void tpu::Stub::experimental_async::_init(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_status_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
   ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod__init_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::sla::tpu_conf_res>* tpu::Stub::Async_initRaw(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::sla::tpu_conf_res>::Create(channel_.get(), cq, rpcmethod__init_, context, request, true);
+::grpc::ClientAsyncResponseReader< ::sla::tpu_status_res>* tpu::Stub::Async_initRaw(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::sla::tpu_status_res>::Create(channel_.get(), cq, rpcmethod__init_, context, request, true);
 }
 
-::grpc::ClientAsyncResponseReader< ::sla::tpu_conf_res>* tpu::Stub::PrepareAsync_initRaw(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::sla::tpu_conf_res>::Create(channel_.get(), cq, rpcmethod__init_, context, request, false);
+::grpc::ClientAsyncResponseReader< ::sla::tpu_status_res>* tpu::Stub::PrepareAsync_initRaw(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::sla::tpu_status_res>::Create(channel_.get(), cq, rpcmethod__init_, context, request, false);
 }
 
-::grpc::Status tpu::Stub::_invoke(::grpc::ClientContext* context, const ::sla::tpu_calc_req& request, ::sla::tpu_calc_res* response) {
-  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod__invoke_, context, request, response);
+::grpc::Status tpu::Stub::_ref_phase_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::sla::tpu_status_res* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod__ref_phase_compute_, context, request, response);
 }
 
-void tpu::Stub::experimental_async::_invoke(::grpc::ClientContext* context, const ::sla::tpu_calc_req* request, ::sla::tpu_calc_res* response, std::function<void(::grpc::Status)> f) {
-  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod__invoke_, context, request, response, std::move(f));
+void tpu::Stub::experimental_async::_ref_phase_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req* request, ::sla::tpu_status_res* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod__ref_phase_compute_, context, request, response, std::move(f));
 }
 
-void tpu::Stub::experimental_async::_invoke(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_calc_res* response, std::function<void(::grpc::Status)> f) {
-  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod__invoke_, context, request, response, std::move(f));
+void tpu::Stub::experimental_async::_ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_status_res* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod__ref_phase_compute_, context, request, response, std::move(f));
 }
 
-void tpu::Stub::experimental_async::_invoke(::grpc::ClientContext* context, const ::sla::tpu_calc_req* request, ::sla::tpu_calc_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
-  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod__invoke_, context, request, response, reactor);
+void tpu::Stub::experimental_async::_ref_phase_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req* request, ::sla::tpu_status_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod__ref_phase_compute_, context, request, response, reactor);
 }
 
-void tpu::Stub::experimental_async::_invoke(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_calc_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
-  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod__invoke_, context, request, response, reactor);
+void tpu::Stub::experimental_async::_ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_status_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod__ref_phase_compute_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::sla::tpu_calc_res>* tpu::Stub::Async_invokeRaw(::grpc::ClientContext* context, const ::sla::tpu_calc_req& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::sla::tpu_calc_res>::Create(channel_.get(), cq, rpcmethod__invoke_, context, request, true);
+::grpc::ClientAsyncResponseReader< ::sla::tpu_status_res>* tpu::Stub::Async_ref_phase_computeRaw(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::sla::tpu_status_res>::Create(channel_.get(), cq, rpcmethod__ref_phase_compute_, context, request, true);
 }
 
-::grpc::ClientAsyncResponseReader< ::sla::tpu_calc_res>* tpu::Stub::PrepareAsync_invokeRaw(::grpc::ClientContext* context, const ::sla::tpu_calc_req& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::sla::tpu_calc_res>::Create(channel_.get(), cq, rpcmethod__invoke_, context, request, false);
+::grpc::ClientAsyncResponseReader< ::sla::tpu_status_res>* tpu::Stub::PrepareAsync_ref_phase_computeRaw(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::sla::tpu_status_res>::Create(channel_.get(), cq, rpcmethod__ref_phase_compute_, context, request, false);
+}
+
+::grpc::Status tpu::Stub::_depth_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::sla::depth_env_res* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod__depth_compute_, context, request, response);
+}
+
+void tpu::Stub::experimental_async::_depth_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req* request, ::sla::depth_env_res* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod__depth_compute_, context, request, response, std::move(f));
+}
+
+void tpu::Stub::experimental_async::_depth_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::depth_env_res* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod__depth_compute_, context, request, response, std::move(f));
+}
+
+void tpu::Stub::experimental_async::_depth_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req* request, ::sla::depth_env_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod__depth_compute_, context, request, response, reactor);
+}
+
+void tpu::Stub::experimental_async::_depth_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::depth_env_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod__depth_compute_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::sla::depth_env_res>* tpu::Stub::Async_depth_computeRaw(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::sla::depth_env_res>::Create(channel_.get(), cq, rpcmethod__depth_compute_, context, request, true);
+}
+
+::grpc::ClientAsyncResponseReader< ::sla::depth_env_res>* tpu::Stub::PrepareAsync_depth_computeRaw(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::sla::depth_env_res>::Create(channel_.get(), cq, rpcmethod__depth_compute_, context, request, false);
 }
 
 tpu::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       tpu_method_names[0],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< tpu::Service, ::sla::tpu_conf_req, ::sla::tpu_conf_res>(
+      new ::grpc::internal::RpcMethodHandler< tpu::Service, ::sla::tpu_conf_req, ::sla::tpu_status_res>(
           std::mem_fn(&tpu::Service::_init), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       tpu_method_names[1],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< tpu::Service, ::sla::tpu_calc_req, ::sla::tpu_calc_res>(
-          std::mem_fn(&tpu::Service::_invoke), this)));
+      new ::grpc::internal::RpcMethodHandler< tpu::Service, ::sla::tpu_env_req, ::sla::tpu_status_res>(
+          std::mem_fn(&tpu::Service::_ref_phase_compute), this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      tpu_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< tpu::Service, ::sla::tpu_env_req, ::sla::depth_env_res>(
+          std::mem_fn(&tpu::Service::_depth_compute), this)));
 }
 
 tpu::Service::~Service() {
 }
 
-::grpc::Status tpu::Service::_init(::grpc::ServerContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_conf_res* response) {
+::grpc::Status tpu::Service::_init(::grpc::ServerContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_status_res* response) {
   (void) context;
   (void) request;
   (void) response;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status tpu::Service::_invoke(::grpc::ServerContext* context, const ::sla::tpu_calc_req* request, ::sla::tpu_calc_res* response) {
+::grpc::Status tpu::Service::_ref_phase_compute(::grpc::ServerContext* context, const ::sla::tpu_env_req* request, ::sla::tpu_status_res* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status tpu::Service::_depth_compute(::grpc::ServerContext* context, const ::sla::tpu_env_req* request, ::sla::depth_env_res* response) {
   (void) context;
   (void) request;
   (void) response;

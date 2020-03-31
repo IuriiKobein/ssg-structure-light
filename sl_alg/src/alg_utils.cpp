@@ -1,8 +1,11 @@
 #include "alg_utils.hpp"
 
+#include <algorithm>
+#include <cmath>
 #include <cstdint>
 #include <experimental/filesystem>
 #include <iostream>
+#include <iterator>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/core/types.hpp>
 #include <opencv2/highgui.hpp>
@@ -48,10 +51,26 @@ static void to_float_scale(const std::vector<MatType> &src,
 }
 }  // namespace
 
-void img_show(const std::string title, cv::Mat &h_img) {
-    cv::normalize(h_img, h_img, 0, 255, cv::NORM_MINMAX, CV_8U);
+void img_show(const std::string &title, const cv::Mat &img) {
+    auto tmp = img.clone();
+
+    cv::normalize(tmp, tmp, 0, 255, cv::NORM_MINMAX, CV_8U);
     cv::namedWindow(title, cv::WINDOW_NORMAL);
-    cv::imshow(title, h_img);
+    cv::imshow(title, tmp);
+}
+
+void lfs_img_write(const std::string &path, const cv::Mat &h_img) {
+    cv::normalize(h_img, h_img, 0, 255, cv::NORM_MINMAX, CV_8U);
+    cv::imwrite(path, h_img);
+}
+
+void lfs_imgs_write(const std::string &path, const  std::vector<cv::Mat> &imgs) {
+    std::int32_t i = 0;
+
+    std::for_each(std::begin(imgs), std::end(imgs),
+                  [&i, &path](const auto &img) {
+                      lfs_img_write(std::string(path) + std::to_string(i++) + ".png", img);
+                  });
 }
 
 std::vector<cv::Mat> host_imgs_load(const std::vector<std::string> &path_list) {
@@ -60,9 +79,7 @@ std::vector<cv::Mat> host_imgs_load(const std::vector<std::string> &path_list) {
 
     std::transform(
         std::begin(path_list), std::end(path_list), std::back_inserter(imgs),
-        [](const auto &p) {
-            return cv::imread(p, cv::IMREAD_GRAYSCALE);
-        });
+        [](const auto &p) { return cv::imread(p, cv::IMREAD_GRAYSCALE); });
 
     return imgs;
 }
@@ -99,3 +116,56 @@ void cv_round(cv::Mat &img) {
         }
     }
 }
+
+// Generate sinusoidal patterns. Markers are optional
+std::vector<cv::Mat> sinusoidal_pattern_generate(
+    sinusoidal_pattern_params &params) {
+    // Three patterns are used in the reference paper.
+    std::float_t meanAmpl = 127.5;
+    std::float_t sinAmpl = 127.5;
+    std::float_t phase_shift = std::float_t(2 * CV_PI / params.num_of_patterns);
+    std::int32_t period_pixels;
+    std::float_t freq;
+
+    std::vector<cv::Mat> patterns(params.num_of_patterns);
+
+    if (params.is_horizontal) {
+        period_pixels = params.size.height / params.num_of_periods;
+    } else {
+        period_pixels = params.size.width / params.num_of_periods;
+    }
+
+    freq = (std::float_t)(1 / period_pixels);
+
+    for (int i = 0; i < params.num_of_patterns; ++i) {
+        patterns[i] = cv::Mat(params.size.height, params.size.width, CV_8UC1);
+
+        if (params.is_horizontal) {
+            patterns[i] = patterns[i].t();
+        }
+    }
+    // Patterns vary along one direction only so, a row Mat can be created and
+    // copied to the pattern's rows
+    for (int i = 0; i < params.num_of_patterns; ++i) {
+        cv::Mat rowValues(1, patterns[i].cols, CV_8UC1);
+
+        for (int j = 0; j < patterns[i].cols; ++j) {
+            rowValues.at<uchar>(0, j) = cv::saturate_cast<uchar>(
+                meanAmpl +
+                sinAmpl * sin(2 * CV_PI * freq * j + i * phase_shift));
+        }
+
+        for (int j = 0; j < patterns[i].rows; ++j) {
+            rowValues.row(0).copyTo(patterns[i].row(j));
+        }
+    }
+
+    if (params.is_horizontal) {
+        for (int i = 0; i < params.num_of_patterns; ++i) {
+            patterns[i] = patterns[i].t();
+        }
+    }
+
+    return patterns;
+}
+

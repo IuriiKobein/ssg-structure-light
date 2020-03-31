@@ -10,8 +10,8 @@
 #include <vector>
 
 namespace {
-sl_alg_auto_reg s_sl_tpu_reg("cpu_tpu", [](cv::Size size) {
-    return std::make_unique<sl_tpu>(size);
+sl_alg_auto_reg s_sl_tpu_reg("cpu_tpu", [](const sl_alg::params_t& params) {
+    return std::make_unique<sl_tpu>(params);
 });
 
 cv::Mat cpu_temporal_phase_unwrap(cv::Mat& phase1, cv::Mat& phase2,
@@ -31,19 +31,14 @@ cv::Mat cpu_temporal_phase_unwrap(cv::Mat& phase1, cv::Mat& phase2,
 
 class sl_tpu::alg_impl {
    public:
-    alg_impl(cv::Size size)
-        : _params{20, 1},
-          _lf_obj_phase(size, CV_32FC1),
-          _hf_obj_phase(size, CV_32FC1),
-          _lf_ref_phase(size, CV_32FC1),
-          _hf_ref_phase(size, CV_32FC1)
+    alg_impl(const params_t &params)
+        : _params(params),
+          _lf_obj_phase(_params.size, CV_32FC1),
+          _hf_obj_phase(_params.size, CV_32FC1),
+          _lf_ref_phase(_params.size, CV_32FC1),
+          _hf_ref_phase(_params.size, CV_32FC1)
 
     {}
-
-    int config_set(const tpu_params_t& params) {
-        _params = params;
-        return 0;
-    }
 
     int ref_phase_compute(const std::vector<cv::Mat>& lf_refs,
                           const std::vector<cv::Mat>& hf_refs) {
@@ -66,7 +61,7 @@ class sl_tpu::alg_impl {
     }
 
    private:
-    tpu_params_t _params;
+    params_t _params;
     std::vector<cv::Mat> _tmp;
     cv::Mat _lf_obj_phase;
     cv::Mat _hf_obj_phase;
@@ -74,13 +69,9 @@ class sl_tpu::alg_impl {
     cv::Mat _hf_ref_phase;
 };
 
-sl_tpu::sl_tpu(cv::Size size) : _pimpl(std::make_unique<alg_impl>(size)) {}
+sl_tpu::sl_tpu(const params_t &params) : _pimpl(std::make_unique<alg_impl>(params)) {}
 
 sl_tpu::~sl_tpu() = default;
-
-int sl_tpu::config_set(const tpu_params_t& params) {
-    return _pimpl->config_set(params);
-}
 
 int sl_tpu::ref_phase_compute(const std::vector<cv::Mat>& refs) {
     return -ENOTSUP;

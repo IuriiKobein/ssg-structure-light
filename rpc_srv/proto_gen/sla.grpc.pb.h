@@ -36,46 +36,65 @@ class tpu final {
   class StubInterface {
    public:
     virtual ~StubInterface() {}
-    virtual ::grpc::Status _init(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::sla::tpu_conf_res* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_conf_res>> Async_init(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_conf_res>>(Async_initRaw(context, request, cq));
+    virtual ::grpc::Status _init(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::sla::tpu_status_res* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_status_res>> Async_init(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_status_res>>(Async_initRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_conf_res>> PrepareAsync_init(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_conf_res>>(PrepareAsync_initRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_status_res>> PrepareAsync_init(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_status_res>>(PrepareAsync_initRaw(context, request, cq));
     }
-    virtual ::grpc::Status _invoke(::grpc::ClientContext* context, const ::sla::tpu_calc_req& request, ::sla::tpu_calc_res* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_calc_res>> Async_invoke(::grpc::ClientContext* context, const ::sla::tpu_calc_req& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_calc_res>>(Async_invokeRaw(context, request, cq));
+    virtual ::grpc::Status _ref_phase_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::sla::tpu_status_res* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_status_res>> Async_ref_phase_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_status_res>>(Async_ref_phase_computeRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_calc_res>> PrepareAsync_invoke(::grpc::ClientContext* context, const ::sla::tpu_calc_req& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_calc_res>>(PrepareAsync_invokeRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_status_res>> PrepareAsync_ref_phase_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_status_res>>(PrepareAsync_ref_phase_computeRaw(context, request, cq));
+    }
+    virtual ::grpc::Status _depth_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::sla::depth_env_res* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::depth_env_res>> Async_depth_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::depth_env_res>>(Async_depth_computeRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::depth_env_res>> PrepareAsync_depth_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::depth_env_res>>(PrepareAsync_depth_computeRaw(context, request, cq));
     }
     class experimental_async_interface {
      public:
       virtual ~experimental_async_interface() {}
-      virtual void _init(::grpc::ClientContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_conf_res* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void _init(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_conf_res* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void _init(::grpc::ClientContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_status_res* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void _init(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_status_res* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void _init(::grpc::ClientContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_conf_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void _init(::grpc::ClientContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_status_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void _init(::grpc::ClientContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_conf_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void _init(::grpc::ClientContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_status_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void _init(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_conf_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void _init(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_status_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void _init(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_conf_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void _init(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_status_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
-      virtual void _invoke(::grpc::ClientContext* context, const ::sla::tpu_calc_req* request, ::sla::tpu_calc_res* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void _invoke(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_calc_res* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void _ref_phase_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req* request, ::sla::tpu_status_res* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void _ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_status_res* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void _invoke(::grpc::ClientContext* context, const ::sla::tpu_calc_req* request, ::sla::tpu_calc_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void _ref_phase_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req* request, ::sla::tpu_status_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void _invoke(::grpc::ClientContext* context, const ::sla::tpu_calc_req* request, ::sla::tpu_calc_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void _ref_phase_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req* request, ::sla::tpu_status_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void _invoke(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_calc_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void _ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_status_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void _invoke(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_calc_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void _ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_status_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      #endif
+      virtual void _depth_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req* request, ::sla::depth_env_res* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void _depth_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::depth_env_res* response, std::function<void(::grpc::Status)>) = 0;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      virtual void _depth_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req* request, ::sla::depth_env_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      #else
+      virtual void _depth_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req* request, ::sla::depth_env_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      #endif
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      virtual void _depth_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::depth_env_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      #else
+      virtual void _depth_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::depth_env_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
     };
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -86,54 +105,75 @@ class tpu final {
     #endif
     virtual class experimental_async_interface* experimental_async() { return nullptr; }
   private:
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_conf_res>* Async_initRaw(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_conf_res>* PrepareAsync_initRaw(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_calc_res>* Async_invokeRaw(::grpc::ClientContext* context, const ::sla::tpu_calc_req& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_calc_res>* PrepareAsync_invokeRaw(::grpc::ClientContext* context, const ::sla::tpu_calc_req& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_status_res>* Async_initRaw(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_status_res>* PrepareAsync_initRaw(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_status_res>* Async_ref_phase_computeRaw(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::tpu_status_res>* PrepareAsync_ref_phase_computeRaw(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::depth_env_res>* Async_depth_computeRaw(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::depth_env_res>* PrepareAsync_depth_computeRaw(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
     Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel);
-    ::grpc::Status _init(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::sla::tpu_conf_res* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::tpu_conf_res>> Async_init(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::tpu_conf_res>>(Async_initRaw(context, request, cq));
+    ::grpc::Status _init(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::sla::tpu_status_res* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::tpu_status_res>> Async_init(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::tpu_status_res>>(Async_initRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::tpu_conf_res>> PrepareAsync_init(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::tpu_conf_res>>(PrepareAsync_initRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::tpu_status_res>> PrepareAsync_init(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::tpu_status_res>>(PrepareAsync_initRaw(context, request, cq));
     }
-    ::grpc::Status _invoke(::grpc::ClientContext* context, const ::sla::tpu_calc_req& request, ::sla::tpu_calc_res* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::tpu_calc_res>> Async_invoke(::grpc::ClientContext* context, const ::sla::tpu_calc_req& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::tpu_calc_res>>(Async_invokeRaw(context, request, cq));
+    ::grpc::Status _ref_phase_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::sla::tpu_status_res* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::tpu_status_res>> Async_ref_phase_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::tpu_status_res>>(Async_ref_phase_computeRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::tpu_calc_res>> PrepareAsync_invoke(::grpc::ClientContext* context, const ::sla::tpu_calc_req& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::tpu_calc_res>>(PrepareAsync_invokeRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::tpu_status_res>> PrepareAsync_ref_phase_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::tpu_status_res>>(PrepareAsync_ref_phase_computeRaw(context, request, cq));
+    }
+    ::grpc::Status _depth_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::sla::depth_env_res* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::depth_env_res>> Async_depth_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::depth_env_res>>(Async_depth_computeRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::depth_env_res>> PrepareAsync_depth_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::depth_env_res>>(PrepareAsync_depth_computeRaw(context, request, cq));
     }
     class experimental_async final :
       public StubInterface::experimental_async_interface {
      public:
-      void _init(::grpc::ClientContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_conf_res* response, std::function<void(::grpc::Status)>) override;
-      void _init(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_conf_res* response, std::function<void(::grpc::Status)>) override;
+      void _init(::grpc::ClientContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_status_res* response, std::function<void(::grpc::Status)>) override;
+      void _init(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_status_res* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void _init(::grpc::ClientContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_conf_res* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void _init(::grpc::ClientContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_status_res* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void _init(::grpc::ClientContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_conf_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void _init(::grpc::ClientContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_status_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void _init(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_conf_res* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void _init(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_status_res* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void _init(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_conf_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void _init(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_status_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
-      void _invoke(::grpc::ClientContext* context, const ::sla::tpu_calc_req* request, ::sla::tpu_calc_res* response, std::function<void(::grpc::Status)>) override;
-      void _invoke(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_calc_res* response, std::function<void(::grpc::Status)>) override;
+      void _ref_phase_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req* request, ::sla::tpu_status_res* response, std::function<void(::grpc::Status)>) override;
+      void _ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_status_res* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void _invoke(::grpc::ClientContext* context, const ::sla::tpu_calc_req* request, ::sla::tpu_calc_res* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void _ref_phase_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req* request, ::sla::tpu_status_res* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void _invoke(::grpc::ClientContext* context, const ::sla::tpu_calc_req* request, ::sla::tpu_calc_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void _ref_phase_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req* request, ::sla::tpu_status_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void _invoke(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_calc_res* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void _ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_status_res* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void _invoke(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_calc_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void _ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::tpu_status_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      #endif
+      void _depth_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req* request, ::sla::depth_env_res* response, std::function<void(::grpc::Status)>) override;
+      void _depth_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::depth_env_res* response, std::function<void(::grpc::Status)>) override;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      void _depth_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req* request, ::sla::depth_env_res* response, ::grpc::ClientUnaryReactor* reactor) override;
+      #else
+      void _depth_compute(::grpc::ClientContext* context, const ::sla::tpu_env_req* request, ::sla::depth_env_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      #endif
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      void _depth_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::depth_env_res* response, ::grpc::ClientUnaryReactor* reactor) override;
+      #else
+      void _depth_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::depth_env_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
      private:
       friend class Stub;
@@ -146,12 +186,15 @@ class tpu final {
    private:
     std::shared_ptr< ::grpc::ChannelInterface> channel_;
     class experimental_async async_stub_{this};
-    ::grpc::ClientAsyncResponseReader< ::sla::tpu_conf_res>* Async_initRaw(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::sla::tpu_conf_res>* PrepareAsync_initRaw(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::sla::tpu_calc_res>* Async_invokeRaw(::grpc::ClientContext* context, const ::sla::tpu_calc_req& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::sla::tpu_calc_res>* PrepareAsync_invokeRaw(::grpc::ClientContext* context, const ::sla::tpu_calc_req& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sla::tpu_status_res>* Async_initRaw(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sla::tpu_status_res>* PrepareAsync_initRaw(::grpc::ClientContext* context, const ::sla::tpu_conf_req& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sla::tpu_status_res>* Async_ref_phase_computeRaw(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sla::tpu_status_res>* PrepareAsync_ref_phase_computeRaw(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sla::depth_env_res>* Async_depth_computeRaw(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sla::depth_env_res>* PrepareAsync_depth_computeRaw(::grpc::ClientContext* context, const ::sla::tpu_env_req& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod__init_;
-    const ::grpc::internal::RpcMethod rpcmethod__invoke_;
+    const ::grpc::internal::RpcMethod rpcmethod__ref_phase_compute_;
+    const ::grpc::internal::RpcMethod rpcmethod__depth_compute_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -159,8 +202,9 @@ class tpu final {
    public:
     Service();
     virtual ~Service();
-    virtual ::grpc::Status _init(::grpc::ServerContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_conf_res* response);
-    virtual ::grpc::Status _invoke(::grpc::ServerContext* context, const ::sla::tpu_calc_req* request, ::sla::tpu_calc_res* response);
+    virtual ::grpc::Status _init(::grpc::ServerContext* context, const ::sla::tpu_conf_req* request, ::sla::tpu_status_res* response);
+    virtual ::grpc::Status _ref_phase_compute(::grpc::ServerContext* context, const ::sla::tpu_env_req* request, ::sla::tpu_status_res* response);
+    virtual ::grpc::Status _depth_compute(::grpc::ServerContext* context, const ::sla::tpu_env_req* request, ::sla::depth_env_res* response);
   };
   template <class BaseClass>
   class WithAsyncMethod__init : public BaseClass {
@@ -174,35 +218,55 @@ class tpu final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status _init(::grpc::ServerContext* /*context*/, const ::sla::tpu_conf_req* /*request*/, ::sla::tpu_conf_res* /*response*/) override {
+    ::grpc::Status _init(::grpc::ServerContext* /*context*/, const ::sla::tpu_conf_req* /*request*/, ::sla::tpu_status_res* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void Request_init(::grpc::ServerContext* context, ::sla::tpu_conf_req* request, ::grpc::ServerAsyncResponseWriter< ::sla::tpu_conf_res>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void Request_init(::grpc::ServerContext* context, ::sla::tpu_conf_req* request, ::grpc::ServerAsyncResponseWriter< ::sla::tpu_status_res>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
-  class WithAsyncMethod__invoke : public BaseClass {
+  class WithAsyncMethod__ref_phase_compute : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithAsyncMethod__invoke() {
+    WithAsyncMethod__ref_phase_compute() {
       ::grpc::Service::MarkMethodAsync(1);
     }
-    ~WithAsyncMethod__invoke() override {
+    ~WithAsyncMethod__ref_phase_compute() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status _invoke(::grpc::ServerContext* /*context*/, const ::sla::tpu_calc_req* /*request*/, ::sla::tpu_calc_res* /*response*/) override {
+    ::grpc::Status _ref_phase_compute(::grpc::ServerContext* /*context*/, const ::sla::tpu_env_req* /*request*/, ::sla::tpu_status_res* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void Request_invoke(::grpc::ServerContext* context, ::sla::tpu_calc_req* request, ::grpc::ServerAsyncResponseWriter< ::sla::tpu_calc_res>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void Request_ref_phase_compute(::grpc::ServerContext* context, ::sla::tpu_env_req* request, ::grpc::ServerAsyncResponseWriter< ::sla::tpu_status_res>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod__init<WithAsyncMethod__invoke<Service > > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod__depth_compute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod__depth_compute() {
+      ::grpc::Service::MarkMethodAsync(2);
+    }
+    ~WithAsyncMethod__depth_compute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status _depth_compute(::grpc::ServerContext* /*context*/, const ::sla::tpu_env_req* /*request*/, ::sla::depth_env_res* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Request_depth_compute(::grpc::ServerContext* context, ::sla::tpu_env_req* request, ::grpc::ServerAsyncResponseWriter< ::sla::depth_env_res>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod__init<WithAsyncMethod__ref_phase_compute<WithAsyncMethod__depth_compute<Service > > > AsyncService;
   template <class BaseClass>
   class ExperimentalWithCallbackMethod__init : public BaseClass {
    private:
@@ -215,93 +279,140 @@ class tpu final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(0,
-          new ::grpc_impl::internal::CallbackUnaryHandler< ::sla::tpu_conf_req, ::sla::tpu_conf_res>(
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::sla::tpu_conf_req, ::sla::tpu_status_res>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::sla::tpu_conf_req* request, ::sla::tpu_conf_res* response) { return this->_init(context, request, response); }));}
+                     context, const ::sla::tpu_conf_req* request, ::sla::tpu_status_res* response) { return this->_init(context, request, response); }));}
     void SetMessageAllocatorFor__init(
-        ::grpc::experimental::MessageAllocator< ::sla::tpu_conf_req, ::sla::tpu_conf_res>* allocator) {
+        ::grpc::experimental::MessageAllocator< ::sla::tpu_conf_req, ::sla::tpu_status_res>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(0);
     #endif
-      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::sla::tpu_conf_req, ::sla::tpu_conf_res>*>(handler)
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::sla::tpu_conf_req, ::sla::tpu_status_res>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~ExperimentalWithCallbackMethod__init() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status _init(::grpc::ServerContext* /*context*/, const ::sla::tpu_conf_req* /*request*/, ::sla::tpu_conf_res* /*response*/) override {
+    ::grpc::Status _init(::grpc::ServerContext* /*context*/, const ::sla::tpu_conf_req* /*request*/, ::sla::tpu_status_res* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerUnaryReactor* _init(
-      ::grpc::CallbackServerContext* /*context*/, const ::sla::tpu_conf_req* /*request*/, ::sla::tpu_conf_res* /*response*/)
+      ::grpc::CallbackServerContext* /*context*/, const ::sla::tpu_conf_req* /*request*/, ::sla::tpu_status_res* /*response*/)
     #else
     virtual ::grpc::experimental::ServerUnaryReactor* _init(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::sla::tpu_conf_req* /*request*/, ::sla::tpu_conf_res* /*response*/)
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::sla::tpu_conf_req* /*request*/, ::sla::tpu_status_res* /*response*/)
     #endif
       { return nullptr; }
   };
   template <class BaseClass>
-  class ExperimentalWithCallbackMethod__invoke : public BaseClass {
+  class ExperimentalWithCallbackMethod__ref_phase_compute : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    ExperimentalWithCallbackMethod__invoke() {
+    ExperimentalWithCallbackMethod__ref_phase_compute() {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::Service::
     #else
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(1,
-          new ::grpc_impl::internal::CallbackUnaryHandler< ::sla::tpu_calc_req, ::sla::tpu_calc_res>(
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::sla::tpu_env_req, ::sla::tpu_status_res>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::sla::tpu_calc_req* request, ::sla::tpu_calc_res* response) { return this->_invoke(context, request, response); }));}
-    void SetMessageAllocatorFor__invoke(
-        ::grpc::experimental::MessageAllocator< ::sla::tpu_calc_req, ::sla::tpu_calc_res>* allocator) {
+                     context, const ::sla::tpu_env_req* request, ::sla::tpu_status_res* response) { return this->_ref_phase_compute(context, request, response); }));}
+    void SetMessageAllocatorFor__ref_phase_compute(
+        ::grpc::experimental::MessageAllocator< ::sla::tpu_env_req, ::sla::tpu_status_res>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(1);
     #endif
-      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::sla::tpu_calc_req, ::sla::tpu_calc_res>*>(handler)
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::sla::tpu_env_req, ::sla::tpu_status_res>*>(handler)
               ->SetMessageAllocator(allocator);
     }
-    ~ExperimentalWithCallbackMethod__invoke() override {
+    ~ExperimentalWithCallbackMethod__ref_phase_compute() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status _invoke(::grpc::ServerContext* /*context*/, const ::sla::tpu_calc_req* /*request*/, ::sla::tpu_calc_res* /*response*/) override {
+    ::grpc::Status _ref_phase_compute(::grpc::ServerContext* /*context*/, const ::sla::tpu_env_req* /*request*/, ::sla::tpu_status_res* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-    virtual ::grpc::ServerUnaryReactor* _invoke(
-      ::grpc::CallbackServerContext* /*context*/, const ::sla::tpu_calc_req* /*request*/, ::sla::tpu_calc_res* /*response*/)
+    virtual ::grpc::ServerUnaryReactor* _ref_phase_compute(
+      ::grpc::CallbackServerContext* /*context*/, const ::sla::tpu_env_req* /*request*/, ::sla::tpu_status_res* /*response*/)
     #else
-    virtual ::grpc::experimental::ServerUnaryReactor* _invoke(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::sla::tpu_calc_req* /*request*/, ::sla::tpu_calc_res* /*response*/)
+    virtual ::grpc::experimental::ServerUnaryReactor* _ref_phase_compute(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::sla::tpu_env_req* /*request*/, ::sla::tpu_status_res* /*response*/)
+    #endif
+      { return nullptr; }
+  };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod__depth_compute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod__depth_compute() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodCallback(2,
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::sla::tpu_env_req, ::sla::depth_env_res>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::sla::tpu_env_req* request, ::sla::depth_env_res* response) { return this->_depth_compute(context, request, response); }));}
+    void SetMessageAllocatorFor__depth_compute(
+        ::grpc::experimental::MessageAllocator< ::sla::tpu_env_req, ::sla::depth_env_res>* allocator) {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
+    #else
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(2);
+    #endif
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::sla::tpu_env_req, ::sla::depth_env_res>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod__depth_compute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status _depth_compute(::grpc::ServerContext* /*context*/, const ::sla::tpu_env_req* /*request*/, ::sla::depth_env_res* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerUnaryReactor* _depth_compute(
+      ::grpc::CallbackServerContext* /*context*/, const ::sla::tpu_env_req* /*request*/, ::sla::depth_env_res* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* _depth_compute(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::sla::tpu_env_req* /*request*/, ::sla::depth_env_res* /*response*/)
     #endif
       { return nullptr; }
   };
   #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-  typedef ExperimentalWithCallbackMethod__init<ExperimentalWithCallbackMethod__invoke<Service > > CallbackService;
+  typedef ExperimentalWithCallbackMethod__init<ExperimentalWithCallbackMethod__ref_phase_compute<ExperimentalWithCallbackMethod__depth_compute<Service > > > CallbackService;
   #endif
 
-  typedef ExperimentalWithCallbackMethod__init<ExperimentalWithCallbackMethod__invoke<Service > > ExperimentalCallbackService;
+  typedef ExperimentalWithCallbackMethod__init<ExperimentalWithCallbackMethod__ref_phase_compute<ExperimentalWithCallbackMethod__depth_compute<Service > > > ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod__init : public BaseClass {
    private:
@@ -314,24 +425,41 @@ class tpu final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status _init(::grpc::ServerContext* /*context*/, const ::sla::tpu_conf_req* /*request*/, ::sla::tpu_conf_res* /*response*/) override {
+    ::grpc::Status _init(::grpc::ServerContext* /*context*/, const ::sla::tpu_conf_req* /*request*/, ::sla::tpu_status_res* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
   };
   template <class BaseClass>
-  class WithGenericMethod__invoke : public BaseClass {
+  class WithGenericMethod__ref_phase_compute : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithGenericMethod__invoke() {
+    WithGenericMethod__ref_phase_compute() {
       ::grpc::Service::MarkMethodGeneric(1);
     }
-    ~WithGenericMethod__invoke() override {
+    ~WithGenericMethod__ref_phase_compute() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status _invoke(::grpc::ServerContext* /*context*/, const ::sla::tpu_calc_req* /*request*/, ::sla::tpu_calc_res* /*response*/) override {
+    ::grpc::Status _ref_phase_compute(::grpc::ServerContext* /*context*/, const ::sla::tpu_env_req* /*request*/, ::sla::tpu_status_res* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod__depth_compute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod__depth_compute() {
+      ::grpc::Service::MarkMethodGeneric(2);
+    }
+    ~WithGenericMethod__depth_compute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status _depth_compute(::grpc::ServerContext* /*context*/, const ::sla::tpu_env_req* /*request*/, ::sla::depth_env_res* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -348,7 +476,7 @@ class tpu final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status _init(::grpc::ServerContext* /*context*/, const ::sla::tpu_conf_req* /*request*/, ::sla::tpu_conf_res* /*response*/) override {
+    ::grpc::Status _init(::grpc::ServerContext* /*context*/, const ::sla::tpu_conf_req* /*request*/, ::sla::tpu_status_res* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -357,23 +485,43 @@ class tpu final {
     }
   };
   template <class BaseClass>
-  class WithRawMethod__invoke : public BaseClass {
+  class WithRawMethod__ref_phase_compute : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawMethod__invoke() {
+    WithRawMethod__ref_phase_compute() {
       ::grpc::Service::MarkMethodRaw(1);
     }
-    ~WithRawMethod__invoke() override {
+    ~WithRawMethod__ref_phase_compute() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status _invoke(::grpc::ServerContext* /*context*/, const ::sla::tpu_calc_req* /*request*/, ::sla::tpu_calc_res* /*response*/) override {
+    ::grpc::Status _ref_phase_compute(::grpc::ServerContext* /*context*/, const ::sla::tpu_env_req* /*request*/, ::sla::tpu_status_res* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void Request_invoke(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void Request_ref_phase_compute(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod__depth_compute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod__depth_compute() {
+      ::grpc::Service::MarkMethodRaw(2);
+    }
+    ~WithRawMethod__depth_compute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status _depth_compute(::grpc::ServerContext* /*context*/, const ::sla::tpu_env_req* /*request*/, ::sla::depth_env_res* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Request_depth_compute(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -401,7 +549,7 @@ class tpu final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status _init(::grpc::ServerContext* /*context*/, const ::sla::tpu_conf_req* /*request*/, ::sla::tpu_conf_res* /*response*/) override {
+    ::grpc::Status _init(::grpc::ServerContext* /*context*/, const ::sla::tpu_conf_req* /*request*/, ::sla::tpu_status_res* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -415,11 +563,11 @@ class tpu final {
       { return nullptr; }
   };
   template <class BaseClass>
-  class ExperimentalWithRawCallbackMethod__invoke : public BaseClass {
+  class ExperimentalWithRawCallbackMethod__ref_phase_compute : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    ExperimentalWithRawCallbackMethod__invoke() {
+    ExperimentalWithRawCallbackMethod__ref_phase_compute() {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::Service::
     #else
@@ -433,21 +581,59 @@ class tpu final {
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->_invoke(context, request, response); }));
+                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->_ref_phase_compute(context, request, response); }));
     }
-    ~ExperimentalWithRawCallbackMethod__invoke() override {
+    ~ExperimentalWithRawCallbackMethod__ref_phase_compute() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status _invoke(::grpc::ServerContext* /*context*/, const ::sla::tpu_calc_req* /*request*/, ::sla::tpu_calc_res* /*response*/) override {
+    ::grpc::Status _ref_phase_compute(::grpc::ServerContext* /*context*/, const ::sla::tpu_env_req* /*request*/, ::sla::tpu_status_res* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-    virtual ::grpc::ServerUnaryReactor* _invoke(
+    virtual ::grpc::ServerUnaryReactor* _ref_phase_compute(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
     #else
-    virtual ::grpc::experimental::ServerUnaryReactor* _invoke(
+    virtual ::grpc::experimental::ServerUnaryReactor* _ref_phase_compute(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #endif
+      { return nullptr; }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod__depth_compute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod__depth_compute() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodRawCallback(2,
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->_depth_compute(context, request, response); }));
+    }
+    ~ExperimentalWithRawCallbackMethod__depth_compute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status _depth_compute(::grpc::ServerContext* /*context*/, const ::sla::tpu_env_req* /*request*/, ::sla::depth_env_res* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerUnaryReactor* _depth_compute(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* _depth_compute(
       ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
     #endif
       { return nullptr; }
@@ -459,42 +645,62 @@ class tpu final {
    public:
     WithStreamedUnaryMethod__init() {
       ::grpc::Service::MarkMethodStreamed(0,
-        new ::grpc::internal::StreamedUnaryHandler< ::sla::tpu_conf_req, ::sla::tpu_conf_res>(std::bind(&WithStreamedUnaryMethod__init<BaseClass>::Streamed_init, this, std::placeholders::_1, std::placeholders::_2)));
+        new ::grpc::internal::StreamedUnaryHandler< ::sla::tpu_conf_req, ::sla::tpu_status_res>(std::bind(&WithStreamedUnaryMethod__init<BaseClass>::Streamed_init, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod__init() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status _init(::grpc::ServerContext* /*context*/, const ::sla::tpu_conf_req* /*request*/, ::sla::tpu_conf_res* /*response*/) override {
+    ::grpc::Status _init(::grpc::ServerContext* /*context*/, const ::sla::tpu_conf_req* /*request*/, ::sla::tpu_status_res* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status Streamed_init(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sla::tpu_conf_req,::sla::tpu_conf_res>* server_unary_streamer) = 0;
+    virtual ::grpc::Status Streamed_init(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sla::tpu_conf_req,::sla::tpu_status_res>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
-  class WithStreamedUnaryMethod__invoke : public BaseClass {
+  class WithStreamedUnaryMethod__ref_phase_compute : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithStreamedUnaryMethod__invoke() {
+    WithStreamedUnaryMethod__ref_phase_compute() {
       ::grpc::Service::MarkMethodStreamed(1,
-        new ::grpc::internal::StreamedUnaryHandler< ::sla::tpu_calc_req, ::sla::tpu_calc_res>(std::bind(&WithStreamedUnaryMethod__invoke<BaseClass>::Streamed_invoke, this, std::placeholders::_1, std::placeholders::_2)));
+        new ::grpc::internal::StreamedUnaryHandler< ::sla::tpu_env_req, ::sla::tpu_status_res>(std::bind(&WithStreamedUnaryMethod__ref_phase_compute<BaseClass>::Streamed_ref_phase_compute, this, std::placeholders::_1, std::placeholders::_2)));
     }
-    ~WithStreamedUnaryMethod__invoke() override {
+    ~WithStreamedUnaryMethod__ref_phase_compute() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status _invoke(::grpc::ServerContext* /*context*/, const ::sla::tpu_calc_req* /*request*/, ::sla::tpu_calc_res* /*response*/) override {
+    ::grpc::Status _ref_phase_compute(::grpc::ServerContext* /*context*/, const ::sla::tpu_env_req* /*request*/, ::sla::tpu_status_res* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status Streamed_invoke(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sla::tpu_calc_req,::sla::tpu_calc_res>* server_unary_streamer) = 0;
+    virtual ::grpc::Status Streamed_ref_phase_compute(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sla::tpu_env_req,::sla::tpu_status_res>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod__init<WithStreamedUnaryMethod__invoke<Service > > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod__depth_compute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod__depth_compute() {
+      ::grpc::Service::MarkMethodStreamed(2,
+        new ::grpc::internal::StreamedUnaryHandler< ::sla::tpu_env_req, ::sla::depth_env_res>(std::bind(&WithStreamedUnaryMethod__depth_compute<BaseClass>::Streamed_depth_compute, this, std::placeholders::_1, std::placeholders::_2)));
+    }
+    ~WithStreamedUnaryMethod__depth_compute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status _depth_compute(::grpc::ServerContext* /*context*/, const ::sla::tpu_env_req* /*request*/, ::sla::depth_env_res* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status Streamed_depth_compute(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sla::tpu_env_req,::sla::depth_env_res>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod__init<WithStreamedUnaryMethod__ref_phase_compute<WithStreamedUnaryMethod__depth_compute<Service > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod__init<WithStreamedUnaryMethod__invoke<Service > > StreamedService;
+  typedef WithStreamedUnaryMethod__init<WithStreamedUnaryMethod__ref_phase_compute<WithStreamedUnaryMethod__depth_compute<Service > > > StreamedService;
 };
 
 }  // namespace sla

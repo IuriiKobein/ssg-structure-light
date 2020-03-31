@@ -4,7 +4,7 @@ import grpc
 import sla_pb2 as sla__pb2
 
 
-class phase_unwrapStub(object):
+class tpuStub(object):
   # missing associated documentation comment in .proto file
   pass
 
@@ -14,18 +14,42 @@ class phase_unwrapStub(object):
     Args:
       channel: A grpc.Channel.
     """
-    self.tpu_invoke = channel.unary_unary(
-        '/sla.phase_unwrap/tpu_invoke',
-        request_serializer=sla__pb2.tpu_req.SerializeToString,
-        response_deserializer=sla__pb2.tpu_res.FromString,
+    self._init = channel.unary_unary(
+        '/sla.tpu/_init',
+        request_serializer=sla__pb2.tpu_conf_req.SerializeToString,
+        response_deserializer=sla__pb2.tpu_status_res.FromString,
+        )
+    self._ref_phase_compute = channel.unary_unary(
+        '/sla.tpu/_ref_phase_compute',
+        request_serializer=sla__pb2.tpu_env_req.SerializeToString,
+        response_deserializer=sla__pb2.tpu_status_res.FromString,
+        )
+    self._depth_compute = channel.unary_unary(
+        '/sla.tpu/_depth_compute',
+        request_serializer=sla__pb2.tpu_env_req.SerializeToString,
+        response_deserializer=sla__pb2.depth_env_res.FromString,
         )
 
 
-class phase_unwrapServicer(object):
+class tpuServicer(object):
   # missing associated documentation comment in .proto file
   pass
 
-  def tpu_invoke(self, request, context):
+  def _init(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def _ref_phase_compute(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def _depth_compute(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -33,14 +57,24 @@ class phase_unwrapServicer(object):
     raise NotImplementedError('Method not implemented!')
 
 
-def add_phase_unwrapServicer_to_server(servicer, server):
+def add_tpuServicer_to_server(servicer, server):
   rpc_method_handlers = {
-      'tpu_invoke': grpc.unary_unary_rpc_method_handler(
-          servicer.tpu_invoke,
-          request_deserializer=sla__pb2.tpu_req.FromString,
-          response_serializer=sla__pb2.tpu_res.SerializeToString,
+      '_init': grpc.unary_unary_rpc_method_handler(
+          servicer._init,
+          request_deserializer=sla__pb2.tpu_conf_req.FromString,
+          response_serializer=sla__pb2.tpu_status_res.SerializeToString,
+      ),
+      '_ref_phase_compute': grpc.unary_unary_rpc_method_handler(
+          servicer._ref_phase_compute,
+          request_deserializer=sla__pb2.tpu_env_req.FromString,
+          response_serializer=sla__pb2.tpu_status_res.SerializeToString,
+      ),
+      '_depth_compute': grpc.unary_unary_rpc_method_handler(
+          servicer._depth_compute,
+          request_deserializer=sla__pb2.tpu_env_req.FromString,
+          response_serializer=sla__pb2.depth_env_res.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
-      'sla.phase_unwrap', rpc_method_handlers)
+      'sla.tpu', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))

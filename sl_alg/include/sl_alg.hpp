@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include <memory>
 #include <opencv2/core.hpp>
 #include <opencv2/core/mat.hpp>
@@ -8,6 +9,11 @@
 
 class sl_alg {
    public:
+    struct params_t {
+        cv::Size size;
+        std::float_t freq_ratio;
+        std::float_t real_scale;
+    };
     sl_alg() {};
     virtual ~sl_alg() = default; 
     sl_alg& operator=(const sl_alg&) = delete;

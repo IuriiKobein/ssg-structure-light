@@ -18,44 +18,51 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='sla',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\tsla.proto\x12\x03sla\"Y\n\x07tpu_req\x12\x12\n\nurl_ref_lf\x18\x01 \x01(\t\x12\x12\n\nurl_ref_hf\x18\x02 \x01(\t\x12\x12\n\nurl_obj_lf\x18\x03 \x01(\t\x12\x12\n\nurl_obj_hf\x18\x04 \x01(\t\"#\n\x07tpu_res\x12\x18\n\x10url_unwrap_phase\x18\x01 \x01(\t2:\n\x0cphase_unwrap\x12*\n\ntpu_invoke\x12\x0c.sla.tpu_req\x1a\x0c.sla.tpu_res\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\tsla.proto\x12\x03sla\"c\n\x0ctpu_conf_req\x12\x0c\n\x04impl\x18\x01 \x01(\t\x12\r\n\x05width\x18\x02 \x01(\x05\x12\x0e\n\x06height\x18\x03 \x01(\x05\x12\x12\n\nfreq_ratio\x18\x04 \x01(\x02\x12\x12\n\nreal_scale\x18\x05 \x01(\x02\" \n\x0etpu_status_res\x12\x0e\n\x06status\x18\x01 \x01(\x05\"-\n\x0btpu_env_req\x12\x0e\n\x06lf_img\x18\x01 \x03(\t\x12\x0e\n\x06hf_img\x18\x02 \x03(\t\")\n\rdepth_env_res\x12\x18\n\x10url_unwrap_phase\x18\x01 \x01(\t2\xb1\x01\n\x03tpu\x12\x31\n\x05_init\x12\x11.sla.tpu_conf_req\x1a\x13.sla.tpu_status_res\"\x00\x12=\n\x12_ref_phase_compute\x12\x10.sla.tpu_env_req\x1a\x13.sla.tpu_status_res\"\x00\x12\x38\n\x0e_depth_compute\x12\x10.sla.tpu_env_req\x1a\x12.sla.depth_env_res\"\x00\x62\x06proto3'
 )
 
 
 
 
-_TPU_REQ = _descriptor.Descriptor(
-  name='tpu_req',
-  full_name='sla.tpu_req',
+_TPU_CONF_REQ = _descriptor.Descriptor(
+  name='tpu_conf_req',
+  full_name='sla.tpu_conf_req',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='url_ref_lf', full_name='sla.tpu_req.url_ref_lf', index=0,
+      name='impl', full_name='sla.tpu_conf_req.impl', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='url_ref_hf', full_name='sla.tpu_req.url_ref_hf', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
+      name='width', full_name='sla.tpu_conf_req.width', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='url_obj_lf', full_name='sla.tpu_req.url_obj_lf', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
+      name='height', full_name='sla.tpu_conf_req.height', index=2,
+      number=3, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='url_obj_hf', full_name='sla.tpu_req.url_obj_hf', index=3,
-      number=4, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
+      name='freq_ratio', full_name='sla.tpu_conf_req.freq_ratio', index=3,
+      number=4, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='real_scale', full_name='sla.tpu_conf_req.real_scale', index=4,
+      number=5, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -72,19 +79,88 @@ _TPU_REQ = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=18,
-  serialized_end=107,
+  serialized_end=117,
 )
 
 
-_TPU_RES = _descriptor.Descriptor(
-  name='tpu_res',
-  full_name='sla.tpu_res',
+_TPU_STATUS_RES = _descriptor.Descriptor(
+  name='tpu_status_res',
+  full_name='sla.tpu_status_res',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='url_unwrap_phase', full_name='sla.tpu_res.url_unwrap_phase', index=0,
+      name='status', full_name='sla.tpu_status_res.status', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=119,
+  serialized_end=151,
+)
+
+
+_TPU_ENV_REQ = _descriptor.Descriptor(
+  name='tpu_env_req',
+  full_name='sla.tpu_env_req',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='lf_img', full_name='sla.tpu_env_req.lf_img', index=0,
+      number=1, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='hf_img', full_name='sla.tpu_env_req.hf_img', index=1,
+      number=2, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=153,
+  serialized_end=198,
+)
+
+
+_DEPTH_ENV_RES = _descriptor.Descriptor(
+  name='depth_env_res',
+  full_name='sla.depth_env_res',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='url_unwrap_phase', full_name='sla.depth_env_res.url_unwrap_phase', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -102,51 +178,85 @@ _TPU_RES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=109,
-  serialized_end=144,
+  serialized_start=200,
+  serialized_end=241,
 )
 
-DESCRIPTOR.message_types_by_name['tpu_req'] = _TPU_REQ
-DESCRIPTOR.message_types_by_name['tpu_res'] = _TPU_RES
+DESCRIPTOR.message_types_by_name['tpu_conf_req'] = _TPU_CONF_REQ
+DESCRIPTOR.message_types_by_name['tpu_status_res'] = _TPU_STATUS_RES
+DESCRIPTOR.message_types_by_name['tpu_env_req'] = _TPU_ENV_REQ
+DESCRIPTOR.message_types_by_name['depth_env_res'] = _DEPTH_ENV_RES
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-tpu_req = _reflection.GeneratedProtocolMessageType('tpu_req', (_message.Message,), {
-  'DESCRIPTOR' : _TPU_REQ,
+tpu_conf_req = _reflection.GeneratedProtocolMessageType('tpu_conf_req', (_message.Message,), {
+  'DESCRIPTOR' : _TPU_CONF_REQ,
   '__module__' : 'sla_pb2'
-  # @@protoc_insertion_point(class_scope:sla.tpu_req)
+  # @@protoc_insertion_point(class_scope:sla.tpu_conf_req)
   })
-_sym_db.RegisterMessage(tpu_req)
+_sym_db.RegisterMessage(tpu_conf_req)
 
-tpu_res = _reflection.GeneratedProtocolMessageType('tpu_res', (_message.Message,), {
-  'DESCRIPTOR' : _TPU_RES,
+tpu_status_res = _reflection.GeneratedProtocolMessageType('tpu_status_res', (_message.Message,), {
+  'DESCRIPTOR' : _TPU_STATUS_RES,
   '__module__' : 'sla_pb2'
-  # @@protoc_insertion_point(class_scope:sla.tpu_res)
+  # @@protoc_insertion_point(class_scope:sla.tpu_status_res)
   })
-_sym_db.RegisterMessage(tpu_res)
+_sym_db.RegisterMessage(tpu_status_res)
+
+tpu_env_req = _reflection.GeneratedProtocolMessageType('tpu_env_req', (_message.Message,), {
+  'DESCRIPTOR' : _TPU_ENV_REQ,
+  '__module__' : 'sla_pb2'
+  # @@protoc_insertion_point(class_scope:sla.tpu_env_req)
+  })
+_sym_db.RegisterMessage(tpu_env_req)
+
+depth_env_res = _reflection.GeneratedProtocolMessageType('depth_env_res', (_message.Message,), {
+  'DESCRIPTOR' : _DEPTH_ENV_RES,
+  '__module__' : 'sla_pb2'
+  # @@protoc_insertion_point(class_scope:sla.depth_env_res)
+  })
+_sym_db.RegisterMessage(depth_env_res)
 
 
 
-_PHASE_UNWRAP = _descriptor.ServiceDescriptor(
-  name='phase_unwrap',
-  full_name='sla.phase_unwrap',
+_TPU = _descriptor.ServiceDescriptor(
+  name='tpu',
+  full_name='sla.tpu',
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=146,
-  serialized_end=204,
+  serialized_start=244,
+  serialized_end=421,
   methods=[
   _descriptor.MethodDescriptor(
-    name='tpu_invoke',
-    full_name='sla.phase_unwrap.tpu_invoke',
+    name='_init',
+    full_name='sla.tpu._init',
     index=0,
     containing_service=None,
-    input_type=_TPU_REQ,
-    output_type=_TPU_RES,
+    input_type=_TPU_CONF_REQ,
+    output_type=_TPU_STATUS_RES,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='_ref_phase_compute',
+    full_name='sla.tpu._ref_phase_compute',
+    index=1,
+    containing_service=None,
+    input_type=_TPU_ENV_REQ,
+    output_type=_TPU_STATUS_RES,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='_depth_compute',
+    full_name='sla.tpu._depth_compute',
+    index=2,
+    containing_service=None,
+    input_type=_TPU_ENV_REQ,
+    output_type=_DEPTH_ENV_RES,
     serialized_options=None,
   ),
 ])
-_sym_db.RegisterServiceDescriptor(_PHASE_UNWRAP)
+_sym_db.RegisterServiceDescriptor(_TPU)
 
-DESCRIPTOR.services_by_name['phase_unwrap'] = _PHASE_UNWRAP
+DESCRIPTOR.services_by_name['tpu'] = _TPU
 
 # @@protoc_insertion_point(module_scope)
