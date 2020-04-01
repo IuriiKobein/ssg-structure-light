@@ -15,6 +15,8 @@ class sl_tpu: public sl_alg {
     sl_tpu(const params_t& params);
     ~sl_tpu();
 
+    virtual const std::vector<cv::Mat>& patterns_get();
+
     virtual int ref_phase_compute(
         const std::vector<cv::Mat>& refs);
     virtual cv::Mat depth_compute(const std::vector<cv::Mat>& objs);

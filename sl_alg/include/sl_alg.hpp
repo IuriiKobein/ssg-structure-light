@@ -13,10 +13,18 @@ class sl_alg {
         cv::Size size;
         std::float_t freq_ratio;
         std::float_t real_scale;
+        std::int32_t num_of_periods;
+        std::int32_t use_markers;
+        std::int32_t is_horizontal;
+        std::int32_t num_of_patterns;
+        std::int32_t num_of_pix_mark;
+        std::int32_t opencv_method_id;
     };
     sl_alg() {};
     virtual ~sl_alg() = default; 
     sl_alg& operator=(const sl_alg&) = delete;
+
+    virtual const std::vector<cv::Mat>& patterns_get() = 0;
 
     virtual int ref_phase_compute(const std::vector<cv::Mat> &refs) = 0;
     virtual cv::Mat depth_compute(const std::vector<cv::Mat> &objs) = 0;

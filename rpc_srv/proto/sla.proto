@@ -2,29 +2,48 @@ syntax = "proto3";
 
 package sla;
 
-service tpu {
-  rpc _init(tpu_conf_req) returns (tpu_status_res) {}
-  rpc _ref_phase_compute(tpu_env_req) returns (tpu_status_res) {}
-  rpc _depth_compute(tpu_env_req) returns (depth_env_res) {}
+service sla_ctrl {
+  rpc _setup(conf_req) returns (status_res) {}
+  rpc _setup_get(conf_req) returns (conf_req) {}
+
+  rpc _ref_phase_compute(compute_req) returns (status_res) {}
+  rpc _depth_compute(compute_req) returns (compute_res) {}
+
+  rpc _scan_start(scan_req) returns (status_res) {}
+  rpc _scan_pause(scan_req) returns (status_res) {}
+  rpc _scan_stop(scan_req) returns (status_res) {}
 }
 
-message tpu_conf_req {
-    string impl = 1;
+message conf_req {
+    string method = 1;
     int32 width = 2;
     int32 height = 3;
     float freq_ratio = 4;
     float real_scale = 5;
+    int32 num_of_periods = 6;
+    int32 use_markers = 7;
+    int32 is_horizontal = 8;
+    int32 num_of_patterns = 9;
+    int32 num_of_pix_mark = 10;
+    int32 opencv_method_id = 11;
 }
 
-message tpu_status_res {
+message scan_req {
+    string method = 1;
+    int32 rotation_angle = 2;
+}
+
+message status_res {
     int32 status = 1;
 }
 
-message tpu_env_req {
-  repeated string lf_img = 1;
-  repeated string hf_img = 2;
+message compute_req {
+  string method = 1;
+  repeated string lf_img = 2;
+  repeated string hf_img = 3;
 }
 
-message depth_env_res {
-  string url_unwrap_phase = 1;
+message compute_res {
+  string method = 1;
+  string url_img = 2;
 }

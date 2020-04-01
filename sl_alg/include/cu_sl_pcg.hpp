@@ -7,6 +7,8 @@ class cu_sl_pcg : public sl_alg {
     cu_sl_pcg(const params_t& params);
     ~cu_sl_pcg();
 
+    virtual const std::vector<cv::Mat>& patterns_get();
+
     virtual int ref_phase_compute(const std::vector<cv::Mat> &refs);
     virtual cv::Mat depth_compute(const std::vector<cv::Mat> &objs);
 

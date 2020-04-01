@@ -31,14 +31,24 @@ cv::Mat cpu_temporal_phase_unwrap(cv::Mat& phase1, cv::Mat& phase2,
 
 class sl_tpu::alg_impl {
    public:
-    alg_impl(const params_t &params)
+    alg_impl(const params_t& params)
         : _params(params),
           _lf_obj_phase(_params.size, CV_32FC1),
           _hf_obj_phase(_params.size, CV_32FC1),
           _lf_ref_phase(_params.size, CV_32FC1),
           _hf_ref_phase(_params.size, CV_32FC1)
 
-    {}
+    {
+        sinusoidal_pattern_params sinus_params;
+
+        sinus_params.is_horizontal = params.is_horizontal;
+        sinus_params.num_of_patterns = params.num_of_patterns;
+        sinus_params.num_of_periods = params.num_of_periods;
+        sinus_params.size = params.size;
+        _patterns = sinusoidal_pattern_generate(sinus_params);
+    }
+
+    const std::vector<cv::Mat>& patterns_get() { return _patterns; }
 
     int ref_phase_compute(const std::vector<cv::Mat>& lf_refs,
                           const std::vector<cv::Mat>& hf_refs) {
@@ -62,6 +72,7 @@ class sl_tpu::alg_impl {
 
    private:
     params_t _params;
+    std::vector<cv::Mat> _patterns;
     std::vector<cv::Mat> _tmp;
     cv::Mat _lf_obj_phase;
     cv::Mat _hf_obj_phase;
@@ -69,9 +80,14 @@ class sl_tpu::alg_impl {
     cv::Mat _hf_ref_phase;
 };
 
-sl_tpu::sl_tpu(const params_t &params) : _pimpl(std::make_unique<alg_impl>(params)) {}
+sl_tpu::sl_tpu(const params_t& params)
+    : _pimpl(std::make_unique<alg_impl>(params)) {}
 
 sl_tpu::~sl_tpu() = default;
+
+const std::vector<cv::Mat>& sl_tpu::patterns_get() {
+    return _pimpl->patterns_get();
+}
 
 int sl_tpu::ref_phase_compute(const std::vector<cv::Mat>& refs) {
     return -ENOTSUP;

@@ -16,7 +16,7 @@
 
 namespace {
 
-sl_alg_auto_reg s_sl_pcg_reg("cpu_pcg", [](const sl_alg::params_t& params) {
+sl_alg_auto_reg s_sl_pcg_reg("cpu_pcg", [](const sl_alg::params_t &params) {
     return std::make_unique<sl_pcg>(params);
 });
 
@@ -162,7 +162,17 @@ class sl_pcg::sl_pcg_impl {
           _obj_phase(_params.size, CV_32F),
           _ref_phase(_params.size, CV_32F) {
         g_laplacian = create_grid(_params.size);
+
+        sinusoidal_pattern_params sinus_params;
+
+        sinus_params.is_horizontal = params.is_horizontal;
+        sinus_params.num_of_patterns = params.num_of_patterns;
+        sinus_params.num_of_periods = params.num_of_periods;
+        sinus_params.size = params.size;
+        _patterns = sinusoidal_pattern_generate(sinus_params);
     }
+
+    const std::vector<cv::Mat> &patterns_get() { return _patterns; }
 
     int ref_phase_compute(const std::vector<cv::Mat> &refs) {
         cpu_phase_compute(refs, _ref_phase);
@@ -178,6 +188,7 @@ class sl_pcg::sl_pcg_impl {
 
    private:
     params_t _params;
+    std::vector<cv::Mat> _patterns;
     cv::Mat _obj_phase;
     cv::Mat _ref_phase;
 };
@@ -186,6 +197,10 @@ sl_pcg::sl_pcg(const params_t &params)
     : _pimpl(std::make_unique<sl_pcg_impl>(params)) {}
 
 sl_pcg::~sl_pcg() = default;
+
+const std::vector<cv::Mat> &sl_pcg::patterns_get() {
+    return _pimpl->patterns_get();
+}
 
 int sl_pcg::ref_phase_compute(const std::vector<cv::Mat> &ref_phases) {
     return _pimpl->ref_phase_compute(ref_phases);

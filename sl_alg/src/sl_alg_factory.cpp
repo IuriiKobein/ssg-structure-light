@@ -16,6 +16,10 @@ auto& registrar_map_get() {
 }
 }  // namespace
 
+int sl_alg_is_supported(const std::string& name) {
+    return registrar_map_get().count(name);
+}
+
 alg_type sl_alg_type_by_name(const std::string& name) {
     if (name == "cuda_pcg" || name == "cpu_pcg") {
         return PCG;

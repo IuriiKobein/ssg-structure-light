@@ -15,13 +15,13 @@
 #include <opencv2/cudafilters.hpp>
 #include <opencv2/highgui.hpp>
 
-#include <string>
 #include <iostream>
+#include <string>
 #include <vector>
 
 namespace {
 
-sl_alg_auto_reg s_cu_sl_pcg_reg("cuda_pcg", [](const sl_alg::params_t& params) {
+sl_alg_auto_reg s_cu_sl_pcg_reg("cuda_pcg", [](const sl_alg::params_t &params) {
     return std::make_unique<cu_sl_pcg>(params);
 });
 
@@ -288,17 +288,25 @@ class cu_pu_pcg {
 
 class cu_sl_pcg::cu_sl_pcg_impl {
    public:
-    cu_sl_pcg_impl(const params_t& params)
+    cu_sl_pcg_impl(const params_t &params)
         : _params(params),
           _tmp(imgs_alloc(4, _params.size, CV_32FC1)),
           _cu_tmp(cuda_imgs_alloc(4, _params.size, CV_32FC1)),
           _obj_phase(cuda_img_alloc(_params.size, CV_32FC1)),
           _ref_phase(cuda_img_alloc(_params.size, CV_32FC1)),
           _alg(_params.size),
-          _filt(
-              cv::cuda::createGaussianFilter(CV_32F, CV_32F, cv::Size(5, 5), 0))
+          _filt(cv::cuda::createGaussianFilter(CV_32F, CV_32F, cv::Size(5, 5),
+                                               0)) {
+        sinusoidal_pattern_params sinus_params;
 
-    {}
+        sinus_params.is_horizontal = params.is_horizontal;
+        sinus_params.num_of_patterns = params.num_of_patterns;
+        sinus_params.num_of_periods = params.num_of_periods;
+        sinus_params.size = params.size;
+        _patterns = sinusoidal_pattern_generate(sinus_params);
+    }
+
+    const std::vector<cv::Mat> &patterns_get() { return _patterns; }
 
     int ref_phase_compute(const std::vector<cv::Mat> &refs) {
         cuda_phase_compute(refs, _tmp, _cu_tmp, *_filt, _ref_phase);
@@ -314,6 +322,7 @@ class cu_sl_pcg::cu_sl_pcg_impl {
 
    private:
     params_t _params;
+    std::vector<cv::Mat> _patterns;
     std::vector<cv::Mat> _tmp;
     std::vector<cv::cuda::GpuMat> _cu_tmp;
     cv::cuda::GpuMat _obj_phase;
@@ -322,10 +331,14 @@ class cu_sl_pcg::cu_sl_pcg_impl {
     cv::Ptr<cv::cuda::Filter> _filt;
 };
 
-cu_sl_pcg::cu_sl_pcg(const params_t& params)
+cu_sl_pcg::cu_sl_pcg(const params_t &params)
     : _pimpl(std::make_unique<cu_sl_pcg_impl>(params)) {}
 
 cu_sl_pcg::~cu_sl_pcg() = default;
+
+const std::vector<cv::Mat> &cu_sl_pcg::patterns_get() {
+    return _pimpl->patterns_get();
+}
 
 int cu_sl_pcg::ref_phase_compute(const std::vector<cv::Mat> &refs) {
     return _pimpl->ref_phase_compute(refs);

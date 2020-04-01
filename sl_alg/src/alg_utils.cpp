@@ -135,7 +135,7 @@ std::vector<cv::Mat> sinusoidal_pattern_generate(
         period_pixels = params.size.width / params.num_of_periods;
     }
 
-    freq = (std::float_t)(1 / period_pixels);
+    freq = 1.0f / period_pixels;
 
     for (int i = 0; i < params.num_of_patterns; ++i) {
         patterns[i] = cv::Mat(params.size.height, params.size.width, CV_8UC1);
@@ -158,7 +158,10 @@ std::vector<cv::Mat> sinusoidal_pattern_generate(
         for (int j = 0; j < patterns[i].rows; ++j) {
             rowValues.row(0).copyTo(patterns[i].row(j));
         }
+
     }
+
+    cv::waitKey(0);
 
     if (params.is_horizontal) {
         for (int i = 0; i < params.num_of_patterns; ++i) {

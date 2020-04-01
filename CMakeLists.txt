@@ -15,17 +15,15 @@ message(STATUS "Using protobuf ${protobuf_VERSION}")
 find_package(gRPC CONFIG REQUIRED)
 message(STATUS "Using gRPC ${gRPC_VERSION}")
 
+add_subdirectory(rpc_srv)
 add_subdirectory(sl_alg)
 
 add_executable(3dr "")
+target_compile_options(3dr PRIVATE -Werror)
 target_sources(3dr PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/experimental_sl_main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/opencv_sl_main.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/rpc_srv/rpc_server.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/rpc_srv/lfs_transport.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/rpc_srv/tpu_service.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/rpc_srv/proto_gen/sla.grpc.pb.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/rpc_srv/proto_gen/sla.pb.cc)
-target_link_libraries(3dr sl_alg stdc++fs protobuf::libprotobuf
-    gRPC::grpc++_unsecure)
+)
+
+target_link_libraries(3dr sl_rpc  )

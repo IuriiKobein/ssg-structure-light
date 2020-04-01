@@ -3,10 +3,11 @@
 
 #include <opencv2/core/cvstd.hpp>
 #include <opencv2/core/utility.hpp>
+#include <opencv2/highgui.hpp>
 #include <string>
 
 #include "alg_utils.hpp"
-#include "rpc_srv/rpc_server.hpp"
+#include "rpc_server.hpp"
 #include "sl_alg_factory.hpp"
 
 namespace {
@@ -90,7 +91,23 @@ int sl_run_once(cv::CommandLineParser& parser) {
     auto freq_ratio = parser.get<std::float_t>("tpu_fr_ratio");
     auto alg_type = sl_alg_type_by_name(m);
 
-    auto alg = sl_alg_make(m, sl_alg::params_t{{h, w}, freq_ratio, 1.0f});
+    sl_alg::params_t params;
+
+    params.size = cv::Size(h, w);
+    params.freq_ratio = freq_ratio;
+    params.is_horizontal = 0;
+    params.num_of_periods = 32;
+    params.num_of_pix_mark = -1;
+    params.opencv_method_id = -1;
+    params.real_scale = 1;
+    params.num_of_patterns = 4;
+    params.use_markers = 0;
+
+    auto alg = sl_alg_make(m, params);
+    auto patterns = alg->patterns_get();
+
+    img_show("p1", patterns[0]);
+    cv::waitKey(0);
     if (!alg) {
         std::cout << "method: " << m << " not supported";
         std::exit(1);

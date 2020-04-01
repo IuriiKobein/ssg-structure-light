@@ -4,14 +4,14 @@
 #include <grpcpp/server_builder.h>
 #include <grpcpp/server_context.h>
 
-#include "tpu_service.hpp"
+#include "sla_ctrl_service.hpp"
 
 void rpc_server_run(const std::string& address) {
-    auto tpu_srv = tpu_srv_make();
+    auto ctrl_srv = sla_ctrl_make();
 
     grpc::ServerBuilder builder;
     builder.AddListeningPort(address, grpc::InsecureServerCredentials());
-    builder.RegisterService(tpu_srv.get());
+    builder.RegisterService(ctrl_srv.get());
 
     std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
 

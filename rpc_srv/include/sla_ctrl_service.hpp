@@ -3,4 +3,4 @@
 #include <grpcpp/impl/codegen/service_type.h>
 #include <memory>
 
-std::unique_ptr<grpc::Service> tpu_srv_make();
+std::unique_ptr<grpc::Service> sla_ctrl_make();
