@@ -54,10 +54,10 @@ int opencv_sl_main(int argc, char** argv) {
     params.setMarkers = parser.get<bool>(3);
     params.horizontal = parser.get<bool>(4);
     params.methodId = parser.get<int>(5);
-    String outputCapturePath = parser.get<String>(6);
     params.shiftValue = static_cast<float>(2 * CV_PI / 3);
     params.nbrOfPixelsBetweenMarkers = 70;
-    String outputPatternPath = parser.get<String>(7);
+    String outputPatternPath = parser.get<String>(6);
+    String outputCapturePath = parser.get<String>(7);
     String outputWrappedPhasePath = parser.get<String>(8);
     String outputUnwrappedPhasePath = parser.get<String>(9);
     String reliabilitiesPath = parser.get<String>(10);

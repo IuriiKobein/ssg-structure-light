@@ -50,12 +50,12 @@ class sla_ctrl final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::conf_req>> PrepareAsync_setup_get(::grpc::ClientContext* context, const ::sla::conf_req& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::conf_req>>(PrepareAsync_setup_getRaw(context, request, cq));
     }
-    virtual ::grpc::Status _ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::sla::status_res* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::status_res>> Async_ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::status_res>>(Async_ref_phase_computeRaw(context, request, cq));
+    virtual ::grpc::Status _ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::sla::compute_res* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>> Async_ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>>(Async_ref_phase_computeRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::status_res>> PrepareAsync_ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::status_res>>(PrepareAsync_ref_phase_computeRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>> PrepareAsync_ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>>(PrepareAsync_ref_phase_computeRaw(context, request, cq));
     }
     virtual ::grpc::Status _depth_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::sla::compute_res* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>> Async_depth_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
@@ -63,6 +63,20 @@ class sla_ctrl final {
     }
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>> PrepareAsync_depth_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>>(PrepareAsync_depth_computeRaw(context, request, cq));
+    }
+    virtual ::grpc::Status _ref_phase_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::sla::compute_res* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>> Async_ref_phase_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>>(Async_ref_phase_capture_and_computeRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>> PrepareAsync_ref_phase_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>>(PrepareAsync_ref_phase_capture_and_computeRaw(context, request, cq));
+    }
+    virtual ::grpc::Status _depth_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::sla::compute_res* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>> Async_depth_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>>(Async_depth_capture_and_computeRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>> PrepareAsync_depth_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>>(PrepareAsync_depth_capture_and_computeRaw(context, request, cq));
     }
     virtual ::grpc::Status _scan_start(::grpc::ClientContext* context, const ::sla::scan_req& request, ::sla::status_res* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sla::status_res>> Async_scan_start(::grpc::ClientContext* context, const ::sla::scan_req& request, ::grpc::CompletionQueue* cq) {
@@ -112,17 +126,17 @@ class sla_ctrl final {
       #else
       virtual void _setup_get(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::conf_req* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
-      virtual void _ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::status_res* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void _ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::status_res* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void _ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void _ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void _ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::status_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void _ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void _ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::status_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void _ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void _ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::status_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void _ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void _ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::status_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void _ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
       virtual void _depth_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, std::function<void(::grpc::Status)>) = 0;
       virtual void _depth_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, std::function<void(::grpc::Status)>) = 0;
@@ -135,6 +149,30 @@ class sla_ctrl final {
       virtual void _depth_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
       virtual void _depth_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      #endif
+      virtual void _ref_phase_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void _ref_phase_capture_and_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, std::function<void(::grpc::Status)>) = 0;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      virtual void _ref_phase_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      #else
+      virtual void _ref_phase_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      #endif
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      virtual void _ref_phase_capture_and_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      #else
+      virtual void _ref_phase_capture_and_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      #endif
+      virtual void _depth_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void _depth_capture_and_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, std::function<void(::grpc::Status)>) = 0;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      virtual void _depth_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      #else
+      virtual void _depth_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      #endif
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      virtual void _depth_capture_and_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      #else
+      virtual void _depth_capture_and_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
       virtual void _scan_start(::grpc::ClientContext* context, const ::sla::scan_req* request, ::sla::status_res* response, std::function<void(::grpc::Status)>) = 0;
       virtual void _scan_start(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::status_res* response, std::function<void(::grpc::Status)>) = 0;
@@ -185,10 +223,14 @@ class sla_ctrl final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::status_res>* PrepareAsync_setupRaw(::grpc::ClientContext* context, const ::sla::conf_req& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::conf_req>* Async_setup_getRaw(::grpc::ClientContext* context, const ::sla::conf_req& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::conf_req>* PrepareAsync_setup_getRaw(::grpc::ClientContext* context, const ::sla::conf_req& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::status_res>* Async_ref_phase_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::status_res>* PrepareAsync_ref_phase_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>* Async_ref_phase_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>* PrepareAsync_ref_phase_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>* Async_depth_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>* PrepareAsync_depth_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>* Async_ref_phase_capture_and_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>* PrepareAsync_ref_phase_capture_and_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>* Async_depth_capture_and_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::compute_res>* PrepareAsync_depth_capture_and_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::status_res>* Async_scan_startRaw(::grpc::ClientContext* context, const ::sla::scan_req& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::status_res>* PrepareAsync_scan_startRaw(::grpc::ClientContext* context, const ::sla::scan_req& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sla::status_res>* Async_scan_pauseRaw(::grpc::ClientContext* context, const ::sla::scan_req& request, ::grpc::CompletionQueue* cq) = 0;
@@ -213,12 +255,12 @@ class sla_ctrl final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::conf_req>> PrepareAsync_setup_get(::grpc::ClientContext* context, const ::sla::conf_req& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::conf_req>>(PrepareAsync_setup_getRaw(context, request, cq));
     }
-    ::grpc::Status _ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::sla::status_res* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::status_res>> Async_ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::status_res>>(Async_ref_phase_computeRaw(context, request, cq));
+    ::grpc::Status _ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::sla::compute_res* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::compute_res>> Async_ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::compute_res>>(Async_ref_phase_computeRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::status_res>> PrepareAsync_ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::status_res>>(PrepareAsync_ref_phase_computeRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::compute_res>> PrepareAsync_ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::compute_res>>(PrepareAsync_ref_phase_computeRaw(context, request, cq));
     }
     ::grpc::Status _depth_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::sla::compute_res* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::compute_res>> Async_depth_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
@@ -226,6 +268,20 @@ class sla_ctrl final {
     }
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::compute_res>> PrepareAsync_depth_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::compute_res>>(PrepareAsync_depth_computeRaw(context, request, cq));
+    }
+    ::grpc::Status _ref_phase_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::sla::compute_res* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::compute_res>> Async_ref_phase_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::compute_res>>(Async_ref_phase_capture_and_computeRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::compute_res>> PrepareAsync_ref_phase_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::compute_res>>(PrepareAsync_ref_phase_capture_and_computeRaw(context, request, cq));
+    }
+    ::grpc::Status _depth_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::sla::compute_res* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::compute_res>> Async_depth_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::compute_res>>(Async_depth_capture_and_computeRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::compute_res>> PrepareAsync_depth_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::compute_res>>(PrepareAsync_depth_capture_and_computeRaw(context, request, cq));
     }
     ::grpc::Status _scan_start(::grpc::ClientContext* context, const ::sla::scan_req& request, ::sla::status_res* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sla::status_res>> Async_scan_start(::grpc::ClientContext* context, const ::sla::scan_req& request, ::grpc::CompletionQueue* cq) {
@@ -275,17 +331,17 @@ class sla_ctrl final {
       #else
       void _setup_get(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::conf_req* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
-      void _ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::status_res* response, std::function<void(::grpc::Status)>) override;
-      void _ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::status_res* response, std::function<void(::grpc::Status)>) override;
+      void _ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, std::function<void(::grpc::Status)>) override;
+      void _ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void _ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::status_res* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void _ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void _ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::status_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void _ref_phase_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void _ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::status_res* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void _ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void _ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::status_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void _ref_phase_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
       void _depth_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, std::function<void(::grpc::Status)>) override;
       void _depth_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, std::function<void(::grpc::Status)>) override;
@@ -298,6 +354,30 @@ class sla_ctrl final {
       void _depth_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
       void _depth_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      #endif
+      void _ref_phase_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, std::function<void(::grpc::Status)>) override;
+      void _ref_phase_capture_and_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, std::function<void(::grpc::Status)>) override;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      void _ref_phase_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, ::grpc::ClientUnaryReactor* reactor) override;
+      #else
+      void _ref_phase_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      #endif
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      void _ref_phase_capture_and_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, ::grpc::ClientUnaryReactor* reactor) override;
+      #else
+      void _ref_phase_capture_and_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      #endif
+      void _depth_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, std::function<void(::grpc::Status)>) override;
+      void _depth_capture_and_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, std::function<void(::grpc::Status)>) override;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      void _depth_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, ::grpc::ClientUnaryReactor* reactor) override;
+      #else
+      void _depth_capture_and_compute(::grpc::ClientContext* context, const ::sla::compute_req* request, ::sla::compute_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      #endif
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      void _depth_capture_and_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, ::grpc::ClientUnaryReactor* reactor) override;
+      #else
+      void _depth_capture_and_compute(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::compute_res* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
       void _scan_start(::grpc::ClientContext* context, const ::sla::scan_req* request, ::sla::status_res* response, std::function<void(::grpc::Status)>) override;
       void _scan_start(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sla::status_res* response, std::function<void(::grpc::Status)>) override;
@@ -350,10 +430,14 @@ class sla_ctrl final {
     ::grpc::ClientAsyncResponseReader< ::sla::status_res>* PrepareAsync_setupRaw(::grpc::ClientContext* context, const ::sla::conf_req& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sla::conf_req>* Async_setup_getRaw(::grpc::ClientContext* context, const ::sla::conf_req& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sla::conf_req>* PrepareAsync_setup_getRaw(::grpc::ClientContext* context, const ::sla::conf_req& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::sla::status_res>* Async_ref_phase_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::sla::status_res>* PrepareAsync_ref_phase_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sla::compute_res>* Async_ref_phase_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sla::compute_res>* PrepareAsync_ref_phase_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sla::compute_res>* Async_depth_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sla::compute_res>* PrepareAsync_depth_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sla::compute_res>* Async_ref_phase_capture_and_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sla::compute_res>* PrepareAsync_ref_phase_capture_and_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sla::compute_res>* Async_depth_capture_and_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sla::compute_res>* PrepareAsync_depth_capture_and_computeRaw(::grpc::ClientContext* context, const ::sla::compute_req& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sla::status_res>* Async_scan_startRaw(::grpc::ClientContext* context, const ::sla::scan_req& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sla::status_res>* PrepareAsync_scan_startRaw(::grpc::ClientContext* context, const ::sla::scan_req& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sla::status_res>* Async_scan_pauseRaw(::grpc::ClientContext* context, const ::sla::scan_req& request, ::grpc::CompletionQueue* cq) override;
@@ -364,6 +448,8 @@ class sla_ctrl final {
     const ::grpc::internal::RpcMethod rpcmethod__setup_get_;
     const ::grpc::internal::RpcMethod rpcmethod__ref_phase_compute_;
     const ::grpc::internal::RpcMethod rpcmethod__depth_compute_;
+    const ::grpc::internal::RpcMethod rpcmethod__ref_phase_capture_and_compute_;
+    const ::grpc::internal::RpcMethod rpcmethod__depth_capture_and_compute_;
     const ::grpc::internal::RpcMethod rpcmethod__scan_start_;
     const ::grpc::internal::RpcMethod rpcmethod__scan_pause_;
     const ::grpc::internal::RpcMethod rpcmethod__scan_stop_;
@@ -376,8 +462,10 @@ class sla_ctrl final {
     virtual ~Service();
     virtual ::grpc::Status _setup(::grpc::ServerContext* context, const ::sla::conf_req* request, ::sla::status_res* response);
     virtual ::grpc::Status _setup_get(::grpc::ServerContext* context, const ::sla::conf_req* request, ::sla::conf_req* response);
-    virtual ::grpc::Status _ref_phase_compute(::grpc::ServerContext* context, const ::sla::compute_req* request, ::sla::status_res* response);
+    virtual ::grpc::Status _ref_phase_compute(::grpc::ServerContext* context, const ::sla::compute_req* request, ::sla::compute_res* response);
     virtual ::grpc::Status _depth_compute(::grpc::ServerContext* context, const ::sla::compute_req* request, ::sla::compute_res* response);
+    virtual ::grpc::Status _ref_phase_capture_and_compute(::grpc::ServerContext* context, const ::sla::compute_req* request, ::sla::compute_res* response);
+    virtual ::grpc::Status _depth_capture_and_compute(::grpc::ServerContext* context, const ::sla::compute_req* request, ::sla::compute_res* response);
     virtual ::grpc::Status _scan_start(::grpc::ServerContext* context, const ::sla::scan_req* request, ::sla::status_res* response);
     virtual ::grpc::Status _scan_pause(::grpc::ServerContext* context, const ::sla::scan_req* request, ::sla::status_res* response);
     virtual ::grpc::Status _scan_stop(::grpc::ServerContext* context, const ::sla::scan_req* request, ::sla::status_res* response);
@@ -434,11 +522,11 @@ class sla_ctrl final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status _ref_phase_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::status_res* /*response*/) override {
+    ::grpc::Status _ref_phase_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void Request_ref_phase_compute(::grpc::ServerContext* context, ::sla::compute_req* request, ::grpc::ServerAsyncResponseWriter< ::sla::status_res>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void Request_ref_phase_compute(::grpc::ServerContext* context, ::sla::compute_req* request, ::grpc::ServerAsyncResponseWriter< ::sla::compute_res>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -463,12 +551,52 @@ class sla_ctrl final {
     }
   };
   template <class BaseClass>
+  class WithAsyncMethod__ref_phase_capture_and_compute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod__ref_phase_capture_and_compute() {
+      ::grpc::Service::MarkMethodAsync(4);
+    }
+    ~WithAsyncMethod__ref_phase_capture_and_compute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status _ref_phase_capture_and_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Request_ref_phase_capture_and_compute(::grpc::ServerContext* context, ::sla::compute_req* request, ::grpc::ServerAsyncResponseWriter< ::sla::compute_res>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod__depth_capture_and_compute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod__depth_capture_and_compute() {
+      ::grpc::Service::MarkMethodAsync(5);
+    }
+    ~WithAsyncMethod__depth_capture_and_compute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status _depth_capture_and_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Request_depth_capture_and_compute(::grpc::ServerContext* context, ::sla::compute_req* request, ::grpc::ServerAsyncResponseWriter< ::sla::compute_res>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithAsyncMethod__scan_start : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod__scan_start() {
-      ::grpc::Service::MarkMethodAsync(4);
+      ::grpc::Service::MarkMethodAsync(6);
     }
     ~WithAsyncMethod__scan_start() override {
       BaseClassMustBeDerivedFromService(this);
@@ -479,7 +607,7 @@ class sla_ctrl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void Request_scan_start(::grpc::ServerContext* context, ::sla::scan_req* request, ::grpc::ServerAsyncResponseWriter< ::sla::status_res>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -488,7 +616,7 @@ class sla_ctrl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod__scan_pause() {
-      ::grpc::Service::MarkMethodAsync(5);
+      ::grpc::Service::MarkMethodAsync(7);
     }
     ~WithAsyncMethod__scan_pause() override {
       BaseClassMustBeDerivedFromService(this);
@@ -499,7 +627,7 @@ class sla_ctrl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void Request_scan_pause(::grpc::ServerContext* context, ::sla::scan_req* request, ::grpc::ServerAsyncResponseWriter< ::sla::status_res>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -508,7 +636,7 @@ class sla_ctrl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod__scan_stop() {
-      ::grpc::Service::MarkMethodAsync(6);
+      ::grpc::Service::MarkMethodAsync(8);
     }
     ~WithAsyncMethod__scan_stop() override {
       BaseClassMustBeDerivedFromService(this);
@@ -519,10 +647,10 @@ class sla_ctrl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void Request_scan_stop(::grpc::ServerContext* context, ::sla::scan_req* request, ::grpc::ServerAsyncResponseWriter< ::sla::status_res>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod__setup<WithAsyncMethod__setup_get<WithAsyncMethod__ref_phase_compute<WithAsyncMethod__depth_compute<WithAsyncMethod__scan_start<WithAsyncMethod__scan_pause<WithAsyncMethod__scan_stop<Service > > > > > > > AsyncService;
+  typedef WithAsyncMethod__setup<WithAsyncMethod__setup_get<WithAsyncMethod__ref_phase_compute<WithAsyncMethod__depth_compute<WithAsyncMethod__ref_phase_capture_and_compute<WithAsyncMethod__depth_capture_and_compute<WithAsyncMethod__scan_start<WithAsyncMethod__scan_pause<WithAsyncMethod__scan_stop<Service > > > > > > > > > AsyncService;
   template <class BaseClass>
   class ExperimentalWithCallbackMethod__setup : public BaseClass {
    private:
@@ -629,38 +757,38 @@ class sla_ctrl final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(2,
-          new ::grpc_impl::internal::CallbackUnaryHandler< ::sla::compute_req, ::sla::status_res>(
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::sla::compute_req, ::sla::compute_res>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::sla::compute_req* request, ::sla::status_res* response) { return this->_ref_phase_compute(context, request, response); }));}
+                     context, const ::sla::compute_req* request, ::sla::compute_res* response) { return this->_ref_phase_compute(context, request, response); }));}
     void SetMessageAllocatorFor__ref_phase_compute(
-        ::grpc::experimental::MessageAllocator< ::sla::compute_req, ::sla::status_res>* allocator) {
+        ::grpc::experimental::MessageAllocator< ::sla::compute_req, ::sla::compute_res>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(2);
     #endif
-      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::sla::compute_req, ::sla::status_res>*>(handler)
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::sla::compute_req, ::sla::compute_res>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~ExperimentalWithCallbackMethod__ref_phase_compute() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status _ref_phase_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::status_res* /*response*/) override {
+    ::grpc::Status _ref_phase_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerUnaryReactor* _ref_phase_compute(
-      ::grpc::CallbackServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::status_res* /*response*/)
+      ::grpc::CallbackServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/)
     #else
     virtual ::grpc::experimental::ServerUnaryReactor* _ref_phase_compute(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::status_res* /*response*/)
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/)
     #endif
       { return nullptr; }
   };
@@ -712,6 +840,100 @@ class sla_ctrl final {
       { return nullptr; }
   };
   template <class BaseClass>
+  class ExperimentalWithCallbackMethod__ref_phase_capture_and_compute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod__ref_phase_capture_and_compute() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodCallback(4,
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::sla::compute_req, ::sla::compute_res>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::sla::compute_req* request, ::sla::compute_res* response) { return this->_ref_phase_capture_and_compute(context, request, response); }));}
+    void SetMessageAllocatorFor__ref_phase_capture_and_compute(
+        ::grpc::experimental::MessageAllocator< ::sla::compute_req, ::sla::compute_res>* allocator) {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(4);
+    #else
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(4);
+    #endif
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::sla::compute_req, ::sla::compute_res>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod__ref_phase_capture_and_compute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status _ref_phase_capture_and_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerUnaryReactor* _ref_phase_capture_and_compute(
+      ::grpc::CallbackServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* _ref_phase_capture_and_compute(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/)
+    #endif
+      { return nullptr; }
+  };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod__depth_capture_and_compute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod__depth_capture_and_compute() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodCallback(5,
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::sla::compute_req, ::sla::compute_res>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::sla::compute_req* request, ::sla::compute_res* response) { return this->_depth_capture_and_compute(context, request, response); }));}
+    void SetMessageAllocatorFor__depth_capture_and_compute(
+        ::grpc::experimental::MessageAllocator< ::sla::compute_req, ::sla::compute_res>* allocator) {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
+    #else
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(5);
+    #endif
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::sla::compute_req, ::sla::compute_res>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod__depth_capture_and_compute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status _depth_capture_and_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerUnaryReactor* _depth_capture_and_compute(
+      ::grpc::CallbackServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* _depth_capture_and_compute(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/)
+    #endif
+      { return nullptr; }
+  };
+  template <class BaseClass>
   class ExperimentalWithCallbackMethod__scan_start : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
@@ -722,7 +944,7 @@ class sla_ctrl final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(4,
+        MarkMethodCallback(6,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::sla::scan_req, ::sla::status_res>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -734,9 +956,9 @@ class sla_ctrl final {
     void SetMessageAllocatorFor__scan_start(
         ::grpc::experimental::MessageAllocator< ::sla::scan_req, ::sla::status_res>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(4);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(4);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(6);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::sla::scan_req, ::sla::status_res>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -769,7 +991,7 @@ class sla_ctrl final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(5,
+        MarkMethodCallback(7,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::sla::scan_req, ::sla::status_res>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -781,9 +1003,9 @@ class sla_ctrl final {
     void SetMessageAllocatorFor__scan_pause(
         ::grpc::experimental::MessageAllocator< ::sla::scan_req, ::sla::status_res>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(7);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(5);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(7);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::sla::scan_req, ::sla::status_res>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -816,7 +1038,7 @@ class sla_ctrl final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(6,
+        MarkMethodCallback(8,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::sla::scan_req, ::sla::status_res>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -828,9 +1050,9 @@ class sla_ctrl final {
     void SetMessageAllocatorFor__scan_stop(
         ::grpc::experimental::MessageAllocator< ::sla::scan_req, ::sla::status_res>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(8);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(6);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(8);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::sla::scan_req, ::sla::status_res>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -853,10 +1075,10 @@ class sla_ctrl final {
       { return nullptr; }
   };
   #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-  typedef ExperimentalWithCallbackMethod__setup<ExperimentalWithCallbackMethod__setup_get<ExperimentalWithCallbackMethod__ref_phase_compute<ExperimentalWithCallbackMethod__depth_compute<ExperimentalWithCallbackMethod__scan_start<ExperimentalWithCallbackMethod__scan_pause<ExperimentalWithCallbackMethod__scan_stop<Service > > > > > > > CallbackService;
+  typedef ExperimentalWithCallbackMethod__setup<ExperimentalWithCallbackMethod__setup_get<ExperimentalWithCallbackMethod__ref_phase_compute<ExperimentalWithCallbackMethod__depth_compute<ExperimentalWithCallbackMethod__ref_phase_capture_and_compute<ExperimentalWithCallbackMethod__depth_capture_and_compute<ExperimentalWithCallbackMethod__scan_start<ExperimentalWithCallbackMethod__scan_pause<ExperimentalWithCallbackMethod__scan_stop<Service > > > > > > > > > CallbackService;
   #endif
 
-  typedef ExperimentalWithCallbackMethod__setup<ExperimentalWithCallbackMethod__setup_get<ExperimentalWithCallbackMethod__ref_phase_compute<ExperimentalWithCallbackMethod__depth_compute<ExperimentalWithCallbackMethod__scan_start<ExperimentalWithCallbackMethod__scan_pause<ExperimentalWithCallbackMethod__scan_stop<Service > > > > > > > ExperimentalCallbackService;
+  typedef ExperimentalWithCallbackMethod__setup<ExperimentalWithCallbackMethod__setup_get<ExperimentalWithCallbackMethod__ref_phase_compute<ExperimentalWithCallbackMethod__depth_compute<ExperimentalWithCallbackMethod__ref_phase_capture_and_compute<ExperimentalWithCallbackMethod__depth_capture_and_compute<ExperimentalWithCallbackMethod__scan_start<ExperimentalWithCallbackMethod__scan_pause<ExperimentalWithCallbackMethod__scan_stop<Service > > > > > > > > > ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod__setup : public BaseClass {
    private:
@@ -903,7 +1125,7 @@ class sla_ctrl final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status _ref_phase_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::status_res* /*response*/) override {
+    ::grpc::Status _ref_phase_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -926,12 +1148,46 @@ class sla_ctrl final {
     }
   };
   template <class BaseClass>
+  class WithGenericMethod__ref_phase_capture_and_compute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod__ref_phase_capture_and_compute() {
+      ::grpc::Service::MarkMethodGeneric(4);
+    }
+    ~WithGenericMethod__ref_phase_capture_and_compute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status _ref_phase_capture_and_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod__depth_capture_and_compute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod__depth_capture_and_compute() {
+      ::grpc::Service::MarkMethodGeneric(5);
+    }
+    ~WithGenericMethod__depth_capture_and_compute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status _depth_capture_and_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
   class WithGenericMethod__scan_start : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod__scan_start() {
-      ::grpc::Service::MarkMethodGeneric(4);
+      ::grpc::Service::MarkMethodGeneric(6);
     }
     ~WithGenericMethod__scan_start() override {
       BaseClassMustBeDerivedFromService(this);
@@ -948,7 +1204,7 @@ class sla_ctrl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod__scan_pause() {
-      ::grpc::Service::MarkMethodGeneric(5);
+      ::grpc::Service::MarkMethodGeneric(7);
     }
     ~WithGenericMethod__scan_pause() override {
       BaseClassMustBeDerivedFromService(this);
@@ -965,7 +1221,7 @@ class sla_ctrl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod__scan_stop() {
-      ::grpc::Service::MarkMethodGeneric(6);
+      ::grpc::Service::MarkMethodGeneric(8);
     }
     ~WithGenericMethod__scan_stop() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1028,7 +1284,7 @@ class sla_ctrl final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status _ref_phase_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::status_res* /*response*/) override {
+    ::grpc::Status _ref_phase_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1057,12 +1313,52 @@ class sla_ctrl final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod__ref_phase_capture_and_compute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod__ref_phase_capture_and_compute() {
+      ::grpc::Service::MarkMethodRaw(4);
+    }
+    ~WithRawMethod__ref_phase_capture_and_compute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status _ref_phase_capture_and_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Request_ref_phase_capture_and_compute(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod__depth_capture_and_compute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod__depth_capture_and_compute() {
+      ::grpc::Service::MarkMethodRaw(5);
+    }
+    ~WithRawMethod__depth_capture_and_compute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status _depth_capture_and_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Request_depth_capture_and_compute(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawMethod__scan_start : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod__scan_start() {
-      ::grpc::Service::MarkMethodRaw(4);
+      ::grpc::Service::MarkMethodRaw(6);
     }
     ~WithRawMethod__scan_start() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1073,7 +1369,7 @@ class sla_ctrl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void Request_scan_start(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1082,7 +1378,7 @@ class sla_ctrl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod__scan_pause() {
-      ::grpc::Service::MarkMethodRaw(5);
+      ::grpc::Service::MarkMethodRaw(7);
     }
     ~WithRawMethod__scan_pause() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1093,7 +1389,7 @@ class sla_ctrl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void Request_scan_pause(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1102,7 +1398,7 @@ class sla_ctrl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod__scan_stop() {
-      ::grpc::Service::MarkMethodRaw(6);
+      ::grpc::Service::MarkMethodRaw(8);
     }
     ~WithRawMethod__scan_stop() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1113,7 +1409,7 @@ class sla_ctrl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void Request_scan_stop(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1217,7 +1513,7 @@ class sla_ctrl final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status _ref_phase_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::status_res* /*response*/) override {
+    ::grpc::Status _ref_phase_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1269,6 +1565,82 @@ class sla_ctrl final {
       { return nullptr; }
   };
   template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod__ref_phase_capture_and_compute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod__ref_phase_capture_and_compute() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodRawCallback(4,
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->_ref_phase_capture_and_compute(context, request, response); }));
+    }
+    ~ExperimentalWithRawCallbackMethod__ref_phase_capture_and_compute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status _ref_phase_capture_and_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerUnaryReactor* _ref_phase_capture_and_compute(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* _ref_phase_capture_and_compute(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #endif
+      { return nullptr; }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod__depth_capture_and_compute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod__depth_capture_and_compute() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodRawCallback(5,
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->_depth_capture_and_compute(context, request, response); }));
+    }
+    ~ExperimentalWithRawCallbackMethod__depth_capture_and_compute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status _depth_capture_and_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerUnaryReactor* _depth_capture_and_compute(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* _depth_capture_and_compute(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #endif
+      { return nullptr; }
+  };
+  template <class BaseClass>
   class ExperimentalWithRawCallbackMethod__scan_start : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
@@ -1279,7 +1651,7 @@ class sla_ctrl final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(4,
+        MarkMethodRawCallback(6,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -1317,7 +1689,7 @@ class sla_ctrl final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(5,
+        MarkMethodRawCallback(7,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -1355,7 +1727,7 @@ class sla_ctrl final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(6,
+        MarkMethodRawCallback(8,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -1429,18 +1801,18 @@ class sla_ctrl final {
    public:
     WithStreamedUnaryMethod__ref_phase_compute() {
       ::grpc::Service::MarkMethodStreamed(2,
-        new ::grpc::internal::StreamedUnaryHandler< ::sla::compute_req, ::sla::status_res>(std::bind(&WithStreamedUnaryMethod__ref_phase_compute<BaseClass>::Streamed_ref_phase_compute, this, std::placeholders::_1, std::placeholders::_2)));
+        new ::grpc::internal::StreamedUnaryHandler< ::sla::compute_req, ::sla::compute_res>(std::bind(&WithStreamedUnaryMethod__ref_phase_compute<BaseClass>::Streamed_ref_phase_compute, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod__ref_phase_compute() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status _ref_phase_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::status_res* /*response*/) override {
+    ::grpc::Status _ref_phase_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status Streamed_ref_phase_compute(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sla::compute_req,::sla::status_res>* server_unary_streamer) = 0;
+    virtual ::grpc::Status Streamed_ref_phase_compute(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sla::compute_req,::sla::compute_res>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod__depth_compute : public BaseClass {
@@ -1463,12 +1835,52 @@ class sla_ctrl final {
     virtual ::grpc::Status Streamed_depth_compute(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sla::compute_req,::sla::compute_res>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
+  class WithStreamedUnaryMethod__ref_phase_capture_and_compute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod__ref_phase_capture_and_compute() {
+      ::grpc::Service::MarkMethodStreamed(4,
+        new ::grpc::internal::StreamedUnaryHandler< ::sla::compute_req, ::sla::compute_res>(std::bind(&WithStreamedUnaryMethod__ref_phase_capture_and_compute<BaseClass>::Streamed_ref_phase_capture_and_compute, this, std::placeholders::_1, std::placeholders::_2)));
+    }
+    ~WithStreamedUnaryMethod__ref_phase_capture_and_compute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status _ref_phase_capture_and_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status Streamed_ref_phase_capture_and_compute(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sla::compute_req,::sla::compute_res>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod__depth_capture_and_compute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod__depth_capture_and_compute() {
+      ::grpc::Service::MarkMethodStreamed(5,
+        new ::grpc::internal::StreamedUnaryHandler< ::sla::compute_req, ::sla::compute_res>(std::bind(&WithStreamedUnaryMethod__depth_capture_and_compute<BaseClass>::Streamed_depth_capture_and_compute, this, std::placeholders::_1, std::placeholders::_2)));
+    }
+    ~WithStreamedUnaryMethod__depth_capture_and_compute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status _depth_capture_and_compute(::grpc::ServerContext* /*context*/, const ::sla::compute_req* /*request*/, ::sla::compute_res* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status Streamed_depth_capture_and_compute(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sla::compute_req,::sla::compute_res>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
   class WithStreamedUnaryMethod__scan_start : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod__scan_start() {
-      ::grpc::Service::MarkMethodStreamed(4,
+      ::grpc::Service::MarkMethodStreamed(6,
         new ::grpc::internal::StreamedUnaryHandler< ::sla::scan_req, ::sla::status_res>(std::bind(&WithStreamedUnaryMethod__scan_start<BaseClass>::Streamed_scan_start, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod__scan_start() override {
@@ -1488,7 +1900,7 @@ class sla_ctrl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod__scan_pause() {
-      ::grpc::Service::MarkMethodStreamed(5,
+      ::grpc::Service::MarkMethodStreamed(7,
         new ::grpc::internal::StreamedUnaryHandler< ::sla::scan_req, ::sla::status_res>(std::bind(&WithStreamedUnaryMethod__scan_pause<BaseClass>::Streamed_scan_pause, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod__scan_pause() override {
@@ -1508,7 +1920,7 @@ class sla_ctrl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod__scan_stop() {
-      ::grpc::Service::MarkMethodStreamed(6,
+      ::grpc::Service::MarkMethodStreamed(8,
         new ::grpc::internal::StreamedUnaryHandler< ::sla::scan_req, ::sla::status_res>(std::bind(&WithStreamedUnaryMethod__scan_stop<BaseClass>::Streamed_scan_stop, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod__scan_stop() override {
@@ -1522,9 +1934,9 @@ class sla_ctrl final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status Streamed_scan_stop(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sla::scan_req,::sla::status_res>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod__setup<WithStreamedUnaryMethod__setup_get<WithStreamedUnaryMethod__ref_phase_compute<WithStreamedUnaryMethod__depth_compute<WithStreamedUnaryMethod__scan_start<WithStreamedUnaryMethod__scan_pause<WithStreamedUnaryMethod__scan_stop<Service > > > > > > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod__setup<WithStreamedUnaryMethod__setup_get<WithStreamedUnaryMethod__ref_phase_compute<WithStreamedUnaryMethod__depth_compute<WithStreamedUnaryMethod__ref_phase_capture_and_compute<WithStreamedUnaryMethod__depth_capture_and_compute<WithStreamedUnaryMethod__scan_start<WithStreamedUnaryMethod__scan_pause<WithStreamedUnaryMethod__scan_stop<Service > > > > > > > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod__setup<WithStreamedUnaryMethod__setup_get<WithStreamedUnaryMethod__ref_phase_compute<WithStreamedUnaryMethod__depth_compute<WithStreamedUnaryMethod__scan_start<WithStreamedUnaryMethod__scan_pause<WithStreamedUnaryMethod__scan_stop<Service > > > > > > > StreamedService;
+  typedef WithStreamedUnaryMethod__setup<WithStreamedUnaryMethod__setup_get<WithStreamedUnaryMethod__ref_phase_compute<WithStreamedUnaryMethod__depth_compute<WithStreamedUnaryMethod__ref_phase_capture_and_compute<WithStreamedUnaryMethod__depth_capture_and_compute<WithStreamedUnaryMethod__scan_start<WithStreamedUnaryMethod__scan_pause<WithStreamedUnaryMethod__scan_stop<Service > > > > > > > > > StreamedService;
 };
 
 }  // namespace sla

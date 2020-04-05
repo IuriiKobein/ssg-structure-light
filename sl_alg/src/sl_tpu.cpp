@@ -3,10 +3,12 @@
 #include "alg_utils.hpp"
 #include "sl_alg_factory.hpp"
 
+#include <iterator>
 #include <opencv2/core.hpp>
 
 #include <algorithm>
 #include <iostream>
+#include <opencv2/core/mat.hpp>
 #include <vector>
 
 namespace {
@@ -41,21 +43,31 @@ class sl_tpu::alg_impl {
     {
         sinusoidal_pattern_params sinus_params;
 
+        // 1 period low frequency pattern for TPU specific approach 
+        sinus_params.is_horizontal = params.is_horizontal;
+        sinus_params.num_of_patterns = 1;
+        sinus_params.num_of_periods = params.num_of_periods;
+        sinus_params.size = params.size;
+        _patterns = sinusoidal_pattern_generate(sinus_params);
+        
+        // regular high frequency patterns
         sinus_params.is_horizontal = params.is_horizontal;
         sinus_params.num_of_patterns = params.num_of_patterns;
         sinus_params.num_of_periods = params.num_of_periods;
         sinus_params.size = params.size;
-        _patterns = sinusoidal_pattern_generate(sinus_params);
+        auto hf_patterns = sinusoidal_pattern_generate(sinus_params);
+
+        _patterns.insert(std::begin(_patterns), std::begin(hf_patterns), std::end(hf_patterns));
     }
 
     const std::vector<cv::Mat>& patterns_get() { return _patterns; }
 
-    int ref_phase_compute(const std::vector<cv::Mat>& lf_refs,
+    cv::Mat ref_phase_compute(const std::vector<cv::Mat>& lf_refs,
                           const std::vector<cv::Mat>& hf_refs) {
         cpu_phase_compute(lf_refs, _lf_ref_phase);
         cpu_phase_compute(hf_refs, _hf_ref_phase);
 
-        return 0;
+        return _hf_ref_phase;
     }
 
     cv::Mat depth_compute(const std::vector<cv::Mat>& lf_objs,
@@ -89,15 +101,15 @@ const std::vector<cv::Mat>& sl_tpu::patterns_get() {
     return _pimpl->patterns_get();
 }
 
-int sl_tpu::ref_phase_compute(const std::vector<cv::Mat>& refs) {
-    return -ENOTSUP;
+cv::Mat sl_tpu::ref_phase_compute(const std::vector<cv::Mat>& refs) {
+    return cv::Mat();
 }
 
 cv::Mat sl_tpu::depth_compute(const std::vector<cv::Mat>& objs) {
     return cv::Mat();
 }
 
-int sl_tpu::ref_phase_compute(const std::vector<cv::Mat>& lf_refs,
+cv::Mat sl_tpu::ref_phase_compute(const std::vector<cv::Mat>& lf_refs,
                               const std::vector<cv::Mat>& hf_refs) {
     return _pimpl->ref_phase_compute(lf_refs, hf_refs);
 }

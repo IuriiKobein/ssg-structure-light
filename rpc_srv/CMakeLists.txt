@@ -18,5 +18,5 @@ target_include_directories(sl_rpc
 )
 
 target_compile_options(sl_rpc PRIVATE -Werror)
-target_link_libraries(sl_rpc PUBLIC sl_alg protobuf::libprotobuf
+target_link_libraries(sl_rpc PUBLIC sl_alg proj_cam_srv protobuf::libprotobuf
     gRPC::grpc++_unsecure )

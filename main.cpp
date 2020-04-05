@@ -23,13 +23,13 @@ int main(int argc, char* argv[]) {
 
     auto impl = parser.get<std::string>("sla_impl");
 
-    // exclude first argument not to confuse underlaying modules
-    for (int i = 1; i < argc; ++i) argv[i] = argv[i + 1];
-    --argc;
-
     if (impl == "experimental") {
         experimental_sl_main(argc, argv);
     } else if (impl == "opencv") {
+        // exclude first argument not to confuse underlaying modules
+        for (int i = 1; i < argc; ++i) argv[i] = argv[i + 1];
+        --argc;
+
         opencv_sl_main(argc, argv);
     }
     return 0;

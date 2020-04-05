@@ -26,10 +26,10 @@ class sl_alg {
 
     virtual const std::vector<cv::Mat>& patterns_get() = 0;
 
-    virtual int ref_phase_compute(const std::vector<cv::Mat> &refs) = 0;
+    virtual cv::Mat ref_phase_compute(const std::vector<cv::Mat> &refs) = 0;
     virtual cv::Mat depth_compute(const std::vector<cv::Mat> &objs) = 0;
 
-    virtual int ref_phase_compute(const std::vector<cv::Mat> &lf_refs,
+    virtual cv::Mat ref_phase_compute(const std::vector<cv::Mat> &lf_refs,
             const std::vector<cv::Mat>& hf_refs) = 0;
     virtual cv::Mat depth_compute(const std::vector<cv::Mat> &lf_objs,
             const std::vector<cv::Mat> &hf_objs) = 0;

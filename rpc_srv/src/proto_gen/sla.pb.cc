@@ -184,16 +184,20 @@ const char descriptor_table_protodef_sla_2eproto[] PROTOBUF_SECTION_VARIABLE(pro
   "us_res\022\016\n\006status\030\001 \001(\005\"=\n\013compute_req\022\016\n"
   "\006method\030\001 \001(\t\022\016\n\006lf_img\030\002 \003(\t\022\016\n\006hf_img\030"
   "\003 \003(\t\".\n\013compute_res\022\016\n\006method\030\001 \001(\t\022\017\n\007"
-  "url_img\030\002 \001(\t2\351\002\n\010sla_ctrl\022*\n\006_setup\022\r.s"
+  "url_img\030\002 \001(\t2\366\003\n\010sla_ctrl\022*\n\006_setup\022\r.s"
   "la.conf_req\032\017.sla.status_res\"\000\022,\n\n_setup"
-  "_get\022\r.sla.conf_req\032\r.sla.conf_req\"\000\0229\n\022"
-  "_ref_phase_compute\022\020.sla.compute_req\032\017.s"
-  "la.status_res\"\000\0226\n\016_depth_compute\022\020.sla."
-  "compute_req\032\020.sla.compute_res\"\000\022/\n\013_scan"
-  "_start\022\r.sla.scan_req\032\017.sla.status_res\"\000"
-  "\022/\n\013_scan_pause\022\r.sla.scan_req\032\017.sla.sta"
-  "tus_res\"\000\022.\n\n_scan_stop\022\r.sla.scan_req\032\017"
-  ".sla.status_res\"\000b\006proto3"
+  "_get\022\r.sla.conf_req\032\r.sla.conf_req\"\000\022:\n\022"
+  "_ref_phase_compute\022\020.sla.compute_req\032\020.s"
+  "la.compute_res\"\000\0226\n\016_depth_compute\022\020.sla"
+  ".compute_req\032\020.sla.compute_res\"\000\022F\n\036_ref"
+  "_phase_capture_and_compute\022\020.sla.compute"
+  "_req\032\020.sla.compute_res\"\000\022B\n\032_depth_captu"
+  "re_and_compute\022\020.sla.compute_req\032\020.sla.c"
+  "ompute_res\"\000\022/\n\013_scan_start\022\r.sla.scan_r"
+  "eq\032\017.sla.status_res\"\000\022/\n\013_scan_pause\022\r.s"
+  "la.scan_req\032\017.sla.status_res\"\000\022.\n\n_scan_"
+  "stop\022\r.sla.scan_req\032\017.sla.status_res\"\000b\006"
+  "proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_sla_2eproto_deps[1] = {
 };
@@ -207,7 +211,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_sla
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_sla_2eproto_once;
 static bool descriptor_table_sla_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_sla_2eproto = {
-  &descriptor_table_sla_2eproto_initialized, descriptor_table_protodef_sla_2eproto, "sla.proto", 825,
+  &descriptor_table_sla_2eproto_initialized, descriptor_table_protodef_sla_2eproto, "sla.proto", 966,
   &descriptor_table_sla_2eproto_once, descriptor_table_sla_2eproto_sccs, descriptor_table_sla_2eproto_deps, 5, 0,
   schemas, file_default_instances, TableStruct_sla_2eproto::offsets,
   file_level_metadata_sla_2eproto, 5, file_level_enum_descriptors_sla_2eproto, file_level_service_descriptors_sla_2eproto,

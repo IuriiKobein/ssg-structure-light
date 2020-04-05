@@ -7,6 +7,7 @@
 #include <iterator>
 #include <memory>
 #include <opencv2/core.hpp>
+#include <opencv2/core/mat.hpp>
 #include <opencv2/core/types.hpp>
 #include <opencv2/highgui.hpp>
 
@@ -174,9 +175,9 @@ class sl_pcg::sl_pcg_impl {
 
     const std::vector<cv::Mat> &patterns_get() { return _patterns; }
 
-    int ref_phase_compute(const std::vector<cv::Mat> &refs) {
+    cv::Mat ref_phase_compute(const std::vector<cv::Mat> &refs) {
         cpu_phase_compute(refs, _ref_phase);
-        return 0;
+        return _ref_phase;
     }
 
     cv::Mat depth_compute(const std::vector<cv::Mat> &objs) {
@@ -202,7 +203,7 @@ const std::vector<cv::Mat> &sl_pcg::patterns_get() {
     return _pimpl->patterns_get();
 }
 
-int sl_pcg::ref_phase_compute(const std::vector<cv::Mat> &ref_phases) {
+cv::Mat sl_pcg::ref_phase_compute(const std::vector<cv::Mat> &ref_phases) {
     return _pimpl->ref_phase_compute(ref_phases);
 }
 
@@ -210,9 +211,9 @@ cv::Mat sl_pcg::depth_compute(const std::vector<cv::Mat> &obj_phases) {
     return _pimpl->depth_compute(obj_phases);
 }
 
-int sl_pcg::ref_phase_compute(const std::vector<cv::Mat> &,
+cv::Mat sl_pcg::ref_phase_compute(const std::vector<cv::Mat> &,
                               const std::vector<cv::Mat> &) {
-    return -ENOTSUP;
+    return cv::Mat();
 }
 
 cv::Mat sl_pcg::depth_compute(const std::vector<cv::Mat> &,

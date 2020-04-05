@@ -1,39 +1,27 @@
-#include "opencv_sl.hpp"
+#include "sl_opencv.hpp"
 
 #include "alg_utils.hpp"
 #include "sl_alg_factory.hpp"
 
 #include <opencv2/core.hpp>
+#include <opencv2/core/mat.hpp>
 #include <opencv2/phase_unwrapping.hpp>
 #include <opencv2/structured_light.hpp>
 
 #include <algorithm>
 #include <iostream>
 #include <opencv2/structured_light/sinusoidalpattern.hpp>
+#include <string>
 #include <vector>
 
 namespace {
-sl_alg_auto_reg s_opencv_sl_reg("opencv_sl",
+sl_alg_auto_reg s_sl_opencv_reg("sl_opencv",
                                 [](const sl_alg::params_t& params) {
-                                    return std::make_unique<opencv_sl>(params);
+                                    return std::make_unique<sl_opencv>(params);
                                 });
-
-cv::Mat cpu_temporal_phase_unwrap(cv::Mat& phase1, cv::Mat& phase2,
-                                  float scale) {
-    cv::Mat out;
-
-    phase1.convertTo(phase1, phase1.type(), scale);
-    cv::subtract(phase1, phase2, phase1);
-    phase1.convertTo(phase1, phase1.type(), 0.5f / CV_PI);
-    cv_round(phase1);
-    phase1.convertTo(phase1, phase1.type(), 2 * CV_PI);
-    cv::add(phase1, phase2, out);
-
-    return out;
-}
 }  // namespace
 
-class opencv_sl::alg_impl {
+class sl_opencv::alg_impl {
    public:
     alg_impl(const params_t& params) : _params(params) {
         _sl_params.width = params.size.width;
@@ -54,19 +42,16 @@ class opencv_sl::alg_impl {
             cv::phase_unwrapping::HistogramPhaseUnwrapping::create(_pu_params);
 
         _sl_alg->generate(_patterns);
+        _img_size = params.size;
     }
 
     const std::vector<cv::Mat>& patterns_get() { return _patterns; }
 
-    cv::Mat depth_compute(const std::vector<cv::Mat>& lf_objs) {
-        cv::Mat reliabilities;
-
+    cv::Mat depth_compute(const std::vector<cv::Mat>& hf_objs) {
+        _sl_alg->computePhaseMap(hf_objs, _wpm, _shadow_mask);
         _sl_alg->unwrapPhaseMap(_wpm, _upm, _img_size, _shadow_mask);
-        _pu_alg->unwrapPhaseMap(_upm, _wpm, _shadow_mask);
 
-        _pu_alg->getInverseReliabilityMap(reliabilities);
-
-        return reliabilities;
+        return _upm;
     }
 
    private:
@@ -82,29 +67,29 @@ class opencv_sl::alg_impl {
     cv::Mat _wpm;
 };
 
-opencv_sl::opencv_sl(const params_t& params)
+sl_opencv::sl_opencv(const params_t& params)
     : _pimpl(std::make_unique<alg_impl>(params)) {}
 
-opencv_sl::~opencv_sl() = default;
+sl_opencv::~sl_opencv() = default;
 
-const std::vector<cv::Mat>& opencv_sl::patterns_get() {
+const std::vector<cv::Mat>& sl_opencv::patterns_get() {
     return _pimpl->patterns_get();
 }
 
-int opencv_sl::ref_phase_compute(const std::vector<cv::Mat>& refs) {
-    return -ENOTSUP;
+cv::Mat sl_opencv::ref_phase_compute(const std::vector<cv::Mat>& refs) {
+    return cv::Mat();
 }
 
-cv::Mat opencv_sl::depth_compute(const std::vector<cv::Mat>& objs) {
+cv::Mat sl_opencv::depth_compute(const std::vector<cv::Mat>& objs) {
     return _pimpl->depth_compute(objs);
 }
 
-int opencv_sl::ref_phase_compute(const std::vector<cv::Mat>& lf_refs,
+cv::Mat sl_opencv::ref_phase_compute(const std::vector<cv::Mat>& lf_refs,
                                  const std::vector<cv::Mat>& hf_refs) {
-    return -ENOTSUP;
+    return cv::Mat();
 }
 
-cv::Mat opencv_sl::depth_compute(const std::vector<cv::Mat>& lf_objs,
+cv::Mat sl_opencv::depth_compute(const std::vector<cv::Mat>& lf_objs,
                                  const std::vector<cv::Mat>& hf_objs) {
     return cv::Mat();
 }

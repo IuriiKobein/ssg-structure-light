@@ -4,7 +4,7 @@ import grpc
 import sla_pb2 as sla__pb2
 
 
-class tpuStub(object):
+class sla_ctrlStub(object):
   # missing associated documentation comment in .proto file
   pass
 
@@ -14,28 +14,65 @@ class tpuStub(object):
     Args:
       channel: A grpc.Channel.
     """
-    self._init = channel.unary_unary(
-        '/sla.tpu/_init',
-        request_serializer=sla__pb2.tpu_conf_req.SerializeToString,
-        response_deserializer=sla__pb2.tpu_status_res.FromString,
+    self._setup = channel.unary_unary(
+        '/sla.sla_ctrl/_setup',
+        request_serializer=sla__pb2.conf_req.SerializeToString,
+        response_deserializer=sla__pb2.status_res.FromString,
+        )
+    self._setup_get = channel.unary_unary(
+        '/sla.sla_ctrl/_setup_get',
+        request_serializer=sla__pb2.conf_req.SerializeToString,
+        response_deserializer=sla__pb2.conf_req.FromString,
         )
     self._ref_phase_compute = channel.unary_unary(
-        '/sla.tpu/_ref_phase_compute',
-        request_serializer=sla__pb2.tpu_env_req.SerializeToString,
-        response_deserializer=sla__pb2.tpu_status_res.FromString,
+        '/sla.sla_ctrl/_ref_phase_compute',
+        request_serializer=sla__pb2.compute_req.SerializeToString,
+        response_deserializer=sla__pb2.status_res.FromString,
         )
     self._depth_compute = channel.unary_unary(
-        '/sla.tpu/_depth_compute',
-        request_serializer=sla__pb2.tpu_env_req.SerializeToString,
-        response_deserializer=sla__pb2.depth_env_res.FromString,
+        '/sla.sla_ctrl/_depth_compute',
+        request_serializer=sla__pb2.compute_req.SerializeToString,
+        response_deserializer=sla__pb2.compute_res.FromString,
+        )
+    self._ref_phase_capture_and_compute = channel.unary_unary(
+        '/sla.sla_ctrl/_ref_phase_capture_and_compute',
+        request_serializer=sla__pb2.compute_req.SerializeToString,
+        response_deserializer=sla__pb2.status_res.FromString,
+        )
+    self._depth_capture_and_compute = channel.unary_unary(
+        '/sla.sla_ctrl/_depth_capture_and_compute',
+        request_serializer=sla__pb2.compute_req.SerializeToString,
+        response_deserializer=sla__pb2.compute_res.FromString,
+        )
+    self._scan_start = channel.unary_unary(
+        '/sla.sla_ctrl/_scan_start',
+        request_serializer=sla__pb2.scan_req.SerializeToString,
+        response_deserializer=sla__pb2.status_res.FromString,
+        )
+    self._scan_pause = channel.unary_unary(
+        '/sla.sla_ctrl/_scan_pause',
+        request_serializer=sla__pb2.scan_req.SerializeToString,
+        response_deserializer=sla__pb2.status_res.FromString,
+        )
+    self._scan_stop = channel.unary_unary(
+        '/sla.sla_ctrl/_scan_stop',
+        request_serializer=sla__pb2.scan_req.SerializeToString,
+        response_deserializer=sla__pb2.status_res.FromString,
         )
 
 
-class tpuServicer(object):
+class sla_ctrlServicer(object):
   # missing associated documentation comment in .proto file
   pass
 
-  def _init(self, request, context):
+  def _setup(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def _setup_get(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -56,25 +93,90 @@ class tpuServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def _ref_phase_capture_and_compute(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
 
-def add_tpuServicer_to_server(servicer, server):
+  def _depth_capture_and_compute(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def _scan_start(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def _scan_pause(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def _scan_stop(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+
+def add_sla_ctrlServicer_to_server(servicer, server):
   rpc_method_handlers = {
-      '_init': grpc.unary_unary_rpc_method_handler(
-          servicer._init,
-          request_deserializer=sla__pb2.tpu_conf_req.FromString,
-          response_serializer=sla__pb2.tpu_status_res.SerializeToString,
+      '_setup': grpc.unary_unary_rpc_method_handler(
+          servicer._setup,
+          request_deserializer=sla__pb2.conf_req.FromString,
+          response_serializer=sla__pb2.status_res.SerializeToString,
+      ),
+      '_setup_get': grpc.unary_unary_rpc_method_handler(
+          servicer._setup_get,
+          request_deserializer=sla__pb2.conf_req.FromString,
+          response_serializer=sla__pb2.conf_req.SerializeToString,
       ),
       '_ref_phase_compute': grpc.unary_unary_rpc_method_handler(
           servicer._ref_phase_compute,
-          request_deserializer=sla__pb2.tpu_env_req.FromString,
-          response_serializer=sla__pb2.tpu_status_res.SerializeToString,
+          request_deserializer=sla__pb2.compute_req.FromString,
+          response_serializer=sla__pb2.status_res.SerializeToString,
       ),
       '_depth_compute': grpc.unary_unary_rpc_method_handler(
           servicer._depth_compute,
-          request_deserializer=sla__pb2.tpu_env_req.FromString,
-          response_serializer=sla__pb2.depth_env_res.SerializeToString,
+          request_deserializer=sla__pb2.compute_req.FromString,
+          response_serializer=sla__pb2.compute_res.SerializeToString,
+      ),
+      '_ref_phase_capture_and_compute': grpc.unary_unary_rpc_method_handler(
+          servicer._ref_phase_capture_and_compute,
+          request_deserializer=sla__pb2.compute_req.FromString,
+          response_serializer=sla__pb2.status_res.SerializeToString,
+      ),
+      '_depth_capture_and_compute': grpc.unary_unary_rpc_method_handler(
+          servicer._depth_capture_and_compute,
+          request_deserializer=sla__pb2.compute_req.FromString,
+          response_serializer=sla__pb2.compute_res.SerializeToString,
+      ),
+      '_scan_start': grpc.unary_unary_rpc_method_handler(
+          servicer._scan_start,
+          request_deserializer=sla__pb2.scan_req.FromString,
+          response_serializer=sla__pb2.status_res.SerializeToString,
+      ),
+      '_scan_pause': grpc.unary_unary_rpc_method_handler(
+          servicer._scan_pause,
+          request_deserializer=sla__pb2.scan_req.FromString,
+          response_serializer=sla__pb2.status_res.SerializeToString,
+      ),
+      '_scan_stop': grpc.unary_unary_rpc_method_handler(
+          servicer._scan_stop,
+          request_deserializer=sla__pb2.scan_req.FromString,
+          response_serializer=sla__pb2.status_res.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
-      'sla.tpu', rpc_method_handlers)
+      'sla.sla_ctrl', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))

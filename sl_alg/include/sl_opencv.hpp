@@ -10,19 +10,19 @@
 
 #include "sl_alg.hpp"
 
-class opencv_sl: public sl_alg {
+class sl_opencv: public sl_alg {
    public:
-    opencv_sl(const params_t& params);
+    sl_opencv(const params_t& params);
 
-    ~opencv_sl();
+    ~sl_opencv();
 
     virtual const std::vector<cv::Mat>& patterns_get();
 
-    virtual int ref_phase_compute(
+    virtual cv::Mat ref_phase_compute(
         const std::vector<cv::Mat>& refs);
     virtual cv::Mat depth_compute(const std::vector<cv::Mat>& objs);
     
-    virtual int ref_phase_compute(const std::vector<cv::Mat> &lf_refs,
+    virtual cv::Mat ref_phase_compute(const std::vector<cv::Mat> &lf_refs,
             const std::vector<cv::Mat>& hf_refs);
     virtual cv::Mat depth_compute(const std::vector<cv::Mat> &lf_objs,
             const std::vector<cv::Mat> &hf_objs);

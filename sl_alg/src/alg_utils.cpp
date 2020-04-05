@@ -60,8 +60,9 @@ void img_show(const std::string &title, const cv::Mat &img) {
 }
 
 void lfs_img_write(const std::string &path, const cv::Mat &h_img) {
-    cv::normalize(h_img, h_img, 0, 255, cv::NORM_MINMAX, CV_8U);
-    cv::imwrite(path, h_img);
+    cv::Mat norm_img;
+    cv::normalize(h_img, norm_img, 0, 255, cv::NORM_MINMAX, CV_8U);
+    cv::imwrite(path, norm_img);
 }
 
 void lfs_imgs_write(const std::string &path, const  std::vector<cv::Mat> &imgs) {
@@ -160,8 +161,6 @@ std::vector<cv::Mat> sinusoidal_pattern_generate(
         }
 
     }
-
-    cv::waitKey(0);
 
     if (params.is_horizontal) {
         for (int i = 0; i < params.num_of_patterns; ++i) {

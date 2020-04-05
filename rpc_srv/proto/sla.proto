@@ -6,8 +6,11 @@ service sla_ctrl {
   rpc _setup(conf_req) returns (status_res) {}
   rpc _setup_get(conf_req) returns (conf_req) {}
 
-  rpc _ref_phase_compute(compute_req) returns (status_res) {}
+  rpc _ref_phase_compute(compute_req) returns (compute_res) {}
   rpc _depth_compute(compute_req) returns (compute_res) {}
+
+  rpc _ref_phase_capture_and_compute(compute_req) returns (compute_res) {}
+  rpc _depth_capture_and_compute(compute_req) returns (compute_res) {}
 
   rpc _scan_start(scan_req) returns (status_res) {}
   rpc _scan_pause(scan_req) returns (status_res) {}

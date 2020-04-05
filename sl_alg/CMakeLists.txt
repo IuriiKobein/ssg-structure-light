@@ -2,6 +2,7 @@ list(APPEND sl_alg_srcs
     ${CMAKE_CURRENT_SOURCE_DIR}/src/alg_utils.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/sl_pcg.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/sl_tpu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/sl_opencv.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/sl_alg_factory.cpp
 )
 

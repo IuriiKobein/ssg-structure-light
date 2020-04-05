@@ -106,8 +106,6 @@ int sl_run_once(cv::CommandLineParser& parser) {
     auto alg = sl_alg_make(m, params);
     auto patterns = alg->patterns_get();
 
-    img_show("p1", patterns[0]);
-    cv::waitKey(0);
     if (!alg) {
         std::cout << "method: " << m << " not supported";
         std::exit(1);
@@ -117,13 +115,16 @@ int sl_run_once(cv::CommandLineParser& parser) {
 
     auto out = alg_3dr_obj_depth_compute(*alg, parser, alg_type);
 
-    auto ts = std::chrono::high_resolution_clock::now();
-    out = alg_3dr_obj_depth_compute(*alg, parser, alg_type);
-    auto te = std::chrono::high_resolution_clock::now();
-    std::cout << std::chrono::duration_cast<std::chrono::microseconds>(te - ts)
-                     .count()
-              << std::endl;
-
+    int i = params.num_of_patterns;
+    while (i--) {
+        auto ts = std::chrono::high_resolution_clock::now();
+        out = alg_3dr_obj_depth_compute(*alg, parser, alg_type);
+        auto te = std::chrono::high_resolution_clock::now();
+        std::cout << std::chrono::duration_cast<std::chrono::microseconds>(te -
+                                                                           ts)
+                         .count()
+                  << std::endl;
+    }
     img_show("cuda", out);
     cv::waitKey(0);
 

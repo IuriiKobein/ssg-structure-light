@@ -15,6 +15,7 @@ message(STATUS "Using protobuf ${protobuf_VERSION}")
 find_package(gRPC CONFIG REQUIRED)
 message(STATUS "Using gRPC ${gRPC_VERSION}")
 
+add_subdirectory(proj_cam_srv)
 add_subdirectory(rpc_srv)
 add_subdirectory(sl_alg)
 

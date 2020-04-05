@@ -143,16 +143,16 @@ void cuda_dct2(cv::cuda::GpuMat &img, cv::cuda::GpuMat &out) {
 
     /* 1. to calcualte dct via fft make input signal
      * event related to left right corner */
-    img.copyTo(fft_in(cv::Rect(0, 0, h, w)));
-    cv::cuda::flip(img, fft_in(cv::Rect(0, w, h, w)), 0);
-    cv::cuda::flip(img, fft_in(cv::Rect(h, 0, h, w)), 1);
-    cv::cuda::flip(img, fft_in(cv::Rect(h, w, h, w)), -1);
+    img.copyTo(fft_in(cv::Rect(0, 0, w, h)));
+    cv::cuda::flip(img, fft_in(cv::Rect(0, h, w, h)), 0);
+    cv::cuda::flip(img, fft_in(cv::Rect(w, 0, w, h)), 1);
+    cv::cuda::flip(img, fft_in(cv::Rect(w, h, w, h)), -1);
 
     /* 2. apply real -> complex dft  */
     g_alg_env.dft->compute(fft_in, fft_out);
 
     /* 3. crop roi of dct */
-    const auto &crop_fft_out = fft_out(cv::Rect(0, 0, h, w));
+    const auto &crop_fft_out = fft_out(cv::Rect(0, 0, w, h));
 
     //* 4. convert dft out to dct by twiddle factors*/
     cuda_dft2dct_out_convert(crop_fft_out, dct_coeff, out);
@@ -251,7 +251,7 @@ class cu_pu_pcg {
     cu_pu_pcg(cv::Size size)
         : _const_mats(alg_make_const_mat(size)),
           _tmp_mats(alg_make_tmp_mat(size)),
-          _dft(cv::cuda::createDFT(cv::Size(size.height * 2, size.width * 2),
+          _dft(cv::cuda::createDFT(cv::Size(size.width * 2, size.height * 2),
                                    0)),
           _idft(cv::cuda::createDFT(size, cv::DFT_COMPLEX_INPUT | cv::DFT_ROWS |
                                               cv::DFT_INVERSE | cv::DFT_SCALE))
@@ -308,9 +308,13 @@ class cu_sl_pcg::cu_sl_pcg_impl {
 
     const std::vector<cv::Mat> &patterns_get() { return _patterns; }
 
-    int ref_phase_compute(const std::vector<cv::Mat> &refs) {
+    cv::Mat ref_phase_compute(const std::vector<cv::Mat> &refs) {
+        cv::Mat cpu;
+
         cuda_phase_compute(refs, _tmp, _cu_tmp, *_filt, _ref_phase);
-        return 0;
+        _ref_phase.download(cpu);
+
+        return cpu;
     }
 
     cv::Mat depth_compute(const std::vector<cv::Mat> &objs) {
@@ -340,7 +344,7 @@ const std::vector<cv::Mat> &cu_sl_pcg::patterns_get() {
     return _pimpl->patterns_get();
 }
 
-int cu_sl_pcg::ref_phase_compute(const std::vector<cv::Mat> &refs) {
+cv::Mat cu_sl_pcg::ref_phase_compute(const std::vector<cv::Mat> &refs) {
     return _pimpl->ref_phase_compute(refs);
 }
 
@@ -348,9 +352,9 @@ cv::Mat cu_sl_pcg::depth_compute(const std::vector<cv::Mat> &objs) {
     return _pimpl->depth_compute(objs);
 }
 
-int cu_sl_pcg::ref_phase_compute(const std::vector<cv::Mat> &,
+cv::Mat cu_sl_pcg::ref_phase_compute(const std::vector<cv::Mat> &,
                                  const std::vector<cv::Mat> &) {
-    return -ENOTSUP;
+    return cv::Mat();
 }
 
 cv::Mat cu_sl_pcg::depth_compute(const std::vector<cv::Mat> &,
