@@ -1,0 +1,1 @@
+python3 sla_client.py capture_compute_ref_phase --method=cuda_pcg --hf_image_list=/home/rnd/Pictures/fixed_dragon/refs/dragon_ref1.png --hf_image_list=/home/rnd/Pictures/fixed_dragon/refs/dragon_ref2.png --hf_image_list=/home/rnd/Pictures/fixed_dragon/refs/dragon_ref3.png --hf_image_list=/home/rnd/Pictures/fixed_dragon/refs/dragon_ref4.png

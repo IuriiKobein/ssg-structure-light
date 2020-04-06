@@ -45,8 +45,8 @@ using alg_map_t = std::unordered_map<std::string, std::unique_ptr<sl_alg>>;
 
 const std::string LFS_PREFIX = "/tmp/";
 
-std::string file_path_gen(const cv::Mat& img) {
-    return LFS_PREFIX + "depth_map_" + std::to_string((std::intptr_t)img.data) +
+std::string file_path_gen(const std::string& prefix, const cv::Mat& img) {
+    return LFS_PREFIX + prefix + std::to_string((std::intptr_t)img.data) +
            ".png";
 }
 
@@ -87,8 +87,7 @@ Status is_valid_method(const alg_map_t& alg_map, const std::string& method) {
 Status alg_ref_compute_invoke(const alg_map_t& alg_map,
                               const std::string& method,
                               const img_vec_t& lf_imgs,
-                              const img_vec_t& hf_imgs,
-                              cv::Mat& out) {
+                              const img_vec_t& hf_imgs, cv::Mat& out) {
     if (method.find("tpu") == std::string::npos) {
         out = alg_map.at(method)->ref_phase_compute(hf_imgs);
     } else {
@@ -96,9 +95,8 @@ Status alg_ref_compute_invoke(const alg_map_t& alg_map,
     }
 
     if (out.empty()) {
-        return Status(
-            grpc::StatusCode::INTERNAL,
-            "failed to compute ref phase: " + method);
+        return Status(grpc::StatusCode::INTERNAL,
+                      "failed to compute ref phase: " + method);
     }
 
     return Status::OK;
@@ -117,7 +115,6 @@ Status alg_depth_compute_invoke(const alg_map_t& alg_map,
     return Status::OK;
 }
 
-
 Status alg_proj_and_capture(const alg_map_t& alg_map, const std::string& method,
                             proj_cam_srv& proj_cam, img_vec_t& lf_imgs,
                             img_vec_t& hf_imgs) {
@@ -125,13 +122,13 @@ Status alg_proj_and_capture(const alg_map_t& alg_map, const std::string& method,
 
     if (method.find("tpu") != std::string::npos) {
         proj_cam.images_capture(std::begin(patterns),
-                                    std::end(patterns) - patterns.size() / 2,
-                                    std::begin(lf_imgs));
+                                std::end(patterns) - patterns.size() / 2,
+                                std::begin(lf_imgs));
         proj_cam.images_capture(std::begin(patterns) + patterns.size() / 2,
-                                    std::end(patterns), std::begin(hf_imgs));
+                                std::end(patterns), std::begin(hf_imgs));
     } else {
         proj_cam.images_capture(std::begin(patterns), std::end(patterns),
-                                    std::begin(hf_imgs));
+                                std::begin(hf_imgs));
     }
 
     return Status::OK;
@@ -178,25 +175,28 @@ class sla_ctrl_impl final : public sla_ctrl::Service {
 
             auto status = is_valid_method(_alg_map, method);
             if (!status.ok()) {
-                res->set_url_img(std::string("error") + std::to_string(status.error_code()));
+                res->set_url_img(std::string("error") +
+                                 std::to_string(status.error_code()));
                 return status;
             }
 
             status = req_imgs_load(req, _lf_imgs, _hf_imgs);
             if (!status.ok()) {
-                res->set_url_img(std::string("error") + std::to_string(status.error_code()));
+                res->set_url_img(std::string("error") +
+                                 std::to_string(status.error_code()));
                 return status;
             }
 
             cv::Mat ref;
-            status =
-                alg_ref_compute_invoke(_alg_map, method, _lf_imgs, _hf_imgs, ref);
+            status = alg_ref_compute_invoke(_alg_map, method, _lf_imgs,
+                                            _hf_imgs, ref);
             if (!status.ok()) {
-                res->set_url_img(std::string("error") + std::to_string(status.error_code()));
+                res->set_url_img(std::string("error") +
+                                 std::to_string(status.error_code()));
                 return status;
             }
 
-            auto lfs_url = file_path_gen(ref);
+            auto lfs_url = file_path_gen("hf_ref_phase", ref);
             lfs_img_write(lfs_url, ref);
             res->set_url_img(lfs_url);
 
@@ -223,7 +223,7 @@ class sla_ctrl_impl final : public sla_ctrl::Service {
                 return status;
             }
 
-            auto lfs_url = file_path_gen(_depth_map);
+            auto lfs_url = file_path_gen("depth_map", _depth_map);
             lfs_img_write(lfs_url, _depth_map);
             res->set_url_img(lfs_url);
 
@@ -242,30 +242,31 @@ class sla_ctrl_impl final : public sla_ctrl::Service {
 
             auto status = is_valid_method(_alg_map, method);
             if (!status.ok()) {
-                res->set_url_img(std::string("error") + std::to_string(status.error_code()));
+                res->set_url_img(std::string("error") +
+                                 std::to_string(status.error_code()));
                 return status;
             }
 
             status = alg_proj_and_capture(_alg_map, method, _proj_cam, _lf_imgs,
                                           _hf_imgs);
             if (!status.ok()) {
-                res->set_url_img(std::string("error") + std::to_string(status.error_code()));
+                res->set_url_img(std::string("error") +
+                                 std::to_string(status.error_code()));
                 return status;
             }
 
             cv::Mat ref;
-            status =
-                alg_ref_compute_invoke(_alg_map, method, _lf_imgs, _hf_imgs, ref);
+            status = alg_ref_compute_invoke(_alg_map, method, _lf_imgs,
+                                            _hf_imgs, ref);
             if (!status.ok()) {
-                res->set_url_img(std::string("error") + std::to_string(status.error_code()));
+                res->set_url_img(std::string("error") +
+                                 std::to_string(status.error_code()));
                 return status;
             }
 
-            auto lfs_url = file_path_gen(ref);
+            auto lfs_url = file_path_gen("hf_ref_phase", ref);
             lfs_img_write(lfs_url, ref);
             res->set_url_img(lfs_url);
-
-
 
             return Status::OK;
         } catch (const std::exception& e) {
@@ -297,7 +298,7 @@ class sla_ctrl_impl final : public sla_ctrl::Service {
                 return status;
             }
 
-            auto lfs_url = file_path_gen(_depth_map);
+            auto lfs_url = file_path_gen("depth_map", _depth_map);
             lfs_img_write(lfs_url, _depth_map);
             res->set_url_img(lfs_url);
 

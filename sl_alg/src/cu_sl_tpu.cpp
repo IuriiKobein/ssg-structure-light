@@ -79,14 +79,8 @@ class cu_sl_tpu::alg_impl {
 
     cv::Mat depth_compute(const std::vector<cv::Mat>& lf_objs,
                           const std::vector<cv::Mat>& hf_objs) {
-        auto ts = std::chrono::high_resolution_clock::now();
         cuda_phase_compute(lf_objs, _tmp, _cu_tmp, *_filt, _lf_obj_phase);
         cuda_phase_compute(hf_objs, _tmp, _cu_tmp, *_filt, _hf_obj_phase);
-        auto te = std::chrono::high_resolution_clock::now();
-        std::cout << std::chrono::duration_cast<std::chrono::microseconds>(te -
-                                                                           ts)
-                         .count()
-                  << std::endl;
 
         cv::cuda::subtract(_lf_obj_phase, _lf_ref_phase, _lf_obj_phase);
         cv::cuda::subtract(_hf_obj_phase, _hf_ref_phase, _hf_obj_phase);

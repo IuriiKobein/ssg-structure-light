@@ -4,6 +4,7 @@
 #include "alg_utils.hpp"
 
 #include <algorithm>
+#include <cstdint>
 #include <iterator>
 #include <memory>
 #include <opencv2/core.hpp>
@@ -16,6 +17,11 @@
 #include <vector>
 
 namespace {
+
+enum adjust_mode_t {
+    EXTEND_TO_SQUARE = 0,
+    CROP_TO_SQURE_CENTRE,
+};
 
 sl_alg_auto_reg s_sl_pcg_reg("cpu_pcg", [](const sl_alg::params_t &params) {
     return std::make_unique<sl_pcg>(params);
@@ -160,6 +166,7 @@ class sl_pcg::sl_pcg_impl {
    public:
     sl_pcg_impl(const params_t &params)
         : _params(params),
+          _adjust_mode(CROP_TO_SQURE_CENTRE),
           _obj_phase(_params.size, CV_32F),
           _ref_phase(_params.size, CV_32F) {
         g_laplacian = create_grid(_params.size);
@@ -184,11 +191,17 @@ class sl_pcg::sl_pcg_impl {
         cpu_phase_compute(objs, _obj_phase);
         cv::subtract(_obj_phase, _ref_phase, _obj_phase);
 
+        if (_adjust_mode == CROP_TO_SQURE_CENTRE)
+        {
+            auto step = (_params.size.width - _params.size.height)/2;
+            _obj_phase = _obj_phase(cv::Rect(step, 0, _params.size.width - step, _params.size.height));
+        }
         return pcg_phase_unwrap(_obj_phase);
     }
 
    private:
     params_t _params;
+    std::int32_t _adjust_mode;
     std::vector<cv::Mat> _patterns;
     cv::Mat _obj_phase;
     cv::Mat _ref_phase;
@@ -212,7 +225,7 @@ cv::Mat sl_pcg::depth_compute(const std::vector<cv::Mat> &obj_phases) {
 }
 
 cv::Mat sl_pcg::ref_phase_compute(const std::vector<cv::Mat> &,
-                              const std::vector<cv::Mat> &) {
+                                  const std::vector<cv::Mat> &) {
     return cv::Mat();
 }
 
