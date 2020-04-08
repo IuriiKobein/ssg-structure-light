@@ -142,9 +142,13 @@ class sla_ctrl_impl final : public sla_ctrl::Service {
                   status_res* res) override {
         const auto& method = req->method();
 
+        /* try to set user requested resolution*/
+        _proj_cam.size_set(cv::Size(req->width(), req->height()));
+
         sl_alg::params_t params;
 
-        params.size = cv::Size(req->width(), req->height());
+        /* use actual proj-cam resoluion */
+        params.size = _proj_cam.size_get();
         params.freq_ratio = req->freq_ratio();
         params.is_horizontal = req->is_horizontal();
         params.num_of_periods = req->num_of_periods();
@@ -159,7 +163,6 @@ class sla_ctrl_impl final : public sla_ctrl::Service {
         _lf_imgs = imgs_alloc(4, params.size, CV_8UC1);
         _hf_imgs = imgs_alloc(4, params.size, CV_8UC1);
 
-        _proj_cam.size_set(params.size);
 
         std::cout << "setup method:  " << method << " :"
                   << std::to_string(req->opencv_method_id());
@@ -217,9 +220,18 @@ class sla_ctrl_impl final : public sla_ctrl::Service {
                 return status;
             }
 
+            status = req_imgs_load(req, _lf_imgs, _hf_imgs);
+            if (!status.ok()) {
+                res->set_url_img(std::string("error") +
+                                 std::to_string(status.error_code()));
+                return status;
+            }
+
             status = alg_depth_compute_invoke(_alg_map, method, _lf_imgs,
                                               _hf_imgs, _depth_map);
             if (!status.ok()) {
+                res->set_url_img(std::string("error") +
+                                 std::to_string(status.error_code()));
                 return status;
             }
 

@@ -22,7 +22,9 @@
 namespace {
 
 sl_alg_auto_reg s_cu_sl_pcg_reg("cuda_pcg", [](const sl_alg::params_t &params) {
-    return std::make_unique<cu_sl_pcg>(params);
+    auto fixed_params = params;
+    fixed_params.size.height = fixed_params.size.width;
+    return std::make_unique<cu_sl_pcg>(fixed_params);
 });
 
 struct alg_const_mats {

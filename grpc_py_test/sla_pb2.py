@@ -18,7 +18,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='sla',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\tsla.proto\x12\x03sla\"\xf1\x01\n\x08\x63onf_req\x12\x0e\n\x06method\x18\x01 \x01(\t\x12\r\n\x05width\x18\x02 \x01(\x05\x12\x0e\n\x06height\x18\x03 \x01(\x05\x12\x12\n\nfreq_ratio\x18\x04 \x01(\x02\x12\x12\n\nreal_scale\x18\x05 \x01(\x02\x12\x16\n\x0enum_of_periods\x18\x06 \x01(\x05\x12\x13\n\x0buse_markers\x18\x07 \x01(\x05\x12\x15\n\ris_horizontal\x18\x08 \x01(\x05\x12\x17\n\x0fnum_of_patterns\x18\t \x01(\x05\x12\x17\n\x0fnum_of_pix_mark\x18\n \x01(\x05\x12\x18\n\x10opencv_method_id\x18\x0b \x01(\x05\"2\n\x08scan_req\x12\x0e\n\x06method\x18\x01 \x01(\t\x12\x16\n\x0erotation_angle\x18\x02 \x01(\x05\"\x1c\n\nstatus_res\x12\x0e\n\x06status\x18\x01 \x01(\x05\"=\n\x0b\x63ompute_req\x12\x0e\n\x06method\x18\x01 \x01(\t\x12\x0e\n\x06lf_img\x18\x02 \x03(\t\x12\x0e\n\x06hf_img\x18\x03 \x03(\t\".\n\x0b\x63ompute_res\x12\x0e\n\x06method\x18\x01 \x01(\t\x12\x0f\n\x07url_img\x18\x02 \x01(\t2\xf4\x03\n\x08sla_ctrl\x12*\n\x06_setup\x12\r.sla.conf_req\x1a\x0f.sla.status_res\"\x00\x12,\n\n_setup_get\x12\r.sla.conf_req\x1a\r.sla.conf_req\"\x00\x12\x39\n\x12_ref_phase_compute\x12\x10.sla.compute_req\x1a\x0f.sla.status_res\"\x00\x12\x36\n\x0e_depth_compute\x12\x10.sla.compute_req\x1a\x10.sla.compute_res\"\x00\x12\x45\n\x1e_ref_phase_capture_and_compute\x12\x10.sla.compute_req\x1a\x0f.sla.status_res\"\x00\x12\x42\n\x1a_depth_capture_and_compute\x12\x10.sla.compute_req\x1a\x10.sla.compute_res\"\x00\x12/\n\x0b_scan_start\x12\r.sla.scan_req\x1a\x0f.sla.status_res\"\x00\x12/\n\x0b_scan_pause\x12\r.sla.scan_req\x1a\x0f.sla.status_res\"\x00\x12.\n\n_scan_stop\x12\r.sla.scan_req\x1a\x0f.sla.status_res\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\tsla.proto\x12\x03sla\"\xf1\x01\n\x08\x63onf_req\x12\x0e\n\x06method\x18\x01 \x01(\t\x12\r\n\x05width\x18\x02 \x01(\x05\x12\x0e\n\x06height\x18\x03 \x01(\x05\x12\x12\n\nfreq_ratio\x18\x04 \x01(\x02\x12\x12\n\nreal_scale\x18\x05 \x01(\x02\x12\x16\n\x0enum_of_periods\x18\x06 \x01(\x05\x12\x13\n\x0buse_markers\x18\x07 \x01(\x05\x12\x15\n\ris_horizontal\x18\x08 \x01(\x05\x12\x17\n\x0fnum_of_patterns\x18\t \x01(\x05\x12\x17\n\x0fnum_of_pix_mark\x18\n \x01(\x05\x12\x18\n\x10opencv_method_id\x18\x0b \x01(\x05\"2\n\x08scan_req\x12\x0e\n\x06method\x18\x01 \x01(\t\x12\x16\n\x0erotation_angle\x18\x02 \x01(\x05\"\x1c\n\nstatus_res\x12\x0e\n\x06status\x18\x01 \x01(\x05\"=\n\x0b\x63ompute_req\x12\x0e\n\x06method\x18\x01 \x01(\t\x12\x0e\n\x06lf_img\x18\x02 \x03(\t\x12\x0e\n\x06hf_img\x18\x03 \x03(\t\".\n\x0b\x63ompute_res\x12\x0e\n\x06method\x18\x01 \x01(\t\x12\x0f\n\x07url_img\x18\x02 \x01(\t2\xf6\x03\n\x08sla_ctrl\x12*\n\x06_setup\x12\r.sla.conf_req\x1a\x0f.sla.status_res\"\x00\x12,\n\n_setup_get\x12\r.sla.conf_req\x1a\r.sla.conf_req\"\x00\x12:\n\x12_ref_phase_compute\x12\x10.sla.compute_req\x1a\x10.sla.compute_res\"\x00\x12\x36\n\x0e_depth_compute\x12\x10.sla.compute_req\x1a\x10.sla.compute_res\"\x00\x12\x46\n\x1e_ref_phase_capture_and_compute\x12\x10.sla.compute_req\x1a\x10.sla.compute_res\"\x00\x12\x42\n\x1a_depth_capture_and_compute\x12\x10.sla.compute_req\x1a\x10.sla.compute_res\"\x00\x12/\n\x0b_scan_start\x12\r.sla.scan_req\x1a\x0f.sla.status_res\"\x00\x12/\n\x0b_scan_pause\x12\r.sla.scan_req\x1a\x0f.sla.status_res\"\x00\x12.\n\n_scan_stop\x12\r.sla.scan_req\x1a\x0f.sla.status_res\"\x00\x62\x06proto3'
 )
 
 
@@ -327,7 +327,7 @@ _SLA_CTRL = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   serialized_start=456,
-  serialized_end=956,
+  serialized_end=958,
   methods=[
   _descriptor.MethodDescriptor(
     name='_setup',
@@ -353,7 +353,7 @@ _SLA_CTRL = _descriptor.ServiceDescriptor(
     index=2,
     containing_service=None,
     input_type=_COMPUTE_REQ,
-    output_type=_STATUS_RES,
+    output_type=_COMPUTE_RES,
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
@@ -371,7 +371,7 @@ _SLA_CTRL = _descriptor.ServiceDescriptor(
     index=4,
     containing_service=None,
     input_type=_COMPUTE_REQ,
-    output_type=_STATUS_RES,
+    output_type=_COMPUTE_RES,
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(

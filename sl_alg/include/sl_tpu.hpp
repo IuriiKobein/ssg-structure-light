@@ -2,9 +2,6 @@
 
 #include <memory>
 #include <opencv2/core.hpp>
-#include <opencv2/core/cuda.hpp>
-#include <opencv2/core/mat.hpp>
-#include <opencv2/core/types.hpp>
 #include <string>
 #include <vector>
 

@@ -103,7 +103,6 @@ def setup_cmd_handler(sla_ctrl_strub, args):
     response = sla_ctrl_strub._setup(conf_req)
     print(response.status)
 
-
 def create_compute_req(args):
     req = sla_pb2.compute_req()
 
@@ -147,7 +146,9 @@ def run(args):
     # NOTE(gRPC Python Team): .close() is possible on a channel and should be
     # used in circumstances in which the with statement does not fit the needs
     # of the code.
-    with grpc.insecure_channel('localhost:12321') as channel:
+    rpc_srv_addr1 = "192.168.31.35:12321"
+    rpc_srv_addr2 = "localhost:12321"
+    with grpc.insecure_channel(rpc_srv_addr2) as channel:
         stub = sla_pb2_grpc.sla_ctrlStub(channel)
         if args.command == 'setup':
             setup_cmd_handler(stub, args)

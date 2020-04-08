@@ -27,7 +27,7 @@ class sla_ctrlStub(object):
     self._ref_phase_compute = channel.unary_unary(
         '/sla.sla_ctrl/_ref_phase_compute',
         request_serializer=sla__pb2.compute_req.SerializeToString,
-        response_deserializer=sla__pb2.status_res.FromString,
+        response_deserializer=sla__pb2.compute_res.FromString,
         )
     self._depth_compute = channel.unary_unary(
         '/sla.sla_ctrl/_depth_compute',
@@ -37,7 +37,7 @@ class sla_ctrlStub(object):
     self._ref_phase_capture_and_compute = channel.unary_unary(
         '/sla.sla_ctrl/_ref_phase_capture_and_compute',
         request_serializer=sla__pb2.compute_req.SerializeToString,
-        response_deserializer=sla__pb2.status_res.FromString,
+        response_deserializer=sla__pb2.compute_res.FromString,
         )
     self._depth_capture_and_compute = channel.unary_unary(
         '/sla.sla_ctrl/_depth_capture_and_compute',
@@ -144,7 +144,7 @@ def add_sla_ctrlServicer_to_server(servicer, server):
       '_ref_phase_compute': grpc.unary_unary_rpc_method_handler(
           servicer._ref_phase_compute,
           request_deserializer=sla__pb2.compute_req.FromString,
-          response_serializer=sla__pb2.status_res.SerializeToString,
+          response_serializer=sla__pb2.compute_res.SerializeToString,
       ),
       '_depth_compute': grpc.unary_unary_rpc_method_handler(
           servicer._depth_compute,
@@ -154,7 +154,7 @@ def add_sla_ctrlServicer_to_server(servicer, server):
       '_ref_phase_capture_and_compute': grpc.unary_unary_rpc_method_handler(
           servicer._ref_phase_capture_and_compute,
           request_deserializer=sla__pb2.compute_req.FromString,
-          response_serializer=sla__pb2.status_res.SerializeToString,
+          response_serializer=sla__pb2.compute_res.SerializeToString,
       ),
       '_depth_capture_and_compute': grpc.unary_unary_rpc_method_handler(
           servicer._depth_capture_and_compute,

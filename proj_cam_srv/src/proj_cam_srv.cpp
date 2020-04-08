@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include <opencv2/core.hpp>
+#include <opencv2/core/types.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/videoio.hpp>
@@ -10,7 +11,7 @@
 proj_cam_srv::proj_cam_srv()
     : _win_name("structured_light_capture"),
       _capture_timeout_ms(300),
-      _cap(0, cv::CAP_V4L2) {
+      _cap(0, cv::CAP_V4L) {
     if (!_cap.isOpened()) {
         std::cout << "Camera could not be opened\n";
     }
@@ -24,8 +25,16 @@ void proj_cam_srv::size_set(const cv::Size& size) {
     std::cout << _cap.set(cv::CAP_PROP_FRAME_HEIGHT, size.height);
 }
 
+cv::Size proj_cam_srv::size_get() const {
+    return cv::Size(_cap.get(cv::CAP_PROP_FRAME_WIDTH), _cap.get(cv::CAP_PROP_FRAME_HEIGHT));
+}
+
 void proj_cam_srv::capture_timeout_set(int timeout_ms) {
     _capture_timeout_ms = timeout_ms;
+}
+
+int proj_cam_srv::capture_timeout_get() const {
+    return _capture_timeout_ms;
 }
 
 void proj_cam_srv::images_capture(

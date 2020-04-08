@@ -14,6 +14,5 @@ target_include_directories(proj_cam_srv
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-
 target_compile_options(proj_cam_srv PRIVATE -Werror)
 target_link_libraries(proj_cam_srv PUBLIC ${OpenCV_LIBS})

@@ -194,7 +194,7 @@ class sl_pcg::sl_pcg_impl {
         if (_adjust_mode == CROP_TO_SQURE_CENTRE)
         {
             auto step = (_params.size.width - _params.size.height)/2;
-            _obj_phase = _obj_phase(cv::Rect(step, 0, _params.size.width - step, _params.size.height));
+            //_obj_phase = _obj_phase(cv::Rect(step, 0, _params.size.width - step, _params.size.height));
         }
         return pcg_phase_unwrap(_obj_phase);
     }
