@@ -7,7 +7,7 @@ For phase unwrap following algorithms are used:
 
 Both algorithms have CPU(scalar) and GPU(CUDA) implementation.
 
-# Usage via CLI test images
+# Usage via CLI with precaptured test images
 
 3d reconstruction algorithm based on structured light algotirhm using 2 different algorithm for phase unwraping:
 
